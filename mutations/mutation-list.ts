@@ -1,4 +1,4 @@
-import type { MutationBuilder } from './mutation';
+import type { MutationBuilder } from "./mutation";
 
 type MutationMap = Record<string, MutationBuilder<any, any>>;
 

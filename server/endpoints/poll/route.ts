@@ -1,6 +1,6 @@
-import type { BunRequest } from 'bun';
+import type { BunRequest } from "bun";
 
-import { auth } from '@/lib/auth/config';
+import { auth } from "@/lib/auth/config";
 
 // TODO: ATTACH A WEBSOCKET CONNECTION.
 
@@ -9,7 +9,7 @@ export async function getData_POLL(request: BunRequest) {
 	const session = await auth.api.getSession({ headers });
 	const userId = session?.user?.id;
 	if (!userId) {
-		return Response.json({ error: 'Unauthorized' }, { status: 401 });
+		return Response.json({ error: "Unauthorized" }, { status: 401 });
 	}
 
 	// const isAnonymous = session?.user?.isAnonymous;
@@ -18,15 +18,15 @@ export async function getData_POLL(request: BunRequest) {
 	// }
 
 	const params = new URL(request.url).searchParams;
-	const _cursor = params.get('cursor');
-	const _lastUpdatedAt = params.get('lastUpdatedAt');
+	const _cursor = params.get("cursor");
+	const _lastUpdatedAt = params.get("lastUpdatedAt");
 
 	// const data = await db
 	// 	.select()
 	// 	.from(clientLocalChanges)
 	// 	.where(eq(clientLocalChanges.userId, userId));
 
-	return Response.json({ message: 'Hello, world!' });
+	return Response.json({ message: "Hello, world!" });
 	// try {
 	// 	// Authenticate the request
 	// 	const session = await auth.api.getSession({

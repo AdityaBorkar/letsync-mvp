@@ -1,8 +1,8 @@
-import type { Type } from 'arktype';
+import type { Type } from "arktype";
 
 export interface BaseMutationContext {
 	db: any;
-	env: 'client' | 'server';
+	env: "client" | "server";
 }
 
 export interface MutationContext extends BaseMutationContext {
@@ -38,13 +38,13 @@ interface MutationExecuteResult<T = any> {
 	error?: string;
 }
 
-async function getDatabase(env: 'client' | 'server') {
+async function getDatabase(env: "client" | "server") {
 	try {
-		if (env === 'server') {
-			const { db } = await import('@/lib/db/server');
+		if (env === "server") {
+			const { db } = await import("@/lib/db/server");
 			return db;
 		}
-		const { db } = await import('@/lib/db/client');
+		const { db } = await import("@/lib/db/client");
 		return db;
 	} catch (error) {
 		console.warn(`Could not load ${env} database:`, error);
@@ -60,9 +60,9 @@ async function validateWithSchema<T extends Type>(
 	if (
 		result instanceof Error ||
 		(result &&
-			typeof result === 'object' &&
-			' arkKind' in result &&
-			result[' arkKind'] === 'errors')
+			typeof result === "object" &&
+			" arkKind" in result &&
+			result[" arkKind"] === "errors")
 	) {
 		throw new Error(`Validation failed: ${result.toString()}`);
 	}
@@ -73,7 +73,7 @@ export class MutationBuilder<
 	TData = any,
 	TContext extends MutationContext = MutationContext,
 > {
-	public _name = '';
+	public _name = "";
 	public _schema?: Type;
 	public _middlewares: Array<MutationMiddleware<any, any>> = [];
 	public _handler?: MutationHandlerFn<TData, TContext>;
@@ -122,11 +122,11 @@ export class MutationBuilder<
 
 	async execute(
 		data: TData,
-		options?: { env?: 'client' | 'server'; context?: Partial<TContext> },
+		options?: { env?: "client" | "server"; context?: Partial<TContext> },
 	): Promise<MutationExecuteResult> {
 		try {
 			const env =
-				options?.env || (typeof window !== 'undefined' ? 'client' : 'server');
+				options?.env || (typeof window !== "undefined" ? "client" : "server");
 
 			const context = {
 				db: await getDatabase(env),

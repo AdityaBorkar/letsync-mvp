@@ -1,15 +1,15 @@
-import { and, desc, eq, gt, inArray, lt, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, lt, sql } from "drizzle-orm";
 
-import { changeLog, mutationQueue, tenants } from '../../../drizzle/schema';
-import { db } from '../../../src/lib/db/server';
-import type { ChangeRecord, MutationMessage } from '../sync/engine';
+import { changeLog, mutationQueue, tenants } from "../../../drizzle/schema";
+import { db } from "../../../src/lib/db/server";
+import type { ChangeRecord, MutationMessage } from "../sync/engine";
 
 export interface ChangeLogEntry {
 	id: string;
 	tenantId: string;
 	tableName: string;
 	recordId: string;
-	operation: 'insert' | 'update' | 'delete';
+	operation: "insert" | "update" | "delete";
 	changeData: Record<string, any>;
 	timestamp: string; // ISO string timestamp to match Drizzle schema
 	userId: string;
@@ -20,7 +20,7 @@ export interface MutationQueueEntry {
 	tenantId: string;
 	userId: string;
 	mutationData: Record<string, any>;
-	status: 'pending' | 'processing' | 'completed' | 'failed';
+	status: "pending" | "processing" | "completed" | "failed";
 	createdAt: string; // ISO string timestamp
 	processedAt: string | null; // ISO string timestamp
 	error: string | null;
@@ -79,9 +79,9 @@ export class SyncDbUtils {
 
 			return results.map(this.mapToChangeRecord);
 		} catch (error) {
-			console.error('Error retrieving changes:', error);
+			console.error("Error retrieving changes:", error);
 			throw new Error(
-				`Failed to retrieve changes: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to retrieve changes: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -95,7 +95,7 @@ export class SyncDbUtils {
 		userId: string,
 		tableName: string,
 		recordId: string,
-		operation: 'insert' | 'update' | 'delete',
+		operation: "insert" | "update" | "delete",
 		changeData: Record<string, any>,
 	): Promise<string> {
 		try {
@@ -114,9 +114,9 @@ export class SyncDbUtils {
 
 			return result[0].id;
 		} catch (error) {
-			console.error('Error recording change:', error);
+			console.error("Error recording change:", error);
 			throw new Error(
-				`Failed to record change: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to record change: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -147,9 +147,9 @@ export class SyncDbUtils {
 
 			return results.map(this.mapToChangeRecord);
 		} catch (error) {
-			console.error('Error getting changes for record:', error);
+			console.error("Error getting changes for record:", error);
 			throw new Error(
-				`Failed to get changes for record: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to get changes for record: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -169,9 +169,9 @@ export class SyncDbUtils {
 
 			return result.length > 0 ? new Date(result[0].timestamp).getTime() : null;
 		} catch (error) {
-			console.error('Error getting latest change timestamp:', error);
+			console.error("Error getting latest change timestamp:", error);
 			throw new Error(
-				`Failed to get latest change timestamp: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to get latest change timestamp: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -199,9 +199,9 @@ export class SyncDbUtils {
 
 			return result.rowCount || 0;
 		} catch (error) {
-			console.error('Error cleaning up old changes:', error);
+			console.error("Error cleaning up old changes:", error);
 			throw new Error(
-				`Failed to cleanup old changes: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to cleanup old changes: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -275,9 +275,9 @@ export class SyncDbUtils {
 				totalChanges,
 			};
 		} catch (error) {
-			console.error('Error getting change stats:', error);
+			console.error("Error getting change stats:", error);
 			throw new Error(
-				`Failed to get change stats: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to get change stats: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -297,7 +297,7 @@ export class SyncDbUtils {
 					createdAt: new Date().toISOString(),
 					mutationData: mutation as any,
 					retryCount: 0,
-					status: 'pending',
+					status: "pending",
 					tenantId,
 					userId,
 				})
@@ -305,9 +305,9 @@ export class SyncDbUtils {
 
 			return result[0].id;
 		} catch (error) {
-			console.error('Error enqueueing mutation:', error);
+			console.error("Error enqueueing mutation:", error);
 			throw new Error(
-				`Failed to enqueue mutation: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to enqueue mutation: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -326,7 +326,7 @@ export class SyncDbUtils {
 				.where(
 					and(
 						eq(mutationQueue.tenantId, tenantId),
-						eq(mutationQueue.status, 'pending'),
+						eq(mutationQueue.status, "pending"),
 					),
 				)
 				.orderBy(mutationQueue.createdAt)
@@ -334,9 +334,9 @@ export class SyncDbUtils {
 
 			return results.map(this.mapToMutationQueueEntry);
 		} catch (error) {
-			console.error('Error getting pending mutations:', error);
+			console.error("Error getting pending mutations:", error);
 			throw new Error(
-				`Failed to get pending mutations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to get pending mutations: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -347,7 +347,7 @@ export class SyncDbUtils {
 	async updateMutationStatus(
 		tenantId: string,
 		mutationId: string,
-		status: 'processing' | 'completed' | 'failed',
+		status: "processing" | "completed" | "failed",
 		error?: string,
 	): Promise<void> {
 		try {
@@ -371,9 +371,9 @@ export class SyncDbUtils {
 					),
 				);
 		} catch (error) {
-			console.error('Error updating mutation status:', error);
+			console.error("Error updating mutation status:", error);
 			throw new Error(
-				`Failed to update mutation status: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to update mutation status: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -394,16 +394,16 @@ export class SyncDbUtils {
 				.where(
 					and(
 						eq(mutationQueue.tenantId, tenantId),
-						eq(mutationQueue.status, 'completed'),
+						eq(mutationQueue.status, "completed"),
 						lt(mutationQueue.processedAt, cutoffDate.toISOString()),
 					),
 				);
 
 			return result.rowCount || 0;
 		} catch (error) {
-			console.error('Error cleaning up old mutations:', error);
+			console.error("Error cleaning up old mutations:", error);
 			throw new Error(
-				`Failed to cleanup old mutations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to cleanup old mutations: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -427,7 +427,7 @@ export class SyncDbUtils {
 
 			return result.length > 0;
 		} catch (error) {
-			console.error('Error verifying tenant exists:', error);
+			console.error("Error verifying tenant exists:", error);
 			return false;
 		}
 	}
@@ -465,7 +465,7 @@ export class SyncDbUtils {
 				name: tenant.name, // Active if not deleted
 			};
 		} catch (error) {
-			console.error('Error getting tenant info:', error);
+			console.error("Error getting tenant info:", error);
 			return null;
 		}
 	}
@@ -489,11 +489,11 @@ export class SyncDbUtils {
 				.limit(1);
 			await db.select({ count: sql<number>`count(*)` }).from(tenants).limit(1);
 
-			console.log('Sync database health check passed');
+			console.log("Sync database health check passed");
 		} catch (error) {
-			console.error('Sync database health check failed:', error);
+			console.error("Sync database health check failed:", error);
 			throw new Error(
-				`Sync database unhealthy: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Sync database unhealthy: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}

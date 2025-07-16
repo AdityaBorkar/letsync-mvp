@@ -1,10 +1,10 @@
-import { existsSync } from 'node:fs';
-import { mkdir } from 'node:fs/promises';
-import { join } from 'node:path';
+import { existsSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
+import { join } from "node:path";
 
-import postgres from 'postgres';
+import postgres from "postgres";
 
-import { getConfig } from './utils/drizzle';
+import { getConfig } from "./utils/drizzle";
 
 interface MigrateOptions {
 	dryRun?: boolean;
@@ -23,22 +23,22 @@ interface Journal {
 }
 
 export async function migrate(options: MigrateOptions) {
-	console.log('📦 Migrating schema changes...');
+	console.log("📦 Migrating schema changes...");
 	if (options.dryRun)
-		console.log('   Mode: Dry run (no files will be created)');
+		console.log("   Mode: Dry run (no files will be created)");
 
 	const config = await getConfig();
-	console.log('✅ Got database config');
+	console.log("✅ Got database config");
 
 	// TODO: Assuming database is "postgres"
 	const dbCredentials = config.dbCredentials; // TODO: Validate
 	const db = postgres(dbCredentials);
-	console.log('✅ Database connection established');
+	console.log("✅ Database connection established");
 
-	const letsync_path = join(process.cwd(), config.out, '../migrations-client');
+	const letsync_path = join(process.cwd(), config.out, "../migrations-client");
 	if (!existsSync(letsync_path)) await mkdir(letsync_path, { recursive: true });
 
-	const journalPath = Bun.file(join(letsync_path, '_journal.json'));
+	const journalPath = Bun.file(join(letsync_path, "_journal.json"));
 	const journal: Journal = await journalPath.json();
 	console.log(`✅ Read ${journal.entries.length} entries from _journal.json`);
 
@@ -61,7 +61,7 @@ export async function migrate(options: MigrateOptions) {
 			await db`INSERT INTO schema (tag, version, schema, created_at) VALUES (${entry.tag}, ${entry.version}, ${content}, ${new Date(entry.createdAt)})`;
 			console.log(`✅ Inserted ${entry.tag} schema`);
 		}
-		console.log('✅ Inserted missing entries');
+		console.log("✅ Inserted missing entries");
 	}
 
 	// Remove schema records not in journal (cleanup orphaned records)
@@ -74,13 +74,13 @@ export async function migrate(options: MigrateOptions) {
 		for (const orphaned of orphanedSchemas) {
 			await db`DELETE FROM schema WHERE version = ${orphaned.version}`;
 		}
-		console.log('✅ Removed orphaned entries');
+		console.log("✅ Removed orphaned entries");
 	}
 
 	// TODO: CHECK & VERIFY CONTENTS OF EXISTING SCHEMA TABLES. If does not match, throw error.
 
 	await db.end();
-	console.log('✅ Schema published and synced successfully');
+	console.log("✅ Schema published and synced successfully");
 	console.log(`   Total journal entries: ${journal.entries.length}`);
 	console.log(`   Synced to database: ${journal.entries.length}`);
 }

@@ -1,15 +1,15 @@
-import { ArkErrors } from 'arktype';
-import { eq } from 'drizzle-orm';
+import { ArkErrors } from "arktype";
+import { eq } from "drizzle-orm";
 
-import { dataCache } from '#letsync/client/ws/messages/data-cache';
-import { dataOperations } from '#letsync/client/ws/messages/data-operations';
-import { pong } from '#letsync/client/ws/messages/pong';
-import { generateRefId } from '#letsync/client/ws/utils';
-import type { DatabaseListType } from '#letsync/types';
-import { Logger } from '#letsync/utils/Logger';
-import { db } from '@/lib/db/client';
+import { dataCache } from "#letsync/client/ws/messages/data-cache";
+import { dataOperations } from "#letsync/client/ws/messages/data-operations";
+import { pong } from "#letsync/client/ws/messages/pong";
+import { generateRefId } from "#letsync/client/ws/utils";
+import type { DatabaseListType } from "#letsync/types";
+import { Logger } from "#letsync/utils/Logger";
+import { db } from "@/lib/db/client";
 
-const logger = new Logger('SYNC:WS');
+const logger = new Logger("SYNC:WS");
 
 const MessageType = pong.message
 	.or(dataOperations.message)
@@ -28,22 +28,22 @@ export async function syncData_WS({
 	};
 }): Promise<void> {
 	const ws = new window.WebSocket(
-		`${server.https ? 'wss' : 'ws'}://${server.endpoint}/ws`,
+		`${server.https ? "wss" : "ws"}://${server.endpoint}/ws`,
 	);
 
 	ws.onopen = async () => {
-		ws.send(JSON.stringify({ refId: generateRefId(), type: 'ping' }));
+		ws.send(JSON.stringify({ refId: generateRefId(), type: "ping" }));
 		for (const { name } of databases) {
 			const timestamp = await db.query.clientMetadata
 				.findFirst({
 					where: ({ key }) => eq(key, `${name}:cursor`),
 				})
-				.then((cursor) => cursor?.value || '');
+				.then((cursor) => cursor?.value || "");
 			const data = {
 				cursor: timestamp ? new Date(timestamp) : undefined,
 				name,
 				refId: generateRefId(),
-				type: 'sync_request',
+				type: "sync_request",
 			};
 			ws.send(JSON.stringify(data));
 		}
@@ -53,28 +53,28 @@ export async function syncData_WS({
 		const data = MessageType(JSON.parse(message));
 		if (data instanceof ArkErrors) {
 			console.log({ data, message });
-			logger.error('Invalid Message', data);
+			logger.error("Invalid Message", data);
 			return;
 		}
 
-		if (data.type === 'pong') pong.handler(ws, data);
-		if (data.type === 'data_cache') dataCache.handler(ws, data);
-		if (data.type === 'data_operations') dataOperations.handler(ws, data);
+		if (data.type === "pong") pong.handler(ws, data);
+		if (data.type === "data_cache") dataCache.handler(ws, data);
+		if (data.type === "data_operations") dataOperations.handler(ws, data);
 		// mutation_ack
 	};
 
 	ws.onerror = (error) => {
-		logger.error('Connection Error', error);
+		logger.error("Connection Error", error);
 		// TODO: Handle UNAUTHORIZED
 		// TODO: Report Status
 	};
 
 	ws.onclose = () => {
-		logger.log('Connection Closed');
+		logger.log("Connection Closed");
 		// TODO: Report Status
 	};
 
-	signal.addEventListener('abort', () => {
+	signal.addEventListener("abort", () => {
 		ws.close();
 	});
 }

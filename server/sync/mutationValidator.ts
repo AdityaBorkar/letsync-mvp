@@ -1,4 +1,4 @@
-import type { MutationMessage } from './engine';
+import type { MutationMessage } from "./engine";
 
 export interface ValidationResult {
 	isValid: boolean;
@@ -21,7 +21,7 @@ export interface TableSchema {
 }
 
 export interface FieldSchema {
-	type: 'string' | 'number' | 'boolean' | 'date' | 'uuid' | 'json';
+	type: "string" | "number" | "boolean" | "date" | "uuid" | "json";
 	required?: boolean;
 	maxLength?: number;
 	minLength?: number;
@@ -108,7 +108,7 @@ export class MutationValidator {
 			};
 		} catch (error) {
 			return {
-				error: `Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				error: `Validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
 				isValid: false,
 			};
 		}
@@ -141,29 +141,29 @@ export class MutationValidator {
 	private validateBasicStructure(mutation: MutationMessage): ValidationResult {
 		// Check required fields
 		if (!mutation.table) {
-			return { error: 'Missing table name', isValid: false };
+			return { error: "Missing table name", isValid: false };
 		}
 
 		if (!mutation.operation) {
-			return { error: 'Missing operation type', isValid: false };
+			return { error: "Missing operation type", isValid: false };
 		}
 
-		if (!['insert', 'update', 'delete'].includes(mutation.operation)) {
+		if (!["insert", "update", "delete"].includes(mutation.operation)) {
 			return {
 				error: `Invalid operation: ${mutation.operation}`,
 				isValid: false,
 			};
 		}
 
-		if (!mutation.data || typeof mutation.data !== 'object') {
-			return { error: 'Missing or invalid data object', isValid: false };
+		if (!mutation.data || typeof mutation.data !== "object") {
+			return { error: "Missing or invalid data object", isValid: false };
 		}
 
 		if (
 			!mutation.client_timestamp ||
-			typeof mutation.client_timestamp !== 'number'
+			typeof mutation.client_timestamp !== "number"
 		) {
-			return { error: 'Missing or invalid client timestamp', isValid: false };
+			return { error: "Missing or invalid client timestamp", isValid: false };
 		}
 
 		// Validate timestamp is reasonable (not too far in future/past)
@@ -173,7 +173,7 @@ export class MutationValidator {
 
 		if (timeDiff > maxTimeDiff) {
 			return {
-				error: 'Client timestamp too far from server time',
+				error: "Client timestamp too far from server time",
 				isValid: false,
 			};
 		}
@@ -200,9 +200,9 @@ export class MutationValidator {
 		const warnings: string[] = [];
 
 		// For delete operations, we only need the ID
-		if (mutation.operation === 'delete') {
+		if (mutation.operation === "delete") {
 			if (!mutation.data.id) {
-				return { error: 'Delete operation missing record ID', isValid: false };
+				return { error: "Delete operation missing record ID", isValid: false };
 			}
 			return { isValid: true };
 		}
@@ -232,7 +232,7 @@ export class MutationValidator {
 		}
 
 		// Check required fields for insert operations
-		if (mutation.operation === 'insert') {
+		if (mutation.operation === "insert") {
 			for (const [fieldName, fieldSchema] of Object.entries(schema.fields)) {
 				if (fieldSchema.required && !(fieldName in mutation.data)) {
 					return {
@@ -281,7 +281,7 @@ export class MutationValidator {
 		}
 
 		// String-specific validations
-		if (schema.type === 'string' && typeof value === 'string') {
+		if (schema.type === "string" && typeof value === "string") {
 			if (schema.maxLength && value.length > schema.maxLength) {
 				return {
 					error: `Field ${fieldName} exceeds maximum length of ${schema.maxLength}`,
@@ -305,7 +305,7 @@ export class MutationValidator {
 
 			if (schema.enum && !schema.enum.includes(value)) {
 				return {
-					error: `Field ${fieldName} must be one of: ${schema.enum.join(', ')}`,
+					error: `Field ${fieldName} must be one of: ${schema.enum.join(", ")}`,
 					isValid: false,
 				};
 			}
@@ -323,11 +323,11 @@ export class MutationValidator {
 	private validateFieldType(
 		fieldName: string,
 		value: any,
-		expectedType: FieldSchema['type'],
+		expectedType: FieldSchema["type"],
 	): ValidationResult {
 		switch (expectedType) {
-			case 'string':
-				if (typeof value !== 'string') {
+			case "string":
+				if (typeof value !== "string") {
 					return {
 						error: `Field ${fieldName} must be a string`,
 						isValid: false,
@@ -335,8 +335,8 @@ export class MutationValidator {
 				}
 				break;
 
-			case 'number':
-				if (typeof value !== 'number' || Number.isNaN(value)) {
+			case "number":
+				if (typeof value !== "number" || Number.isNaN(value)) {
 					return {
 						error: `Field ${fieldName} must be a valid number`,
 						isValid: false,
@@ -344,8 +344,8 @@ export class MutationValidator {
 				}
 				break;
 
-			case 'boolean':
-				if (typeof value !== 'boolean') {
+			case "boolean":
+				if (typeof value !== "boolean") {
 					return {
 						error: `Field ${fieldName} must be a boolean`,
 						isValid: false,
@@ -353,7 +353,7 @@ export class MutationValidator {
 				}
 				break;
 
-			case 'date': {
+			case "date": {
 				const dateValue = new Date(value);
 				if (Number.isNaN(dateValue.getTime())) {
 					return {
@@ -364,10 +364,10 @@ export class MutationValidator {
 				break;
 			}
 
-			case 'uuid': {
+			case "uuid": {
 				const uuidPattern =
 					/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-				if (typeof value !== 'string' || !uuidPattern.test(value)) {
+				if (typeof value !== "string" || !uuidPattern.test(value)) {
 					return {
 						error: `Field ${fieldName} must be a valid UUID`,
 						isValid: false,
@@ -376,7 +376,7 @@ export class MutationValidator {
 				break;
 			}
 
-			case 'json':
+			case "json":
 				// JSON can be any valid JSON value
 				try {
 					JSON.stringify(value);
@@ -404,7 +404,7 @@ export class MutationValidator {
 	private initializeDefaultRules(): void {
 		// Anti-spam rule
 		this.addValidationRule({
-			name: 'rate_limit',
+			name: "rate_limit",
 			validate: async (_tenantId: string, _mutation: MutationMessage) => {
 				// TODO: Implement rate limiting logic
 				// This would check against a rate limit store (Redis, etc.)
@@ -414,7 +414,7 @@ export class MutationValidator {
 
 		// Data size limit rule
 		this.addValidationRule({
-			name: 'data_size_limit',
+			name: "data_size_limit",
 			validate: (_tenantId: string, mutation: MutationMessage) => {
 				const dataStr = JSON.stringify(mutation.data);
 				const maxSize = 1024 * 1024; // 1MB limit
@@ -439,13 +439,13 @@ export class MutationValidator {
 		// Example tenant schema
 		this.registerTableSchema({
 			fields: {
-				created: { required: true, type: 'date' },
-				deleted: { nullable: true, type: 'date' },
-				id: { required: true, type: 'uuid' },
-				name: { maxLength: 255, type: 'string' },
-				updated: { required: true, type: 'date' },
+				created: { required: true, type: "date" },
+				deleted: { nullable: true, type: "date" },
+				id: { required: true, type: "uuid" },
+				name: { maxLength: 255, type: "string" },
+				updated: { required: true, type: "date" },
 			},
-			name: 'tenants',
+			name: "tenants",
 		});
 
 		// TODO: Add more table schemas as they are defined
@@ -460,24 +460,24 @@ export class MutationValidator {
 			// Test basic validation functionality
 			const testMutation: MutationMessage = {
 				client_timestamp: Date.now(),
-				data: { test: 'value' },
-				operation: 'insert',
-				table: 'test_table',
-				type: 'mutation',
+				data: { test: "value" },
+				operation: "insert",
+				table: "test_table",
+				type: "mutation",
 			};
 
-			const result = await this.validateMutation('test-tenant', testMutation);
+			const result = await this.validateMutation("test-tenant", testMutation);
 
 			// Should be valid (no schema registered for test_table)
 			if (!result.isValid) {
-				throw new Error('Basic validation test failed');
+				throw new Error("Basic validation test failed");
 			}
 
-			console.log('Mutation validator health check passed');
+			console.log("Mutation validator health check passed");
 		} catch (error) {
-			console.error('Mutation validator health check failed:', error);
+			console.error("Mutation validator health check failed:", error);
 			throw new Error(
-				`Mutation validator unhealthy: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Mutation validator unhealthy: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}

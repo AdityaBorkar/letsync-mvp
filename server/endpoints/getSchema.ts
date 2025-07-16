@@ -1,26 +1,25 @@
-import type { BunRequest } from 'bun';
+import { type } from "arktype";
+import type { BunRequest } from "bun";
+import { desc, sql } from "drizzle-orm";
 
-import { type } from 'arktype';
-import { desc, sql } from 'drizzle-orm';
-
-import { clientSchemas } from '#letsync/client/schemas/drizzle-postgres';
-import { db } from '@/lib/db/server'; // TODO: Outsource db to a separate module
+import { clientSchemas } from "#letsync/client/schemas/drizzle-postgres";
+import { db } from "@/lib/db/server"; // TODO: Outsource db to a separate module
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
 
 const schema = type({
-	name: 'string',
-	'version?': 'number',
+	name: "string",
+	"version?": "number",
 });
 
 export async function getSchema(request: BunRequest) {
 	// Request Validation
 	const { searchParams } = new URL(request.url);
-	const name = searchParams.get('name');
-	const version = searchParams.get('version');
+	const name = searchParams.get("name");
+	const version = searchParams.get("version");
 	const data = schema({ name, version });
-	if ('error' in data) {
+	if ("error" in data) {
 		return Response.json({ error: data.error }, { status: 400 });
 	}
 

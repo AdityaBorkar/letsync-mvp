@@ -1,19 +1,19 @@
-import { type } from 'arktype';
+import { type } from "arktype";
 
 // data_ops, name, refId, type: 'data_operations'
 const message = type({
 	data_ops: type(
 		{
-			createdAt: 'string',
-			id: 'number',
-			operation: 'string',
-			tenantId: 'number',
-			updatedAt: 'string',
+			createdAt: "string",
+			id: "number",
+			operation: "string",
+			tenantId: "number",
+			updatedAt: "string",
 		},
-		'[]',
+		"[]",
 	),
-	name: 'string',
-	refId: 'string',
+	name: "string",
+	refId: "string",
 	type: '"data_operations"',
 });
 

@@ -1,7 +1,7 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq, sql } from "drizzle-orm";
 
-import { tenants } from '../../../drizzle/schema';
-import { db } from '../../../src/lib/db/server';
+import { tenants } from "../../../drizzle/schema";
+import { db } from "../../../src/lib/db/server";
 
 /**
  * Tenant relationship utilities for sync engine
@@ -28,13 +28,13 @@ export class TenantUtils {
 			// For development purposes, we'll create/use a default tenant
 			const defaultTenantId = await this.getOrCreateDefaultTenant();
 
-			console.log('Getting tenant ID for user:', {
+			console.log("Getting tenant ID for user:", {
 				tenantId: defaultTenantId,
 				userId,
 			});
 			return defaultTenantId;
 		} catch (error) {
-			console.error('Error getting tenant ID for user:', error);
+			console.error("Error getting tenant ID for user:", error);
 			return null;
 		}
 	}
@@ -50,7 +50,7 @@ export class TenantUtils {
 			const userTenantId = await this.getTenantIdForUser(userId);
 			return userTenantId === tenantId;
 		} catch (error) {
-			console.error('Error validating user tenant access:', error);
+			console.error("Error validating user tenant access:", error);
 			return false;
 		}
 	}
@@ -65,7 +65,7 @@ export class TenantUtils {
 			const existing = await db
 				.select({ id: tenants.id })
 				.from(tenants)
-				.where(eq(tenants.name, 'Default Tenant'))
+				.where(eq(tenants.name, "Default Tenant"))
 				.limit(1);
 
 			if (existing.length > 0) {
@@ -77,16 +77,16 @@ export class TenantUtils {
 				.insert(tenants)
 				.values({
 					created: new Date().toISOString(),
-					name: 'Default Tenant',
+					name: "Default Tenant",
 					updated: new Date().toISOString(),
 				})
 				.returning({ id: tenants.id });
 
-			console.log('Created default tenant:', result[0].id);
+			console.log("Created default tenant:", result[0].id);
 			return result[0].id;
 		} catch (error) {
-			console.error('Error getting/creating default tenant:', error);
-			throw new Error('Failed to initialize tenant');
+			console.error("Error getting/creating default tenant:", error);
+			throw new Error("Failed to initialize tenant");
 		}
 	}
 
@@ -107,9 +107,9 @@ export class TenantUtils {
 
 			return result[0].id;
 		} catch (error) {
-			console.error('Error creating tenant:', error);
+			console.error("Error creating tenant:", error);
 			throw new Error(
-				`Failed to create tenant: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to create tenant: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -153,7 +153,7 @@ export class TenantUtils {
 				updated: tenant.updated, // Active if not deleted
 			};
 		} catch (error) {
-			console.error('Error getting tenant info:', error);
+			console.error("Error getting tenant info:", error);
 			return null;
 		}
 	}
@@ -198,7 +198,7 @@ export class TenantUtils {
 				updated: tenant.updated,
 			}));
 		} catch (error) {
-			console.error('Error listing tenants:', error);
+			console.error("Error listing tenants:", error);
 			return [];
 		}
 	}
@@ -218,7 +218,7 @@ export class TenantUtils {
 
 			return (result.rowCount || 0) > 0;
 		} catch (error) {
-			console.error('Error deleting tenant:', error);
+			console.error("Error deleting tenant:", error);
 			return false;
 		}
 	}
@@ -241,7 +241,7 @@ export class TenantUtils {
 
 			return (result.rowCount || 0) > 0;
 		} catch (error) {
-			console.error('Error updating tenant:', error);
+			console.error("Error updating tenant:", error);
 			return false;
 		}
 	}
@@ -259,7 +259,7 @@ export class TenantUtils {
 			// Get change log count
 			const changeLogCount = await db
 				.select({ count: sql<number>`count(*)` })
-				.from('change_log' as any)
+				.from("change_log" as any)
 				.where(sql`tenant_id = ${tenantId}`);
 
 			// Get mutation queue stats
@@ -268,7 +268,7 @@ export class TenantUtils {
 					count: sql<number>`count(*)`,
 					status: sql`status`,
 				})
-				.from('mutation_queue' as any)
+				.from("mutation_queue" as any)
 				.where(sql`tenant_id = ${tenantId}`)
 				.groupBy(sql`status`);
 
@@ -281,13 +281,13 @@ export class TenantUtils {
 
 			mutationStats.forEach((stat: any) => {
 				switch (stat.status) {
-					case 'pending':
+					case "pending":
 						stats.pendingMutations = stat.count;
 						break;
-					case 'completed':
+					case "completed":
 						stats.completedMutations = stat.count;
 						break;
-					case 'failed':
+					case "failed":
 						stats.failedMutations = stat.count;
 						break;
 				}
@@ -295,7 +295,7 @@ export class TenantUtils {
 
 			return stats;
 		} catch (error) {
-			console.error('Error getting tenant stats:', error);
+			console.error("Error getting tenant stats:", error);
 			return {
 				changeLogEntries: 0,
 				completedMutations: 0,
@@ -312,11 +312,11 @@ export class TenantUtils {
 		try {
 			// Test database connectivity and tenant table access
 			await db.select({ count: sql<number>`count(*)` }).from(tenants).limit(1);
-			console.log('Tenant utils health check passed');
+			console.log("Tenant utils health check passed");
 		} catch (error) {
-			console.error('Tenant utils health check failed:', error);
+			console.error("Tenant utils health check failed:", error);
 			throw new Error(
-				`Tenant utils unhealthy: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Tenant utils unhealthy: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}

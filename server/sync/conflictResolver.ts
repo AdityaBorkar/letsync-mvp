@@ -1,5 +1,5 @@
-import { changeTracker } from './changeTracker';
-import type { MutationMessage } from './engine';
+import { changeTracker } from "./changeTracker";
+import type { MutationMessage } from "./engine";
 
 export interface ConflictResolutionResult {
 	canProceed: boolean;
@@ -10,17 +10,17 @@ export interface ConflictResolutionResult {
 }
 
 export type ConflictType =
-	| 'concurrent_update'
-	| 'delete_conflict'
-	| 'create_conflict'
-	| 'version_mismatch';
+	| "concurrent_update"
+	| "delete_conflict"
+	| "create_conflict"
+	| "version_mismatch";
 
 export type ConflictResolution =
-	| 'last_write_wins'
-	| 'client_wins'
-	| 'server_wins'
-	| 'merge_fields'
-	| 'reject';
+	| "last_write_wins"
+	| "client_wins"
+	| "server_wins"
+	| "merge_fields"
+	| "reject";
 
 export interface ConflictRule {
 	table: string;
@@ -38,7 +38,7 @@ export interface ConflictContext {
 	userId: string;
 	tableName: string;
 	recordId: string;
-	operation: 'insert' | 'update' | 'delete';
+	operation: "insert" | "update" | "delete";
 	clientTimestamp: number;
 	serverTimestamp: number;
 }
@@ -64,12 +64,12 @@ export class ConflictResolver {
 	): Promise<ConflictResolutionResult> {
 		try {
 			// For insert operations, check for duplicate keys
-			if (mutation.operation === 'insert') {
+			if (mutation.operation === "insert") {
 				return await this.resolveInsertConflict(tenantId, mutation);
 			}
 
 			// For update/delete operations, check for concurrent modifications
-			if (mutation.operation === 'update' || mutation.operation === 'delete') {
+			if (mutation.operation === "update" || mutation.operation === "delete") {
 				return await this.resolveConcurrentConflict(tenantId, mutation);
 			}
 
@@ -77,7 +77,7 @@ export class ConflictResolver {
 		} catch (error) {
 			return {
 				canProceed: false,
-				error: `Conflict resolution error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				error: `Conflict resolution error: ${error instanceof Error ? error.message : "Unknown error"}`,
 			};
 		}
 	}
@@ -126,13 +126,13 @@ export class ConflictResolver {
 		if (!recordId) {
 			return {
 				canProceed: false,
-				conflictType: 'create_conflict',
-				error: 'Insert operation missing record ID',
+				conflictType: "create_conflict",
+				error: "Insert operation missing record ID",
 			};
 		}
 
 		// Log the conflict check intent
-		console.log('Checking insert conflict:', {
+		console.log("Checking insert conflict:", {
 			recordId,
 			table: mutation.table,
 			tenantId,
@@ -183,7 +183,7 @@ export class ConflictResolver {
 		if (!recordId) {
 			return {
 				canProceed: false,
-				error: 'Update/delete operation missing record ID',
+				error: "Update/delete operation missing record ID",
 			};
 		}
 
@@ -242,46 +242,46 @@ export class ConflictResolver {
 			serverTimestamp: latestChange.timestamp,
 			tableName: mutation.table,
 			tenantId,
-			userId: mutation.data.user_id || '',
+			userId: mutation.data.user_id || "",
 		};
 
 		// Get applicable conflict rules
 		const rules = this.getConflictRules(mutation.table);
 		const defaultRule: ConflictRule = {
-			resolution: 'last_write_wins',
+			resolution: "last_write_wins",
 			table: mutation.table,
 		};
 		const rule = rules[0] || defaultRule;
 
 		switch (rule.resolution) {
-			case 'last_write_wins':
+			case "last_write_wins":
 				// Client timestamp wins if newer
 				return {
 					canProceed: mutation.client_timestamp >= latestChange.timestamp,
-					conflictType: 'concurrent_update',
+					conflictType: "concurrent_update",
 					error:
 						mutation.client_timestamp < latestChange.timestamp
-							? 'Server data is newer'
+							? "Server data is newer"
 							: undefined,
-					resolution: 'last_write_wins',
+					resolution: "last_write_wins",
 				};
 
-			case 'client_wins':
+			case "client_wins":
 				return {
 					canProceed: true,
-					conflictType: 'concurrent_update',
-					resolution: 'client_wins',
+					conflictType: "concurrent_update",
+					resolution: "client_wins",
 				};
 
-			case 'server_wins':
+			case "server_wins":
 				return {
 					canProceed: false,
-					conflictType: 'concurrent_update',
-					error: 'Server data takes precedence',
-					resolution: 'server_wins',
+					conflictType: "concurrent_update",
+					error: "Server data takes precedence",
+					resolution: "server_wins",
 				};
 
-			case 'merge_fields':
+			case "merge_fields":
 				return await this.mergeFields(
 					mutation.data,
 					latestChange.change_data,
@@ -291,9 +291,9 @@ export class ConflictResolver {
 			default:
 				return {
 					canProceed: false,
-					conflictType: 'concurrent_update',
-					error: 'Concurrent modification detected',
-					resolution: 'reject',
+					conflictType: "concurrent_update",
+					error: "Concurrent modification detected",
+					resolution: "reject",
 				};
 		}
 	}
@@ -312,8 +312,8 @@ export class ConflictResolver {
 		if (rules.length === 0) {
 			return {
 				canProceed: mutation.client_timestamp >= latestChange.timestamp,
-				conflictType: 'version_mismatch',
-				resolution: 'last_write_wins',
+				conflictType: "version_mismatch",
+				resolution: "last_write_wins",
 			};
 		}
 
@@ -326,7 +326,7 @@ export class ConflictResolver {
 			serverTimestamp: latestChange.timestamp,
 			tableName: mutation.table,
 			tenantId,
-			userId: mutation.data.user_id || '',
+			userId: mutation.data.user_id || "",
 		};
 
 		if (rule.customResolver) {
@@ -338,7 +338,7 @@ export class ConflictResolver {
 
 			return {
 				canProceed: resolvedData !== null,
-				conflictType: 'version_mismatch',
+				conflictType: "version_mismatch",
 				resolution: rule.resolution,
 				resolvedData: resolvedData || undefined,
 			};
@@ -346,19 +346,19 @@ export class ConflictResolver {
 
 		// Apply standard resolution
 		switch (rule.resolution) {
-			case 'client_wins':
-				return { canProceed: true, resolution: 'client_wins' };
+			case "client_wins":
+				return { canProceed: true, resolution: "client_wins" };
 
-			case 'server_wins':
+			case "server_wins":
 				return {
 					canProceed: false,
-					error: 'Server version is newer',
-					resolution: 'server_wins',
+					error: "Server version is newer",
+					resolution: "server_wins",
 				};
 			default:
 				return {
 					canProceed: mutation.client_timestamp >= latestChange.timestamp,
-					resolution: 'last_write_wins',
+					resolution: "last_write_wins",
 				};
 		}
 	}
@@ -381,21 +381,21 @@ export class ConflictResolver {
 				if (resolved === null) {
 					return {
 						canProceed: false,
-						conflictType: 'concurrent_update',
-						error: 'Custom merge resolver rejected the conflict',
-						resolution: 'reject',
+						conflictType: "concurrent_update",
+						error: "Custom merge resolver rejected the conflict",
+						resolution: "reject",
 					};
 				}
 				return {
 					canProceed: true,
-					conflictType: 'concurrent_update',
-					resolution: 'merge_fields',
+					conflictType: "concurrent_update",
+					resolution: "merge_fields",
 					resolvedData: resolved,
 				};
 			}
 
 			// Default field merging: client fields win for non-system fields
-			const systemFields = new Set(['id', 'created', 'updated', 'tenant_id']);
+			const systemFields = new Set(["id", "created", "updated", "tenant_id"]);
 
 			for (const [key, value] of Object.entries(clientData)) {
 				if (!systemFields.has(key)) {
@@ -408,16 +408,16 @@ export class ConflictResolver {
 
 			return {
 				canProceed: true,
-				conflictType: 'concurrent_update',
-				resolution: 'merge_fields',
+				conflictType: "concurrent_update",
+				resolution: "merge_fields",
 				resolvedData: mergedData,
 			};
 		} catch (error) {
 			return {
 				canProceed: false,
-				conflictType: 'concurrent_update',
-				error: `Field merge failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-				resolution: 'reject',
+				conflictType: "concurrent_update",
+				error: `Field merge failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+				resolution: "reject",
 			};
 		}
 	}
@@ -440,8 +440,8 @@ export class ConflictResolver {
 
 				return merged;
 			},
-			resolution: 'merge_fields',
-			table: 'tenants',
+			resolution: "merge_fields",
+			table: "tenants",
 		});
 
 		// TODO: Add more table-specific conflict rules as needed
@@ -458,28 +458,28 @@ export class ConflictResolver {
 			const testMutation: MutationMessage = {
 				client_timestamp: Date.now() - 1000, // Older timestamp
 				data: {
-					id: '0197bae0-5f9d-7d5e-9a45-13f838655d33',
-					name: 'test-name',
+					id: "0197bae0-5f9d-7d5e-9a45-13f838655d33",
+					name: "test-name",
 				},
-				operation: 'insert', // Use insert to avoid database lookup
-				table: 'test_table',
-				type: 'mutation',
+				operation: "insert", // Use insert to avoid database lookup
+				table: "test_table",
+				type: "mutation",
 			};
 
 			// Use a dummy tenant ID - insert operations don't need existing records
-			const testTenantId = '0197bae0-5f9d-7d5e-9a45-13f838655d44';
+			const testTenantId = "0197bae0-5f9d-7d5e-9a45-13f838655d44";
 			const result = await this.resolveConflict(testTenantId, testMutation);
 
 			// Should be able to proceed for insert operations
-			if (!(result.canProceed || result.error?.includes('not found'))) {
-				throw new Error('Basic conflict resolution test failed');
+			if (!(result.canProceed || result.error?.includes("not found"))) {
+				throw new Error("Basic conflict resolution test failed");
 			}
 
-			console.log('Conflict resolver health check passed');
+			console.log("Conflict resolver health check passed");
 		} catch (error) {
-			console.error('Conflict resolver health check failed:', error);
+			console.error("Conflict resolver health check failed:", error);
 			throw new Error(
-				`Conflict resolver unhealthy: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Conflict resolver unhealthy: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}

@@ -1,0 +1,40 @@
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+
+export const connection = pgTable("connection", {
+	createdAt: timestamp("created_at")
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
+	id: text("id").primaryKey(),
+	lastSyncedAt: timestamp("last_synced_at").notNull(),
+	name: text("name").notNull(),
+	userId: text("user_id").notNull(),
+	version: integer("version").notNull(),
+});
+
+export const schema = pgTable("schema", {
+	createdAt: timestamp("created_at")
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
+	schema: text("schema").notNull(),
+	tag: text().primaryKey().notNull(),
+	version: integer().notNull(),
+});
+
+export const cache = pgTable("cache", {
+	createdAt: timestamp("created_at")
+		.$defaultFn(() => /* @__PURE__ */ new Date())
+		.notNull(),
+	fromPointer: text("from_pointer").notNull(),
+	// TODO: Convert every "X" number of records to a Cache/CDN
+	hash: text("id").primaryKey(),
+	toPointer: text("to_pointer").notNull(),
+	url: text("url").notNull(),
+});
+
+// CDC Records
+// cdc: pgTable('cdc', {
+// 	hash: text('id').primaryKey(),
+// 	createdAt: timestamp('created_at')
+// 		.$defaultFn(() => /* @__PURE__ */ new Date())
+// 		.notNull(),
+// }),

@@ -1,8 +1,8 @@
-import { syncDbUtils } from '../db/utils';
-import type { ChangeRecord } from './engine';
+import { syncDbUtils } from "../db/utils";
+import type { ChangeRecord } from "./engine";
 
 // Re-export the ChangeLogEntry interface from utils
-export type { ChangeLogEntry } from '../db/utils';
+export type { ChangeLogEntry } from "../db/utils";
 
 export interface GetChangesSinceOptions {
 	tableFilters?: string[];
@@ -36,7 +36,7 @@ export class ChangeTracker {
 		userId: string,
 		tableName: string,
 		recordId: string,
-		operation: 'insert' | 'update' | 'delete',
+		operation: "insert" | "update" | "delete",
 		changeData: Record<string, any>,
 	): Promise<string> {
 		return await syncDbUtils.recordChange(

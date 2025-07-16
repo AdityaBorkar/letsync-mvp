@@ -1,12 +1,11 @@
-import type { ServerWebSocket } from 'bun';
+import { type } from "arktype";
+import type { ServerWebSocket } from "bun";
 
-import { type } from 'arktype';
-
-import type { WebsocketData } from '#letsync/server/endpoints/web-sockets/wsHandler';
+import type { WebsocketData } from "#letsync/server/endpoints/web-sockets/wsHandler";
 
 const message = type({
-	database: [{ cursor: 'string', name: 'string' }, '[]'],
-	refId: 'string',
+	database: [{ cursor: "string", name: "string" }, "[]"],
+	refId: "string",
 	type: '"mutation"',
 });
 
@@ -18,7 +17,7 @@ export async function handler(
 
 	// TODO: Validate mutation message
 	// TODO: RPC execute mutation method
-	console.log('Mutation from user', userId, 'tenant', tenantId, msg);
+	console.log("Mutation from user", userId, "tenant", tenantId, msg);
 
 	// TODO: [ack] mutation result
 	// TODO: [publish] mutation result

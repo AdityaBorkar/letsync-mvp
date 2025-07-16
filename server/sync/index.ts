@@ -11,25 +11,25 @@
  */
 
 // Main sync engine coordinator
-export { SyncEngine, syncEngine } from './engine';
+export { SyncEngine, syncEngine } from "./engine";
 
-import { syncEngine } from './engine';
+import { syncEngine } from "./engine";
 
 export type {
 	ChangeLogEntry,
 	GetChangesSinceOptions,
-} from './changeTracker';
+} from "./changeTracker";
 // Change tracking system
-export { ChangeTracker, changeTracker } from './changeTracker';
+export { ChangeTracker, changeTracker } from "./changeTracker";
 export type {
 	ConflictContext,
 	ConflictResolution,
 	ConflictResolutionResult,
 	ConflictRule,
 	ConflictType,
-} from './conflictResolver';
+} from "./conflictResolver";
 // Conflict resolution system
-export { ConflictResolver, conflictResolver } from './conflictResolver';
+export { ConflictResolver, conflictResolver } from "./conflictResolver";
 export type {
 	ChangeRecord,
 	MutationAckMessage,
@@ -37,7 +37,7 @@ export type {
 	SyncDataMessage,
 	SyncEngineOptions,
 	SyncRequestMessage,
-} from './engine';
+} from "./engine";
 export type {
 	CheckConstraint,
 	FieldSchema,
@@ -46,28 +46,28 @@ export type {
 	TableSchema,
 	ValidationResult,
 	ValidationRule,
-} from './mutationValidator';
+} from "./mutationValidator";
 // Mutation validation pipeline
-export { MutationValidator, mutationValidator } from './mutationValidator';
+export { MutationValidator, mutationValidator } from "./mutationValidator";
 export type {
 	MutationExecutionResult,
 	TenantContext,
-} from './tenantIsolation';
+} from "./tenantIsolation";
 // Tenant isolation utilities
-export { TenantIsolation, tenantIsolation } from './tenantIsolation';
+export { TenantIsolation, tenantIsolation } from "./tenantIsolation";
 
 /**
  * Quick health check for all sync engine components
  * Returns overall health status
  */
 export async function syncEngineHealthCheck(): Promise<{
-	status: 'healthy' | 'degraded' | 'unhealthy';
+	status: "healthy" | "degraded" | "unhealthy";
 	timestamp: number;
-	components: Record<string, 'healthy' | 'unhealthy'>;
+	components: Record<string, "healthy" | "unhealthy">;
 	errors?: string[];
 }> {
 	const timestamp = Date.now();
-	const components: Record<string, 'healthy' | 'unhealthy'> = {};
+	const components: Record<string, "healthy" | "unhealthy"> = {};
 	const errors: string[] = [];
 
 	// Check each component
@@ -75,21 +75,21 @@ export async function syncEngineHealthCheck(): Promise<{
 		const healthStatus = await syncEngine.getHealthStatus();
 		Object.assign(components, {
 			changeTracker:
-				healthStatus.details.changeTracker === 'healthy'
-					? 'healthy'
-					: 'unhealthy',
+				healthStatus.details.changeTracker === "healthy"
+					? "healthy"
+					: "unhealthy",
 			conflictResolver:
-				healthStatus.details.conflictResolver === 'healthy'
-					? 'healthy'
-					: 'unhealthy',
+				healthStatus.details.conflictResolver === "healthy"
+					? "healthy"
+					: "unhealthy",
 			mutationValidator:
-				healthStatus.details.mutationValidator === 'healthy'
-					? 'healthy'
-					: 'unhealthy',
+				healthStatus.details.mutationValidator === "healthy"
+					? "healthy"
+					: "unhealthy",
 			tenantIsolation:
-				healthStatus.details.tenantIsolation === 'healthy'
-					? 'healthy'
-					: 'unhealthy',
+				healthStatus.details.tenantIsolation === "healthy"
+					? "healthy"
+					: "unhealthy",
 		});
 
 		// Collect errors from the detailed health check
@@ -114,28 +114,28 @@ export async function syncEngineHealthCheck(): Promise<{
 	} catch (error) {
 		// If sync engine health check fails, mark all as unhealthy
 		Object.assign(components, {
-			changeTracker: 'unhealthy',
-			conflictResolver: 'unhealthy',
-			mutationValidator: 'unhealthy',
-			tenantIsolation: 'unhealthy',
+			changeTracker: "unhealthy",
+			conflictResolver: "unhealthy",
+			mutationValidator: "unhealthy",
+			tenantIsolation: "unhealthy",
 		});
 		errors.push(
-			`Sync Engine: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			`Sync Engine: ${error instanceof Error ? error.message : "Unknown error"}`,
 		);
 	}
 
 	// Determine overall status
 	const unhealthyCount = Object.values(components).filter(
-		(status) => status === 'unhealthy',
+		(status) => status === "unhealthy",
 	).length;
-	let status: 'healthy' | 'degraded' | 'unhealthy';
+	let status: "healthy" | "degraded" | "unhealthy";
 
 	if (unhealthyCount === 0) {
-		status = 'healthy';
+		status = "healthy";
 	} else if (unhealthyCount < Object.keys(components).length) {
-		status = 'degraded';
+		status = "degraded";
 	} else {
-		status = 'unhealthy';
+		status = "unhealthy";
 	}
 
 	return {

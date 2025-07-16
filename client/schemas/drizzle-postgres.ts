@@ -1,4 +1,4 @@
-import { createId } from '@paralleldrive/cuid2';
+import { createId } from "@paralleldrive/cuid2";
 import {
 	boolean,
 	jsonb,
@@ -7,9 +7,9 @@ import {
 	text,
 	timestamp,
 	uuid,
-} from 'drizzle-orm/pg-core';
+} from "drizzle-orm/pg-core";
 
-export const clientSchemas = pgTable('client_schemas', {
+export const clientSchemas = pgTable("client_schemas", {
 	checksum: text().notNull(),
 	createdAt: timestamp().defaultNow().notNull(),
 	id: serial().primaryKey(),
@@ -20,32 +20,32 @@ export const clientSchemas = pgTable('client_schemas', {
 	version: text().notNull(),
 });
 
-export const clientMetadata = pgTable('client_metadata', {
+export const clientMetadata = pgTable("client_metadata", {
 	key: text().primaryKey(),
 	value: text().notNull(),
 });
 
-export const clientMutations = pgTable('client_mutations', {
+export const clientMutations = pgTable("client_mutations", {
 	createdAt: timestamp().defaultNow().notNull(),
 	mutationName: text().notNull(),
 	requestId: uuid().notNull(),
 	status: text({
-		enum: ['pending', 'processing', 'completed', 'failed'],
+		enum: ["pending", "processing", "completed", "failed"],
 	}).notNull(),
 });
 
-export const cdc = pgTable('cdc', {
+export const cdc = pgTable("cdc", {
 	action: text().notNull(), // 'archived' | 'marked as completed' | 'execution started' | 'execution cancelled' | Custom Text
 	data: jsonb().notNull(), // Transformations only
 	id: text().$defaultFn(() => createId()),
 	itemId: text().notNull(), // tableName_rowId (non-indexed)
-	operation: text({ enum: ['create', 'update', 'delete'] }).notNull(),
+	operation: text({ enum: ["create", "update", "delete"] }).notNull(),
 	tenantId: uuid(),
 	timestamp: timestamp().notNull(), // Cursor
 	userId: uuid().notNull(),
 });
 
-export const cdcCache = pgTable('cdc_cache', {
+export const cdcCache = pgTable("cdc_cache", {
 	_clientAppliedAt: timestamp(),
 	end: text().notNull(),
 	id: text().$defaultFn(() => createId()),

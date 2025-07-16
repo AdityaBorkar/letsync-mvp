@@ -1,8 +1,8 @@
-import { type } from 'arktype';
+import { type } from "arktype";
 
 const message = type({
-	cache: 'object',
-	refId: 'string',
+	cache: "object",
+	refId: "string",
 	type: '"data_cache"',
 });
 

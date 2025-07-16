@@ -1,4 +1,4 @@
-import type { MutationContext, MutationMiddleware } from './mutation';
+import type { MutationContext, MutationMiddleware } from "./mutation";
 
 export type MiddlewareComposer = <T extends MutationContext>(
 	...middlewares: Array<MutationMiddleware<any, T>>
@@ -30,11 +30,11 @@ export const createEnvironmentMiddleware = <T extends MutationContext>(
 ): MutationMiddleware<any, T> => {
 	return async (data, context) => {
 		const env =
-			context.env || (typeof window !== 'undefined' ? 'client' : 'server');
+			context.env || (typeof window !== "undefined" ? "client" : "server");
 
-		if (env === 'client' && clientMiddleware) {
+		if (env === "client" && clientMiddleware) {
 			await clientMiddleware(data, context);
-		} else if (env === 'server' && serverMiddleware) {
+		} else if (env === "server" && serverMiddleware) {
 			await serverMiddleware(data, context);
 		}
 	};

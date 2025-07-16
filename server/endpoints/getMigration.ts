@@ -1,10 +1,9 @@
-import type { BunRequest } from 'bun';
+import { ArkErrors, type } from "arktype";
+import type { BunRequest } from "bun";
+import { and, desc, gte, isNotNull, lte } from "drizzle-orm";
 
-import { ArkErrors, type } from 'arktype';
-import { and, desc, gte, isNotNull, lte } from 'drizzle-orm';
-
-import { clientSchemas } from '#letsync/client/schemas/drizzle-postgres';
-import { db } from '@/lib/db/server'; // TODO: Outsource db to a separate module
+import { clientSchemas } from "#letsync/client/schemas/drizzle-postgres";
+import { db } from "@/lib/db/server"; // TODO: Outsource db to a separate module
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
@@ -12,9 +11,9 @@ import { db } from '@/lib/db/server'; // TODO: Outsource db to a separate module
 // ! WORK ON THIS ENTIRE API ENDPOINT
 
 const schema = type({
-	from: 'number',
-	name: 'string',
-	'to?': 'number',
+	from: "number",
+	name: "string",
+	"to?": "number",
 });
 
 export async function getMigration(request: BunRequest) {
@@ -22,12 +21,12 @@ export async function getMigration(request: BunRequest) {
 		// Request Validation
 		const { searchParams } = new URL(request.url);
 		const data = schema({
-			from: searchParams.get('from')
-				? Number.parseInt(searchParams.get('from') ?? '0')
+			from: searchParams.get("from")
+				? Number.parseInt(searchParams.get("from") ?? "0")
 				: null,
-			name: searchParams.get('name'),
-			to: searchParams.get('to')
-				? Number.parseInt(searchParams.get('to') ?? '0')
+			name: searchParams.get("name"),
+			to: searchParams.get("to")
+				? Number.parseInt(searchParams.get("to") ?? "0")
 				: null,
 		});
 
@@ -39,13 +38,13 @@ export async function getMigration(request: BunRequest) {
 
 		// Validation: from and to cannot be the same
 		if (from === to) {
-			const error = 'from and to cannot be the same';
+			const error = "from and to cannot be the same";
 			return Response.json({ error }, { status: 400 });
 		}
 
 		// Validation: from must be older than to
 		if (to && from > to) {
-			const error = 'from must be older than to';
+			const error = "from must be older than to";
 			return Response.json({ error }, { status: 400 });
 		}
 
@@ -55,7 +54,7 @@ export async function getMigration(request: BunRequest) {
 		if (!result) {
 			return Response.json(
 				{
-					error: 'No migration found or migration already up to date',
+					error: "No migration found or migration already up to date",
 				},
 				{ status: 404 },
 			);
@@ -70,10 +69,10 @@ export async function getMigration(request: BunRequest) {
 			toVersion: result.toVersion,
 		});
 	} catch (error) {
-		console.error('Error in getMigration:', error);
+		console.error("Error in getMigration:", error);
 		return Response.json(
 			{
-				error: 'Internal server error',
+				error: "Internal server error",
 			},
 			{ status: 500 },
 		);
@@ -110,7 +109,7 @@ async function generateMigrationSql(
 				.limit(1);
 
 			if (latestSchema.length === 0) {
-				throw new Error('No schemas found in database');
+				throw new Error("No schemas found in database");
 			}
 
 			targetVersion = Number.parseInt(latestSchema[0].version);
@@ -154,7 +153,7 @@ async function generateMigrationSql(
 
 		// Build combined migration SQL
 		const migrationSqls: string[] = [];
-		const migrationInfo: MigrationResult['migrations'] = [];
+		const migrationInfo: MigrationResult["migrations"] = [];
 
 		for (const migration of validMigrations) {
 			// Add migration info for response
@@ -178,7 +177,7 @@ async function generateMigrationSql(
 		}
 
 		// Combine all migrations with proper separation
-		const combinedSql = migrationSqls.join('\n\n');
+		const combinedSql = migrationSqls.join("\n\n");
 
 		// Add header comment with migration range info
 		const headerComment = name
@@ -193,7 +192,7 @@ async function generateMigrationSql(
 			toVersion: targetVersion,
 		};
 	} catch (error) {
-		console.error('Error generating migration SQL:', error);
+		console.error("Error generating migration SQL:", error);
 		throw error;
 	}
 }

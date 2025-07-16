@@ -1,0 +1,29 @@
+{
+	"tasks": [
+		{
+			"group": {
+				"isDefault": true,
+				"kind": "build"
+			},
+			"isBackground": true,
+			"label": "Dev: Server",
+			"problemMatcher": [],
+			"script": "dev",
+			"type": "npm"
+		},
+		{
+			"isBackground": true,
+			"label": "Dev: DB",
+			"problemMatcher": [],
+			"script": "dev:start-db",
+			"type": "npm"
+		},
+		{
+			"dependsOn": ["Dev: DB", "Dev: Server"],
+			"dependsOrder": "sequence",
+			"label": "Dev: All",
+			"problemMatcher": []
+		}
+	],
+	"version": "2.0.0"
+}

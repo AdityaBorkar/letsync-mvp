@@ -1,16 +1,16 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-import { useSync } from '#letsync/client/useSync';
-import type { DatabaseListType } from '#letsync/types';
+import { useSync } from "#letsync/client/useSync";
+import type { DatabaseListType } from "#letsync/types";
 
 export function SyncProvider({
 	databases,
-	method = 'websocket',
+	method = "websocket",
 	server,
 	children,
 }: {
 	databases: DatabaseListType;
-	method: 'websocket' | 'webtransport' | 'http-short-polling' | 'sse';
+	method: "websocket" | "webtransport" | "http-short-polling" | "sse";
 	server: {
 		endpoint: string;
 		https: boolean;

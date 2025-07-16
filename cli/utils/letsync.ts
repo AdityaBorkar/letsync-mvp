@@ -1,1 +1,1 @@
-export const JOURNAL_VERSION = '1';
+export const JOURNAL_VERSION = "1";

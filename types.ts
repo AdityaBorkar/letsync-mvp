@@ -1,5 +1,5 @@
-import type { PGlite } from '@electric-sql/pglite';
-import type { PgliteDatabase } from 'drizzle-orm/pglite';
+import type { PGlite } from "@electric-sql/pglite";
+import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 // biome-ignore lint/suspicious/noExplicitAny: WE NEED TO SUPPORT ANY DATABASE TYPE
 export type DatabaseType = PgliteDatabase<any>;
@@ -9,7 +9,7 @@ export type DatabaseListType = {
 }[];
 
 // Database operations
-export type OperationType = 'insert' | 'update' | 'delete';
+export type OperationType = "insert" | "update" | "delete";
 
 // Base message interface for type safety
 export interface BaseMessage {
@@ -19,14 +19,14 @@ export interface BaseMessage {
 
 // Client to Server Messages
 export interface SyncRequestMessage extends BaseMessage {
-	type: 'sync_request';
+	type: "sync_request";
 	since_timestamp: number;
 	table_filters?: string[];
 	request_id?: string; // For tracking request/response pairs
 }
 
 export interface MutationMessage extends BaseMessage {
-	type: 'mutation';
+	type: "mutation";
 	table: string;
 	operation: OperationType;
 	data: Record<string, any>;
@@ -36,28 +36,28 @@ export interface MutationMessage extends BaseMessage {
 }
 
 export interface TimestampRequestMessage extends BaseMessage {
-	type: 'timestamp_request';
+	type: "timestamp_request";
 	request_id?: string;
 }
 
 export interface PingMessage extends BaseMessage {
-	type: 'ping';
+	type: "ping";
 }
 
 // Server to Client Messages
 export interface ConnectedMessage extends BaseMessage {
-	type: 'connected';
+	type: "connected";
 	userId: string;
 	timestamp: number;
 }
 
 export interface PongMessage extends BaseMessage {
-	type: 'pong';
+	type: "pong";
 	timestamp: number;
 }
 
 export interface SyncDataMessage extends BaseMessage {
-	type: 'sync_data';
+	type: "sync_data";
 	changes: ChangeRecord[];
 	timestamp: number;
 	has_more?: boolean; // Indicates if there are more changes to sync
@@ -65,7 +65,7 @@ export interface SyncDataMessage extends BaseMessage {
 }
 
 export interface MutationAckMessage extends BaseMessage {
-	type: 'mutation_ack';
+	type: "mutation_ack";
 	temp_id?: string;
 	success: boolean;
 	error?: SyncError;
@@ -75,29 +75,29 @@ export interface MutationAckMessage extends BaseMessage {
 }
 
 export interface TimestampResponseMessage extends BaseMessage {
-	type: 'timestamp_response';
+	type: "timestamp_response";
 	timestamp: number;
 	request_id?: string;
 }
 
 export interface SyncStatusMessage extends BaseMessage {
-	type: 'sync_status';
-	status: 'syncing' | 'synced' | 'error' | 'conflict';
+	type: "sync_status";
+	status: "syncing" | "synced" | "error" | "conflict";
 	message?: string;
 	details?: any;
 }
 
 export interface ErrorMessage extends BaseMessage {
-	type: 'error';
+	type: "error";
 	message: string;
 	code?: string;
 }
 
 export type SyncMethods =
-	| 'websocket'
-	| 'webtransport'
-	| 'http-short-polling'
-	| 'sse';
+	| "websocket"
+	| "webtransport"
+	| "http-short-polling"
+	| "sse";
 
 // Union type for all possible WebSocket messages
 export type WebSocketMessageTypes =
@@ -139,30 +139,30 @@ export interface SyncError {
 
 export enum SyncErrorCode {
 	// Validation errors
-	VALIDATION_FAILED = 'VALIDATION_FAILED',
-	SCHEMA_MISMATCH = 'SCHEMA_MISMATCH',
-	REQUIRED_FIELD_MISSING = 'REQUIRED_FIELD_MISSING',
-	INVALID_DATA_TYPE = 'INVALID_DATA_TYPE',
+	VALIDATION_FAILED = "VALIDATION_FAILED",
+	SCHEMA_MISMATCH = "SCHEMA_MISMATCH",
+	REQUIRED_FIELD_MISSING = "REQUIRED_FIELD_MISSING",
+	INVALID_DATA_TYPE = "INVALID_DATA_TYPE",
 
 	// Authorization errors
-	UNAUTHORIZED = 'UNAUTHORIZED',
-	TENANT_ACCESS_DENIED = 'TENANT_ACCESS_DENIED',
-	INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',
+	UNAUTHORIZED = "UNAUTHORIZED",
+	TENANT_ACCESS_DENIED = "TENANT_ACCESS_DENIED",
+	INSUFFICIENT_PERMISSIONS = "INSUFFICIENT_PERMISSIONS",
 
 	// Conflict errors
-	RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
-	CONCURRENT_MODIFICATION = 'CONCURRENT_MODIFICATION',
-	STALE_DATA = 'STALE_DATA',
+	RECORD_NOT_FOUND = "RECORD_NOT_FOUND",
+	CONCURRENT_MODIFICATION = "CONCURRENT_MODIFICATION",
+	STALE_DATA = "STALE_DATA",
 
 	// System errors
-	DATABASE_ERROR = 'DATABASE_ERROR',
-	INTERNAL_ERROR = 'INTERNAL_ERROR',
-	RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
-	CONNECTION_ERROR = 'CONNECTION_ERROR',
+	DATABASE_ERROR = "DATABASE_ERROR",
+	INTERNAL_ERROR = "INTERNAL_ERROR",
+	RATE_LIMIT_EXCEEDED = "RATE_LIMIT_EXCEEDED",
+	CONNECTION_ERROR = "CONNECTION_ERROR",
 }
 
 export interface SyncErrorMessage extends BaseMessage {
-	type: 'sync_error';
+	type: "sync_error";
 	error: SyncError;
 	request_id?: string;
 }
@@ -185,11 +185,11 @@ export interface MutationQueueRecord {
 }
 
 export enum MutationStatus {
-	PENDING = 'pending',
-	PROCESSING = 'processing',
-	COMPLETED = 'completed',
-	FAILED = 'failed',
-	RETRYING = 'retrying',
+	PENDING = "pending",
+	PROCESSING = "processing",
+	COMPLETED = "completed",
+	FAILED = "failed",
+	RETRYING = "retrying",
 }
 
 // =============================================================================
@@ -227,7 +227,7 @@ export interface SyncConfig {
 	max_changes_per_sync: number;
 
 	// Conflict resolution
-	conflict_resolution_strategy: 'last_write_wins' | 'merge' | 'manual';
+	conflict_resolution_strategy: "last_write_wins" | "merge" | "manual";
 
 	// Performance tuning
 	batch_size: number;
@@ -249,9 +249,9 @@ export interface SyncConfig {
 export function isClientMessage(message: any): message is ClientMessage {
 	return (
 		message &&
-		typeof message === 'object' &&
-		typeof message.type === 'string' &&
-		['sync_request', 'mutation', 'timestamp_request', 'ping'].includes(
+		typeof message === "object" &&
+		typeof message.type === "string" &&
+		["sync_request", "mutation", "timestamp_request", "ping"].includes(
 			message.type,
 		)
 	);
@@ -260,17 +260,17 @@ export function isClientMessage(message: any): message is ClientMessage {
 export function isServerMessage(message: any): message is ServerMessage {
 	return (
 		message &&
-		typeof message === 'object' &&
-		typeof message.type === 'string' &&
+		typeof message === "object" &&
+		typeof message.type === "string" &&
 		[
-			'sync_data',
-			'mutation_ack',
-			'timestamp_response',
-			'sync_status',
-			'sync_error',
-			'connected',
-			'pong',
-			'error',
+			"sync_data",
+			"mutation_ack",
+			"timestamp_response",
+			"sync_status",
+			"sync_error",
+			"connected",
+			"pong",
+			"error",
 		].includes(message.type)
 	);
 }
@@ -279,25 +279,25 @@ export function isSyncRequestMessage(
 	message: any,
 ): message is SyncRequestMessage {
 	return (
-		message?.type === 'sync_request' &&
-		typeof message.since_timestamp === 'number'
+		message?.type === "sync_request" &&
+		typeof message.since_timestamp === "number"
 	);
 }
 
 export function isMutationMessage(message: any): message is MutationMessage {
 	return (
-		message?.type === 'mutation' &&
-		typeof message.table === 'string' &&
-		['insert', 'update', 'delete'].includes(message.operation) &&
-		typeof message.data === 'object' &&
-		typeof message.client_timestamp === 'number'
+		message?.type === "mutation" &&
+		typeof message.table === "string" &&
+		["insert", "update", "delete"].includes(message.operation) &&
+		typeof message.data === "object" &&
+		typeof message.client_timestamp === "number"
 	);
 }
 
 export function isTimestampRequestMessage(
 	message: any,
 ): message is TimestampRequestMessage {
-	return message?.type === 'timestamp_request';
+	return message?.type === "timestamp_request";
 }
 
 // =============================================================================
@@ -310,7 +310,7 @@ export class MessageSerializer {
 			return JSON.stringify(message, MessageSerializer.replacer);
 		} catch (error) {
 			throw new Error(
-				`Failed to serialize message: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to serialize message: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -319,12 +319,12 @@ export class MessageSerializer {
 		try {
 			const parsed = JSON.parse(data, MessageSerializer.reviver);
 			if (!MessageSerializer.isValidMessage(parsed)) {
-				throw new Error('Invalid message format');
+				throw new Error("Invalid message format");
 			}
 			return parsed;
 		} catch (error) {
 			throw new Error(
-				`Failed to deserialize message: ${error instanceof Error ? error.message : 'Unknown error'}`,
+				`Failed to deserialize message: ${error instanceof Error ? error.message : "Unknown error"}`,
 			);
 		}
 	}
@@ -332,21 +332,21 @@ export class MessageSerializer {
 	private static replacer(_key: string, value: any): any {
 		// Handle special data types that need custom serialization
 		if (value instanceof Date) {
-			return { __type: 'Date', value: value.toISOString() };
+			return { __type: "Date", value: value.toISOString() };
 		}
 		if (value instanceof RegExp) {
-			return { __type: 'RegExp', value: value.toString() };
+			return { __type: "RegExp", value: value.toString() };
 		}
 		return value;
 	}
 
 	private static reviver(_key: string, value: any): any {
 		// Handle special data types that need custom deserialization
-		if (value && typeof value === 'object' && value.__type) {
+		if (value && typeof value === "object" && value.__type) {
 			switch (value.__type) {
-				case 'Date':
+				case "Date":
 					return new Date(value.value);
-				case 'RegExp': {
+				case "RegExp": {
 					const match = value.value.match(/\/(.+)\/([gimuy]*)/);
 					return match
 						? new RegExp(match[1], match[2])
@@ -380,7 +380,7 @@ export class SyncErrorFactory {
 		};
 	}
 
-	static unauthorizedError(message: string = 'Unauthorized access'): SyncError {
+	static unauthorizedError(message: string = "Unauthorized access"): SyncError {
 		return {
 			code: SyncErrorCode.UNAUTHORIZED,
 			message,
@@ -416,7 +416,7 @@ export class SyncErrorFactory {
 		};
 	}
 
-	static rateLimitError(message: string = 'Rate limit exceeded'): SyncError {
+	static rateLimitError(message: string = "Rate limit exceeded"): SyncError {
 		return {
 			code: SyncErrorCode.RATE_LIMIT_EXCEEDED,
 			message,
@@ -442,7 +442,7 @@ export function isValidTableName(tableName: string): boolean {
 }
 
 export function sanitizeTableName(tableName: string): string {
-	return tableName.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
+	return tableName.replace(/[^a-zA-Z0-9_]/g, "").toLowerCase();
 }
 
 export function createChangeRecord(

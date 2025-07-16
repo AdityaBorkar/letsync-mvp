@@ -5,20 +5,20 @@ interface EnvironmentConfig {
 
 const ENVIRONMENTS: Record<string, EnvironmentConfig> = {
 	development: {
-		description: 'Local development environment',
-		name: 'Development',
+		description: "Local development environment",
+		name: "Development",
 	},
 	production: {
-		description: 'Production environment',
-		name: 'Production',
+		description: "Production environment",
+		name: "Production",
 	},
 	staging: {
-		description: 'Staging environment for testing',
-		name: 'Staging',
+		description: "Staging environment for testing",
+		name: "Staging",
 	},
 	testing: {
-		description: 'Testing environment',
-		name: 'Testing',
+		description: "Testing environment",
+		name: "Testing",
 	},
 };
 
