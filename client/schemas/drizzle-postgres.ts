@@ -1,0 +1,68 @@
+import { createId } from '@paralleldrive/cuid2';
+import {
+	boolean,
+	jsonb,
+	pgTable,
+	serial,
+	text,
+	timestamp,
+	uuid,
+} from 'drizzle-orm/pg-core';
+
+export const clientSchemas = pgTable('client_schemas', {
+	checksum: text().notNull(),
+	createdAt: timestamp().defaultNow().notNull(),
+	id: serial().primaryKey(),
+	isRolledBack: boolean().default(false).notNull(),
+	snapshot: text().notNull(),
+	sql: text().notNull(),
+	tag: text(),
+	version: text().notNull(),
+});
+
+export const clientMetadata = pgTable('client_metadata', {
+	key: text().primaryKey(),
+	value: text().notNull(),
+});
+
+export const clientMutations = pgTable('client_mutations', {
+	createdAt: timestamp().defaultNow().notNull(),
+	mutationName: text().notNull(),
+	requestId: uuid().notNull(),
+	status: text({
+		enum: ['pending', 'processing', 'completed', 'failed'],
+	}).notNull(),
+});
+
+export const cdc = pgTable('cdc', {
+	action: text().notNull(), // 'archived' | 'marked as completed' | 'execution started' | 'execution cancelled' | Custom Text
+	data: jsonb().notNull(), // Transformations only
+	id: text().$defaultFn(() => createId()),
+	itemId: text().notNull(), // tableName_rowId (non-indexed)
+	operation: text({ enum: ['create', 'update', 'delete'] }).notNull(),
+	tenantId: uuid(),
+	timestamp: timestamp().notNull(), // Cursor
+	userId: uuid().notNull(),
+});
+
+export const cdcCache = pgTable('cdc_cache', {
+	_clientAppliedAt: timestamp(),
+	end: text().notNull(),
+	id: text().$defaultFn(() => createId()),
+	start: text().notNull(),
+	storageUrl: text().notNull(),
+	tenantId: uuid(),
+	timestamp: timestamp().notNull(),
+});
+
+// TODO: Mutations and executing them in the client-server spaces. Experiment in /test endpoint.
+// Go to #letsync/client/ws/messages/data-operations.ts and construct SQL Queries with transactions
+// Also sync CDC Records to the client.
+// Basic Conflice Resolution - Last Write Wins.
+// insert into tenants (id, name) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'my first customer');
+// select * from tenants;
+
+// insert into todos (tenant_id, title, estimate, embedding, complete) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'feed my cat', '1h', '[1,2,3]', false);
+
+// SELECT tenants.name, title, embedding, estimate, complete
+// FROM todos join tenants on tenants.id = todos.tenant_id;
