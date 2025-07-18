@@ -1,0 +1,15 @@
+{
+	"exports": {
+		"./forms": "./src/forms/index.ts",
+		"./media": "./src/media/index.ts",
+		"./navigation": "./src/navigation/index.ts",
+		"./scripts": "./src/scripts/index.ts",
+		"./server": "./src/server/index.ts"
+	},
+	"name": "blunt",
+	"publish": {
+		"exclude": ["**/tests/**", "dist"],
+		"include": ["src", "LICENSE", "package.json", "README.md"]
+	},
+	"version": "0.0.2"
+}
