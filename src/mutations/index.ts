@@ -3,7 +3,7 @@ export {
 	createConditionalMiddleware,
 	createEnvironmentMiddleware,
 	type MiddlewareComposer,
-} from "./middleware";
+} from "./middleware.js";
 export {
 	type BaseMutationContext,
 	createMutation,
@@ -13,5 +13,5 @@ export {
 	MutationHandler,
 	type MutationHandlerFn,
 	type MutationMiddleware,
-} from "./mutation";
-export { MutationList } from "./mutation-list";
+} from "./mutation.js";
+export { MutationList } from "./mutation-list.js";

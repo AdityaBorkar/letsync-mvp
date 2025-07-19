@@ -1,32 +1,22 @@
-import type { BunRequest } from "bun";
+import type { EndpointContext } from '../../index.js';
 
-import { auth } from "../../lib/auth/config.js";
-
-// TODO: ATTACH A WEBSOCKET CONNECTION.
-
-export async function getData_POLL(request: BunRequest) {
-	const headers = request.headers;
-	const session = await auth.api.getSession({ headers });
-	const userId = session?.user?.id;
-	if (!userId) {
-		return Response.json({ error: "Unauthorized" }, { status: 401 });
-	}
-
+export async function getData_POLL(request: Request, context: EndpointContext) {
+	const { auth } = context;
 	// const isAnonymous = session?.user?.isAnonymous;
 	// if (isAnonymous) {
 	// 	return NextResponse.json({ message: 'Anonymous user' });
 	// }
 
 	const params = new URL(request.url).searchParams;
-	const _cursor = params.get("cursor");
-	const _lastUpdatedAt = params.get("lastUpdatedAt");
+	const _cursor = params.get('cursor');
+	const _lastUpdatedAt = params.get('lastUpdatedAt');
 
 	// const data = await db
 	// 	.select()
 	// 	.from(clientLocalChanges)
 	// 	.where(eq(clientLocalChanges.userId, userId));
 
-	return Response.json({ message: "Hello, world!" });
+	return Response.json({ message: 'Hello, world!' });
 	// try {
 	// 	// Authenticate the request
 	// 	const session = await auth.api.getSession({

@@ -2,9 +2,6 @@ import { type } from "arktype";
 import type { BunRequest } from "bun";
 import { desc, sql } from "drizzle-orm";
 
-import { clientSchemas } from "#letsync/client/schemas/drizzle-postgres";
-import { db } from "@/lib/db/server"; // TODO: Outsource db to a separate module
-
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
 

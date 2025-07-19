@@ -1,11 +1,12 @@
-import { type } from "arktype";
-import type { ServerWebSocket } from "bun";
+import type { ServerWebSocket } from 'bun';
 
-import type { WebsocketData } from "../wsHandler.js";
-import type { PongMessage } from "./types.js";
+import { type } from 'arktype';
+
+import type { WebsocketData } from '../../../ws-handler.js';
+import type { PongMessage } from './types.js';
 
 const message = type({
-	refId: "string",
+	refId: 'string',
 	type: '"ping"',
 });
 
@@ -16,7 +17,7 @@ export async function handler(
 	const data = {
 		refId: msg.refId,
 		timestamp: Date.now(),
-		type: "pong",
+		type: 'pong',
 	} as typeof PongMessage.infer;
 	ws.send(JSON.stringify(data));
 }

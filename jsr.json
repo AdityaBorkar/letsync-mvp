@@ -1,15 +1,17 @@
 {
 	"exports": {
-		"./forms": "./src/forms/index.ts",
-		"./media": "./src/media/index.ts",
-		"./navigation": "./src/navigation/index.ts",
-		"./scripts": "./src/scripts/index.ts",
-		"./server": "./src/server/index.ts"
+		"./device-client": "./src/device-client/index.ts",
+		"./drizzle": "./src/drizzle/index.ts",
+		"./express": "./src/express/index.ts",
+		"./mutations": "./src/mutations/index.ts",
+		"./pglite": "./src/pglite/index.ts",
+		"./server": "./src/server/index.ts",
+		"./web-client": "./src/web-client/index.ts"
 	},
-	"name": "blunt",
+	"name": "letsync",
 	"publish": {
 		"exclude": ["**/tests/**", "dist"],
-		"include": ["src", "LICENSE", "package.json", "README.md"]
+		"include": ["src", "LICENSE", "package.json", "README.md", "cli"]
 	},
 	"version": "0.0.2"
 }

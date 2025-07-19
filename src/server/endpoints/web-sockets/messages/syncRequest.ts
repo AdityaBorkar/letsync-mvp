@@ -1,12 +1,14 @@
-import { type } from "arktype";
-import type { ServerWebSocket } from "bun";
-import { and, asc, eq, gte } from "drizzle-orm";
-import type { WebsocketData } from "../wsHandler.js";
+import type { ServerWebSocket } from 'bun';
+
+import { type } from 'arktype';
+import { and, asc, eq, gte } from 'drizzle-orm';
+
+import type { WebsocketData } from '../../../ws-handler.js';
 
 const message = type({
-	"cursor?": "Date",
-	name: "string",
-	refId: "string",
+	'cursor?': 'Date',
+	name: 'string',
+	refId: 'string',
 	type: '"sync_request"',
 	// strategy: '"ahead-of-time" | "on-demand"',
 });
@@ -68,7 +70,7 @@ export async function handler(
 					: eq(tenantId, id),
 		});
 
-		const data = { data_ops, name, refId, type: "data_operations" };
+		const data = { data_ops, name, refId, type: 'data_operations' };
 		ws.send(JSON.stringify(data));
 
 		if (data_ops.length && data_ops.length !== limit) {

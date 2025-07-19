@@ -1,17 +1,5 @@
 {
-	"[javascript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[json]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[jsonc]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescriptreact]": {
+	"[typescript][typescriptreact][javascript][json][jsonc]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"editor.codeActionsOnSave": {
@@ -23,6 +11,7 @@
 		"source.organizeImports.biome": "explicit"
 	},
 	"editor.defaultFormatter": "biomejs.biome",
+	"editor.formatOnPaste": true,
 	"editor.formatOnSave": true,
 	"emmet.showExpandedAbbreviation": "never",
 	"files.associations": {
@@ -44,5 +33,6 @@
 	"typescript.preferences.importModuleSpecifier": "relative",
 	"typescript.suggest.autoImports": true,
 	"typescript.suggest.paths": false,
+	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.updateImportsOnFileMove.enabled": "always"
 }

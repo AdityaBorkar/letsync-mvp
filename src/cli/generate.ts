@@ -1,34 +1,39 @@
-import { copyFileSync, existsSync } from "node:fs";
-import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
-import { JOURNAL_VERSION } from "##letsync/cli/utils/letsync";
-import { performDrizzleGenerate } from "@/utils/drizzle";
+import { copyFileSync, existsSync } from 'node:fs';
+import { copyFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 
-type SupportedSchemas = "drizzle-postgres";
+import { performDrizzleGenerate } from './utils/drizzle.js';
+import { JOURNAL_VERSION } from './utils/letsync.js';
+
+type SupportedSchemas = 'drizzle-postgres';
 
 interface GenerateOptions {
-	schemaId: SupportedSchemas;
-	schemaDir: string;
+	schema: SupportedSchemas;
+	output: string;
 	dryRun?: boolean;
 }
 
 export async function generate(options: GenerateOptions) {
-	const DRY_RUN = options.dryRun;
+	console.log('🔄 Generating schema...');
 
-	console.log("🔄 Generating schema...");
-	if (DRY_RUN) console.log("   Mode: Dry run (no files will be created)");
+	const schemaPath = join(process.cwd(), options.output);
+	await copyFile(`../schemas/${options.schema}`, schemaPath);
+	console.log(`   Copied file: ${schemaPath}`);
+
+	const DRY_RUN = options.dryRun;
+	if (DRY_RUN) console.log('   Mode: Dry run (no files will be created)');
 
 	const { dialect, content, migration, config } =
 		await performDrizzleGenerate();
 
-	const path = join(process.cwd(), config.out, "../migrations-client/");
+	const path = join(process.cwd(), config.out, '../migrations-client/');
 	if (!existsSync(path)) await mkdir(path, { recursive: true });
 
-	const journal = Bun.file(join(path, "_journal.json"));
+	const journal = Bun.file(join(path, '_journal.json'));
 	const exists = await journal.exists();
 	const DEFAULT_JOURNAL = { dialect, entries: [], version: JOURNAL_VERSION };
 	if (!exists) {
-		console.log("   Creating journal file...");
+		console.log('   Creating journal file...');
 		const content = JSON.stringify(DEFAULT_JOURNAL, null, 2);
 		if (DRY_RUN) {
 			console.log(`\n\n\n Write to file: ${journal.name} \n`);
@@ -65,11 +70,5 @@ export async function generate(options: GenerateOptions) {
 		await sqlFile.write(content);
 	}
 
-	const schemaId = options.schemaId;
-	const schemaDir = join(process.cwd(), options.schemaDir);
-	const schemaPath = join(schemaDir, `${schemaId}.generated.ts`);
-	copyFileSync(`../schemas/${schemaId}.txt`, schemaPath);
-	console.log(`   Copied file: ${schemaPath}`);
-
-	console.log("✅ Schema generation completed");
+	console.log('✅ Schema generation completed');
 }
