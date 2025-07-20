@@ -31,14 +31,14 @@ export interface BaseMessage {
 
 // Client to Server Messages
 export interface SyncRequestMessage extends BaseMessage {
-	type: 'sync_request';
+	type: "sync_request";
 	since_timestamp: number;
 	table_filters?: string[];
 	request_id?: string; // For tracking request/response pairs
 }
 
 export interface MutationMessage extends BaseMessage {
-	type: 'mutation';
+	type: "mutation";
 	table: string;
 	operation: OperationType;
 	data: Record<string, any>;
@@ -48,28 +48,28 @@ export interface MutationMessage extends BaseMessage {
 }
 
 export interface TimestampRequestMessage extends BaseMessage {
-	type: 'timestamp_request';
+	type: "timestamp_request";
 	request_id?: string;
 }
 
 export interface PingMessage extends BaseMessage {
-	type: 'ping';
+	type: "ping";
 }
 
 // Server to Client Messages
 export interface ConnectedMessage extends BaseMessage {
-	type: 'connected';
+	type: "connected";
 	userId: string;
 	timestamp: number;
 }
 
 export interface PongMessage extends BaseMessage {
-	type: 'pong';
+	type: "pong";
 	timestamp: number;
 }
 
 export interface SyncDataMessage extends BaseMessage {
-	type: 'sync_data';
+	type: "sync_data";
 	changes: ChangeRecord[];
 	timestamp: number;
 	has_more?: boolean; // Indicates if there are more changes to sync
@@ -77,7 +77,7 @@ export interface SyncDataMessage extends BaseMessage {
 }
 
 export interface MutationAckMessage extends BaseMessage {
-	type: 'mutation_ack';
+	type: "mutation_ack";
 	temp_id?: string;
 	success: boolean;
 	error?: SyncError;
@@ -87,29 +87,29 @@ export interface MutationAckMessage extends BaseMessage {
 }
 
 export interface TimestampResponseMessage extends BaseMessage {
-	type: 'timestamp_response';
+	type: "timestamp_response";
 	timestamp: number;
 	request_id?: string;
 }
 
 export interface SyncStatusMessage extends BaseMessage {
-	type: 'sync_status';
-	status: 'syncing' | 'synced' | 'error' | 'conflict';
+	type: "sync_status";
+	status: "syncing" | "synced" | "error" | "conflict";
 	message?: string;
 	details?: any;
 }
 
 export interface ErrorMessage extends BaseMessage {
-	type: 'error';
+	type: "error";
 	message: string;
 	code?: string;
 }
 
 export type SyncMethods =
-	| 'websocket'
-	| 'webtransport'
-	| 'http-short-polling'
-	| 'sse';
+	| "websocket"
+	| "webtransport"
+	| "http-short-polling"
+	| "sse";
 
 // Union type for all possible WebSocket messages
 export type WebSocketMessageTypes =

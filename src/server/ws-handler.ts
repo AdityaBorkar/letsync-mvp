@@ -1,10 +1,10 @@
-import type { ServerWebSocket } from 'bun';
+import type { ServerWebSocket } from "bun";
 
-import { ArkErrors } from 'arktype';
+import { ArkErrors } from "arktype";
 
-import { mutation } from './endpoints/web-sockets/messages/mutation.js';
-import { ping } from './endpoints/web-sockets/messages/ping.js';
-import { syncRequest } from './endpoints/web-sockets/messages/syncRequest.js';
+import { mutation } from "./endpoints/web-sockets/messages/mutation.js";
+import { ping } from "./endpoints/web-sockets/messages/ping.js";
+import { syncRequest } from "./endpoints/web-sockets/messages/syncRequest.js";
 
 export interface WebsocketData {
 	userId: string;
@@ -23,13 +23,13 @@ export const wsHandler = {
 		const data = MessageType(JSON.parse(message));
 		if (data instanceof ArkErrors) {
 			console.log({ data, message });
-			throw new Error('Invalid message format');
+			throw new Error("Invalid message format");
 		}
 
 		// TODO: Use AsyncLocalStorage for `ws` and `data`
-		if (data.type === 'ping') await ping.handler(ws, data);
-		if (data.type === 'mutation') await mutation.handler(ws, data);
-		if (data.type === 'sync_request') await syncRequest.handler(ws, data);
+		if (data.type === "ping") await ping.handler(ws, data);
+		if (data.type === "mutation") await mutation.handler(ws, data);
+		if (data.type === "sync_request") await syncRequest.handler(ws, data);
 	},
 	// async open(ws: ServerWebSocket<WebsocketData>) {
 	// 	const { userId } = ws.data;

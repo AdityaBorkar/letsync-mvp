@@ -1,4 +1,4 @@
-import type { ClientParams } from './create.js';
+import type { ClientParams } from "./create.js";
 
 type TerminateProps = undefined;
 
@@ -7,5 +7,5 @@ export async function terminate(props: TerminateProps, params: ClientParams) {
 	// database.close();
 	// filesystem.close();
 	// device.deregister();
-	console.log({ props, params });
+	console.log({ params, props });
 }

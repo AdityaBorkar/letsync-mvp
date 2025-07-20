@@ -1,5 +1,5 @@
 type ServerFS<DT> = {
-	__brand: 'LETSYNC_SERVER_FS';
+	__brand: "LETSYNC_SERVER_FS";
 	name: string;
 	filesystem: DT;
 };

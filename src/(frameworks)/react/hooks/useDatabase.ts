@@ -1,15 +1,14 @@
-import type { PGlite } from '@electric-sql/pglite';
-import { eq } from 'drizzle-orm';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { tryCatch } from '../../../utils/tryCatch.js';
-import { clientMetadata } from '../../../web-client/schemas/drizzle-postgres.js';
+import type { ClientDB } from "@/types/index.js";
+import { Logger } from "@/utils/logger.js";
+import { tryCatch } from "@/utils/try-catch.js";
 
 export function useDatabase({
 	name,
 	client,
 }: {
-	client: PGlite;
+	client: ClientDB.Adapter<unknown>;
 	name: string;
 }) {
 	const [status, setStatus] = useState<{
@@ -38,19 +37,18 @@ async function setupDb({
 	checkForUpdates = false,
 }: {
 	name: string;
-	client: PGlite;
+	client: ClientDB.Adapter<unknown>;
 	checkForUpdates?: boolean;
 }) {
-	const _LogsPrefix = `[DB:${name}]`;
+	const console = new Logger(`[DB:${name}]`);
 
 	// Get Current Schema
-	const current_schema = await db.query.clientMetadata
-		.findFirst({
-			where: ({ key }) => eq(key, `${name}:schema_version`),
-		})
-		.then((res) => res?.value || '')
-		.catch(() => '');
-	console.log(_LogsPrefix, 'Current Schema', current_schema);
+	const current_schema =
+		await client.sql`SELECT * FROM client_metadata WHERE key = ${name}:schema_version`.then(
+			// @ts-expect-error FIX THIS
+			(result) => result.rows[0]?.value || "",
+		);
+	console.log("Current Schema", current_schema);
 
 	// If no updates are needed, return
 	if (current_schema && !checkForUpdates) return;
@@ -61,42 +59,36 @@ async function setupDb({
 		: `/api/sync/schema?name=${name}`;
 	const schema = await tryCatch(fetch(url).then((res) => res.json()));
 	if (schema.error) {
-		console.error(_LogsPrefix, 'Error fetching schema', schema.error);
+		console.error("Error fetching schema", schema.error);
 		throw schema.error;
 	}
 
 	// If no updates
 	if (current_schema === schema.data.version) {
-		console.log(_LogsPrefix, 'No updates found');
+		console.log("No updates found");
 		return;
 	}
 
 	// Update Schema
 	await executeSchema(client, schema.data.sql);
-	await db.insert(clientMetadata).values({
-		key: `${name}:schema_version`,
-		value: schema.data.version,
-	});
+	await client.sql`INSERT INTO client_metadata (key, value) VALUES (${name}:schema_version, ${schema.data.version})`;
 }
 
-async function executeSchema(client: PGlite, sql: string) {
-	const commands: string[] = sql.split('--> statement-breakpoint');
+async function executeSchema(client: ClientDB.Adapter<unknown>, sql: string) {
+	const commands: string[] = sql.split("--> statement-breakpoint");
 	const errors: string[] = [];
 	for await (const command of commands) {
-		client.query(command).catch((err) => {
+		client.sql`${command}`.catch((err) => {
 			errors.push(err.toString());
 		});
 	}
 	if (errors.length > 0) {
-		console.error('Schema Execution Failed', errors);
-		throw new Error('Schema Execution Failed');
+		console.error("Schema Execution Failed", errors);
+		throw new Error("Schema Execution Failed");
 	}
 }
 
-// ('use client');
-
 // import { useContext } from 'react';
-
 // import { LetsyncContext } from '../context.js';
 
 // /**
@@ -114,14 +106,15 @@ async function executeSchema(client: PGlite, sql: string) {
 //  * }
 //  * ```
 //  */
+
 // export function useDatabase(name?: string) {
 // 	const { db } = useContext(LetsyncContext);
 
-// 	// DATABASE RELATED FEATURES:
-// 	// subscribe()
-// 	// write()
-// 	// read()
-// 	// delete()
+// DATABASE RELATED FEATURES:
+// subscribe()
+// write()
+// read()
+// delete()
 
 // 	if (!name && db.length !== 1)
 // 		throw new Error(

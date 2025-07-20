@@ -1,5 +1,5 @@
 type ClientFS<DT> = {
-	__brand: 'LETSYNC_CLIENT_FILESYSTEM';
+	__brand: "LETSYNC_CLIENT_FILESYSTEM";
 	name: string;
 	filesystem: DT;
 	init: () => Promise<void>;

@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"alwaysStrict": true,
+		"baseUrl": ".",
 		"downlevelIteration": true,
 		"emitDecoratorMetadata": true,
 		"esModuleInterop": true,
@@ -21,6 +22,9 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"outDir": "./dist/",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
 		"pretty": true,
 		"removeComments": false,
 		"resolveJsonModule": true,

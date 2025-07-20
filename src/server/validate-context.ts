@@ -1,5 +1,5 @@
-import type { ServerDB, ServerFS, ServerPubsub } from '../types/index.js';
-import type { ApiHandlerAuth, ApiHandlerContext } from './api-handler.js';
+import type { ServerDB, ServerFS, ServerPubsub } from "../types/index.js";
+import type { ApiHandlerAuth, ApiHandlerContext } from "./api-handler.js";
 
 export type ApiContext<R extends Request> = {
 	basePath: string;
@@ -13,19 +13,19 @@ export function validateContext<R extends Request>(
 	params: ApiContext<R>,
 ): ApiHandlerContext<R> {
 	if (!params.auth) {
-		throw new Error('Auth middleware is required');
+		throw new Error("Auth middleware is required");
 	}
 
 	const db = Array.isArray(params.db) ? params.db : [params.db];
 	for (const database of db) {
-		if (database.__brand !== 'LETSYNC_SERVER_DATABASE')
-			throw new Error('Invalid database');
+		if (database.__brand !== "LETSYNC_SERVER_DATABASE")
+			throw new Error("Invalid database");
 	}
 
 	const fs = Array.isArray(params.fs) ? params.fs : [params.fs];
 	for (const filesystem of fs) {
-		if (filesystem.__brand !== 'LETSYNC_SERVER_FS')
-			throw new Error('Invalid filesystem');
+		if (filesystem.__brand !== "LETSYNC_SERVER_FS")
+			throw new Error("Invalid filesystem");
 	}
 
 	// TODO - WIP

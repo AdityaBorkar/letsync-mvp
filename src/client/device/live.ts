@@ -1,4 +1,4 @@
-import type { ClientParams } from '../functions/create.js';
+import type { ClientParams } from "../functions/create.js";
 
 interface LiveProps {
 	endpoints: string[];
@@ -8,7 +8,7 @@ export function live(props: LiveProps, params: ClientParams) {
 	// TODO - MQTT ENDPOINT SUBSCRIPTION
 	const { endpoints } = props;
 	// const { apiUrl, pubsub } = superProps;
-	console.log({ props, params });
+	console.log({ params, props });
 
 	// TODO - POLL FOR ALLOWED TOPICS AND THEN SUBSCRIBE TO ALL
 

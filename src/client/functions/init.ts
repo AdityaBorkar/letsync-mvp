@@ -1,12 +1,12 @@
-import type { ClientParams } from './create.js';
+import { Console } from "@/util/Console.js";
 
-import { Console } from '@/util/Console.js';
 // import { live } from '../device/live.js';
 // import { pull } from '../device/pull.js';
 // import { push } from '../device/push.js';
 // import { register } from '../device/register.js';
-import { checkForUpdates } from '../schema/checkForUpdates.js';
-import { migrate } from '../schema/migrate.js';
+import { checkForUpdates } from "../schema/checkForUpdates.js";
+import { migrate } from "../schema/migrate.js";
+import type { ClientParams } from "./create.js";
 
 type InitProps =
 	| undefined
@@ -18,7 +18,7 @@ type InitProps =
 	  };
 
 export async function init(props: InitProps, params: ClientParams) {
-	const { debug } = Console({ fn: 'init' });
+	const { debug } = Console({ fn: "init" });
 	debug({ props });
 
 	console.log({ params });
@@ -29,7 +29,7 @@ export async function init(props: InitProps, params: ClientParams) {
 		updateAvailable
 		// && config.localDb?.updateSchema === 'always'
 	)
-		await migrate({ version: 'latest' }, params);
+		await migrate({ version: "latest" }, params);
 
 	// const device = await register({}, params);
 	// debug({ device });

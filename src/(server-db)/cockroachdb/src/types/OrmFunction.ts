@@ -1,4 +1,4 @@
-import type { Client } from 'pg';
+import type { Client } from "pg";
 
 export type OrmFunction = (client: Client) => {
 	client: Client;

@@ -1,4 +1,5 @@
-import type { PGlite } from '@electric-sql/pglite';
+import type { PGlite } from "@electric-sql/pglite";
+
 // import type { Schema } from '@letsync/core';
 type Schema = null;
 
@@ -12,7 +13,7 @@ type Schema = null;
  */
 export default function exportData(
 	props: { client: PGlite; schema: Schema | null },
-	options: { compression: 'auto' | 'gzip' | 'none' },
+	options: { compression: "auto" | "gzip" | "none" },
 ): Promise<File | Blob> {
 	const { client } = props;
 	const { compression } = options;

@@ -1,6 +1,6 @@
-import { file } from 'bun';
+import { file } from "bun";
 
-export const SUPPORTED_SCHEMAS = ['drizzle-postgres'];
+export const SUPPORTED_SCHEMAS = ["drizzle-postgres"];
 
 export async function getSchema(schema: (typeof SUPPORTED_SCHEMAS)[number]) {
 	if (!SUPPORTED_SCHEMAS.includes(schema)) {

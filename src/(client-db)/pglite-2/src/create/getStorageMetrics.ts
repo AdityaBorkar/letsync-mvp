@@ -1,4 +1,4 @@
-import type { PGlite } from '@electric-sql/pglite';
+import type { PGlite } from "@electric-sql/pglite";
 
 interface DatabaseSizeRecord {
 	total_mb: number;
@@ -26,8 +26,8 @@ export default async function getStorageMetrics(database: PGlite) {
 	console.log({ metrics });
 
 	return {
+		free: 0,
 		total: Number(metrics?.total_mb || 0),
 		used: Number(metrics?.used_mb || 0),
-		free: 0,
 	};
 }

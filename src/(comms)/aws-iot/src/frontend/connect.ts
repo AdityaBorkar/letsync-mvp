@@ -1,4 +1,4 @@
-import mqtt from 'mqtt';
+import mqtt from "mqtt";
 
 export default async function connect(props: {
 	token: string;
@@ -11,20 +11,20 @@ export default async function connect(props: {
 		const connection = mqtt.connect(
 			`wss://${props.endpoint}/mqtt?x-amz-customauthorizer-name=${props.authorizer}`,
 			{
-				protocolVersion: 5,
-				manualConnect: true,
-				username: '',
-				password: props.token,
 				clientId: `device_${props.clientId}`,
+				manualConnect: true,
+				password: props.token,
+				protocolVersion: 5,
+				username: "",
 			},
 		);
 
-		connection.on('connect', async () => {
+		connection.on("connect", async () => {
 			resolve(connection);
 		});
 
-		connection.on('error', async (error) => {
-			console.error('Error connecting to MQTT', error);
+		connection.on("error", async (error) => {
+			console.error("Error connecting to MQTT", error);
 			reject();
 		});
 

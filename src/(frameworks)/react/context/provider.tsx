@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import type { ClientDB, ClientFS, ClientPubsub } from '@letsync/core';
-import type { LetsyncContextType } from './context.js';
-
-import { createClient } from '@letsync/core';
 // biome-ignore lint/style/useImportType: BIOME BUG
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { LetsyncContext } from './context.js';
+import { createClient } from "@/client/index.js";
+import type { ClientDB, ClientFS, ClientPubsub } from "@/types/index.js";
+
+import type { LetsyncContextType } from "./context.js";
+import { LetsyncContext } from "./context.js";
 
 /**
  * Props for the LetsyncProvider component.
@@ -87,7 +87,7 @@ export function LetsyncProvider<
 }: LetsyncProviderProps<DB, FS, Pubsub>) {
 	const client = useMemo(() => {
 		const config = {
-			apiUrl: apiUrl || process.env.LETSYNC_API_URL || '/api/letsync',
+			apiUrl: apiUrl || process.env.LETSYNC_API_URL || "/api/letsync",
 		};
 
 		// TODO - WIP
@@ -98,8 +98,8 @@ export function LetsyncProvider<
 
 		const dbList = _db ? (Array.isArray(_db) ? _db : [_db]) : [];
 		const db = dbList.map((db) => {
-			const database = db({ pubsub, config });
-			if (database.__brand !== 'LETSYNC_CLIENT_DATABASE')
+			const database = db({ config, pubsub });
+			if (database.__brand !== "LETSYNC_CLIENT_DATABASE")
 				throw new Error(
 					`Invalid Database Adapter. Expected: LETSYNC_CLIENT_DATABASE, Found: ${database.__brand}`,
 				);
@@ -109,14 +109,14 @@ export function LetsyncProvider<
 		const fsList = _fs ? (Array.isArray(_fs) ? _fs : [_fs]) : [];
 		const fs = fsList.map((fs) => {
 			const filesystem = fs; // TODO: WIP
-			if (fs.__brand !== 'LETSYNC_CLIENT_FILESYSTEM')
+			if (fs.__brand !== "LETSYNC_CLIENT_FILESYSTEM")
 				throw new Error(
 					`Invalid Filesystem Adapter. Expected: LETSYNC_CLIENT_FILESYSTEM, Found: ${fs.__brand}`,
 				);
 			return filesystem;
 		});
 
-		const client = createClient({ db, fs, pubsub, config });
+		const client = createClient({ config, db, fs, pubsub });
 		return client;
 	}, [pubsub, _db, _fs, apiUrl]);
 
@@ -131,7 +131,7 @@ export function LetsyncProvider<
 				return { terminate };
 			})
 			.catch((error) => {
-				console.error('[Letsync Framework] Initialization Failed: ', error);
+				console.error("[Letsync Framework] Initialization Failed: ", error);
 				return { terminate() {} };
 			});
 

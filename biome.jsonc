@@ -1,0 +1,58 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							["server-only", "use client", "use server", "client-only"],
+							":BLANK_LINE:",
+							":URL:",
+							":BLANK_LINE:",
+							[":NODE:", ":BUN:"],
+							":BLANK_LINE:",
+							[":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+							":BLANK_LINE:",
+							[":ALIAS:"],
+							":BLANK_LINE:",
+							[":PATH:"]
+						]
+					}
+				},
+				"useSortedAttributes": "on",
+				"useSortedKeys": "on"
+			}
+		}
+	},
+	"files": {
+		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
+	},
+	"linter": {
+		"domains": {
+			"next": "none",
+			"project": "all",
+			"react": "all",
+			"solid": "none",
+			"test": "all",
+			"vue": "none"
+		},
+		"rules": {
+			"a11y": "on",
+			"complexity": "on",
+			// "correctness": "on",
+			// "nursery": "on",
+			// "security": "on",
+			// "style": "on",
+			// "suspicious": "on",
+			"performance": "on",
+			"recommended": true
+		}
+	},
+	"vcs": {
+		"clientKind": "git",
+		"enabled": true,
+		"useIgnoreFile": true
+	}
+}

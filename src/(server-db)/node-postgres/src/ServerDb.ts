@@ -1,5 +1,5 @@
-import type { Config, ServerDB, ServerPubsub } from '@letsync/core';
-import type { Client } from 'pg';
+import type { Config, ServerDB, ServerPubsub } from "@letsync/core";
+import type { Client } from "pg";
 
 export function LetsyncServerDb({
 	name,
@@ -9,7 +9,7 @@ export function LetsyncServerDb({
 }: {
 	name: string;
 	pubsub: ServerPubsub.Adapter;
-	schema: Config['schema'];
+	schema: Config["schema"];
 	database: Client;
 	// | (() => {
 	// 		instance: Client;
@@ -24,16 +24,16 @@ export function LetsyncServerDb({
 		try {
 			await database.connect();
 		} catch (error) {
-			console.warn('Connection warning!');
+			console.warn("Connection warning!");
 		}
 	}
 
 	return {
-		__brand: 'LETSYNC_SERVER_DB',
-		name,
-		type: 'SQL',
+		__brand: "LETSYNC_SERVER_DB",
 		database,
-		waitUntilReady,
+		name,
 		query: (query: string) => database.query(query),
+		type: "SQL",
+		waitUntilReady,
 	};
 }

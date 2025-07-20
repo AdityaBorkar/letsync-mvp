@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export function PubSubAuthorizer({
 	secret,
@@ -13,18 +13,18 @@ export function PubSubAuthorizer({
 	return async (token: string) => {
 		try {
 			if (!token) {
-				throw new Error('No token provided');
+				throw new Error("No token provided");
 			}
 			const decoded = await jwt.verify(token, secret, {
-				algorithms: ['HS256'],
+				algorithms: ["HS256"],
 			});
 			console.log({ decoded });
 		} catch (error) {
 			console.log({ error });
-			return { subscribe: [], publish: [] };
+			return { publish: [], subscribe: [] };
 		}
 
-		const topics = ['vasundhara-aakash'];
+		const topics = ["vasundhara-aakash"];
 
 		return {
 			publish: [], // [`${prefix}/letsync/${topic}`],

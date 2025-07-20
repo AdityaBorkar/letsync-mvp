@@ -1,5 +1,5 @@
-import type { Config } from '../config.js';
-import type { ServerPubsub } from '../pubsub/index.js';
+import type { Config } from "../config.js";
+import type { ServerPubsub } from "../pubsub/index.js";
 
 export namespace ServerDB {
 	export type Adapter<DT> = ServerDB<DT>;
@@ -11,16 +11,16 @@ export namespace ServerDB {
 }
 
 type ServerDB<DT> = {
-	__brand: 'LETSYNC_SERVER_DATABASE';
+	__brand: "LETSYNC_SERVER_DATABASE";
 	name: string;
 	client: DT;
 	waitUntilReady: () => Promise<void>;
 } & (
 	| {
-			type: 'SQL';
+			type: "SQL";
 			query: (query: string) => Promise<unknown>;
 	  }
 	| {
-			type: 'NOSQL';
+			type: "NOSQL";
 	  }
 );

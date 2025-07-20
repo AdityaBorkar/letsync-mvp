@@ -1,17 +1,16 @@
 // biome-ignore lint/style/useImportType: React
-import React, { createContext } from 'react';
+import React, { createContext } from "react";
 
-import type { DatabaseListType } from '../../../types.js';
-import { useSync } from '../hooks/useWebSync.js';
+import { useSync } from "../hooks/useWebSync.js";
 
 export function SyncProvider({
 	databases,
-	method = 'websocket',
+	method = "websocket",
 	server,
 	children,
 }: {
 	databases: DatabaseListType;
-	method: 'websocket' | 'webtransport' | 'http-short-polling' | 'sse';
+	method: "websocket" | "webtransport" | "http-short-polling" | "sse";
 	server: {
 		endpoint: string;
 		https: boolean;

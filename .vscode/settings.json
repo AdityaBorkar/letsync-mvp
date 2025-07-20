@@ -30,9 +30,9 @@
 	"testing.automaticallyOpenTestResults": "neverOpen",
 	"testing.followRunningTest": false,
 	"testing.useNativeTesting": true,
-	"typescript.preferences.importModuleSpecifier": "relative",
+	"typescript.preferences.importModuleSpecifier": "shortest",
 	"typescript.suggest.autoImports": true,
-	"typescript.suggest.paths": false,
+	"typescript.suggest.paths": true,
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"typescript.updateImportsOnFileMove.enabled": "always"
 }

@@ -1,4 +1,4 @@
-import type { PGlite } from '@electric-sql/pglite';
+import type { PGlite } from "@electric-sql/pglite";
 
 export async function flush(client: PGlite) {
 	// Drop all tables in the current database

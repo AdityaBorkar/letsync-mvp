@@ -1,8 +1,8 @@
-import { createId } from '@paralleldrive/cuid2';
-import jwt from 'jsonwebtoken';
+import { createId } from "@paralleldrive/cuid2";
+import jwt from "jsonwebtoken";
 
-import type { EndpointContext } from '../../server/index.js';
-import getLatestSchema from '../schema/getLatest.js';
+import type { EndpointContext } from "../../server/index.js";
+import getLatestSchema from "../schema/getLatest.js";
 
 export default async function deviceRegister(
 	request: Request,
@@ -14,7 +14,7 @@ export default async function deviceRegister(
 
 		const device = { deviceId: createId(), isActive: true, userId };
 		const metadata = decodeURI(
-			new URL(request.url).searchParams.get('metadata') || '',
+			new URL(request.url).searchParams.get("metadata") || "",
 		);
 
 		const endpoints: string[] = [
@@ -27,12 +27,12 @@ export default async function deviceRegister(
 
 		const db = databases[0]; // TODO - How to select the correct database?
 		if (!db)
-			return new Response(JSON.stringify({ error: 'No database found' }), {
+			return new Response(JSON.stringify({ error: "No database found" }), {
 				status: 500,
 			});
 
 		await db.waitUntilReady();
-		if (db.type === 'SQL') {
+		if (db.type === "SQL") {
 			await db.query(
 				`INSERT INTO devices (deviceId, userId, isActive, schemaVersion) VALUES ('${device.deviceId}', '${device.userId}', TRUE, ${schema.version})`,
 			);
@@ -41,7 +41,7 @@ export default async function deviceRegister(
 		const token = jwt.sign(
 			{ deviceId: device.deviceId, userId },
 			pubsub.secret,
-			{ expiresIn: '24h' },
+			{ expiresIn: "24h" },
 		);
 
 		const response = {
@@ -53,7 +53,7 @@ export default async function deviceRegister(
 		return new Response(JSON.stringify(response), { status: 200 });
 	} catch (error) {
 		console.error(error);
-		return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+		return new Response(JSON.stringify({ error: "Internal Server Error" }), {
 			status: 500,
 		});
 	}

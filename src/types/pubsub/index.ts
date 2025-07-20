@@ -20,7 +20,7 @@ type PublishFn = (
 ) => Promise<void>;
 
 type Letsync_PubSub_Frontend = {
-	__brand: 'LETSYNC_PUBSUB_FRONTEND';
+	__brand: "LETSYNC_PUBSUB_FRONTEND";
 	connect: (props?: { token: string; clientId: string }) => Promise<{
 		publish: PublishFn;
 		subscribe: SubscribeFn;
@@ -29,7 +29,7 @@ type Letsync_PubSub_Frontend = {
 };
 
 type Letsync_PubSub_Backend = {
-	__brand: 'LETSYNC_PUBSUB_BACKEND';
+	__brand: "LETSYNC_PUBSUB_BACKEND";
 	secret: string;
 	publish: PublishFn;
 	subscribe: SubscribeFn;

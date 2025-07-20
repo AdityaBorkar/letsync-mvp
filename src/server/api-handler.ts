@@ -1,7 +1,7 @@
-import type { ServerDB } from '../../dist/types/index.js';
-import type { HttpMethod } from '../constants.js';
-import type { ServerFS, ServerPubsub } from '../types/index.js';
-import { type EndpointContext, endpoints } from './endpoints.js';
+import type { ServerDB } from "../../dist/types/index.js";
+import type { ServerFS, ServerPubsub } from "../types/index.js";
+import type { HttpMethod } from "../utils/constants.js";
+import { type EndpointContext, endpoints } from "./endpoints.js";
 
 export type ApiHandlerAuth<R extends Request> = (
 	request: R,
@@ -22,25 +22,25 @@ export function apiHandler<R extends Request>(
 	ctx: ApiHandlerContext<R>,
 ) {
 	const url = new URL(request.url);
-	const path = url.pathname.replace(ctx.basePath, '') as keyof typeof endpoints;
+	const path = url.pathname.replace(ctx.basePath, "") as keyof typeof endpoints;
 	if (!(path in endpoints)) {
-		return new Response('Not Found', { status: 404 });
+		return new Response("Not Found", { status: 404 });
 	}
 
 	const methods = endpoints[path];
 	const method = request.method.toUpperCase() as HttpMethod;
 	if (!(method in methods)) {
-		return new Response('Not Found', { status: 404 });
+		return new Response("Not Found", { status: 404 });
 	}
 
 	// @ts-expect-error - TODO: Fix this
 	const endpoint = methods[method];
 	if (!endpoint) {
-		return new Response('Not Found', { status: 404 });
+		return new Response("Not Found", { status: 404 });
 	}
 
 	const auth = ctx.auth(request);
-	if ('status' in auth) {
+	if ("status" in auth) {
 		const { message, status } = auth;
 		return new Response(message, { status });
 	}

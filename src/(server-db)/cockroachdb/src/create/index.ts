@@ -1,8 +1,8 @@
-import type { OrmFunction } from '@/types/OrmFunction.js';
-import type { Config, ServerDB, ServerPubsub } from '@letsync/core';
-import type { ClientConfig } from 'pg';
+import type { Config, ServerDB, ServerPubsub } from "@letsync/core";
+import type { ClientConfig } from "pg";
+import { Client } from "pg";
 
-import { Client } from 'pg';
+import type { OrmFunction } from "@/types/OrmFunction.js";
 
 // import { buildSchema } from './buildSchema.js';
 // import { close } from './close.js';
@@ -35,13 +35,13 @@ export function createDB(
 		pubsub: ServerPubsub.Adapter;
 		config: Config;
 	}) => {
-		console.log({ schema, pubsub, config });
+		console.log({ config, pubsub, schema });
 		return {
-			__brand: 'LETSYNC_SERVER_DATABASE',
-			type: 'SQL',
-			name,
+			__brand: "LETSYNC_SERVER_DATABASE",
 			client: dbClient,
+			name,
 			query: (query: string) => dbClient.query(query),
+			type: "SQL",
 			waitUntilReady: () => Promise.resolve(dbClient.connect()),
 			// open: () => open(dbClient),
 			// flush: () => flush(dbClient),

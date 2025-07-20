@@ -1,4 +1,5 @@
-import type { PGlite } from '@electric-sql/pglite';
+import type { PGlite } from "@electric-sql/pglite";
+
 // import type { Schema } from '@letsync/core';
 type Schema = null;
 
@@ -28,10 +29,10 @@ export async function buildSchema(props: {
 
 		const TABLE_SCHEMA = client.sql`SELECT column_name, data_type, character_maximum_length FROM information_schema.columns WHERE table_name = '${tableName}';`;
 		if (!TABLE_SCHEMA)
-			client.sql`CREATE TABLE IF NOT EXISTS ${tableName} (${fields.join(', ')});`;
+			client.sql`CREATE TABLE IF NOT EXISTS ${tableName} (${fields.join(", ")});`;
 		else {
 			// TODO - Detect Alterations
-			client.sql`ALTER TABLE ${tableName} ADD COLUMN ${fields.join(', ')};`;
+			client.sql`ALTER TABLE ${tableName} ADD COLUMN ${fields.join(", ")};`;
 		}
 
 		console.log({ TABLE_SCHEMA });

@@ -38,20 +38,6 @@ interface MutationExecuteResult<T = any> {
 	error?: string;
 }
 
-async function getDatabase(env: "client" | "server") {
-	try {
-		if (env === "server") {
-			const { db } = await import("@/lib/db/server");
-			return db;
-		}
-		const { db } = await import("@/lib/db/client");
-		return db;
-	} catch (error) {
-		console.warn(`Could not load ${env} database:`, error);
-		return null;
-	}
-}
-
 async function validateWithSchema<T extends Type>(
 	schema: T,
 	data: any,
@@ -80,6 +66,20 @@ export class MutationBuilder<
 	public _onSuccess?: (result: { data: any }) => void;
 	public _onError?: (error: { error: string }) => void;
 	public _validationCache = new Map<string, any>();
+
+	constructor(
+		private readonly config: {
+			env: "client" | "server";
+			db: any;
+			fs: any;
+			pubsub: any;
+		},
+	) {
+		this.env = config.env;
+		this.db = config.db;
+		this.fs = config.fs;
+		this.pubsub = config.pubsub;
+	}
 
 	setName(name: string): this {
 		this._name = name;
@@ -171,20 +171,6 @@ export class MutationBuilder<
 			return { error: errorMessage, success: false };
 		}
 	}
-}
-
-export function MutationHandler<
-	TData = any,
-	TContext extends MutationContext = MutationContext,
->(): MutationBuilder<TData, TContext> {
-	return new MutationBuilder<TData, TContext>();
-}
-
-export function createMutation<
-	TData = any,
-	TContext extends MutationContext = MutationContext,
->(): MutationBuilder<TData, TContext> {
-	return new MutationBuilder<TData, TContext>();
 }
 
 export type MutationChain<

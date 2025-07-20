@@ -1,14 +1,14 @@
 const events = [
-	'auth.grant',
-	'auth.refresh',
-	'auth.revoke',
-	'device.register',
-	'device.deregister',
-	'device:connected',
-	'device:disconnected',
-	'^pull', // TODO: regex
-	'^push', // TODO: regex
-	'^sync', // TODO: regex
+	"auth.grant",
+	"auth.refresh",
+	"auth.revoke",
+	"device.register",
+	"device.deregister",
+	"device:connected",
+	"device:disconnected",
+	"^pull", // TODO: regex
+	"^push", // TODO: regex
+	"^sync", // TODO: regex
 ] as const;
 
 export type EventName = (typeof events)[number];

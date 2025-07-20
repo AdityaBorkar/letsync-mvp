@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export enum NetworkStatus {
 	Online = 1,
@@ -26,7 +26,7 @@ export enum NetworkStatus {
  */
 export function useNetworkState() {
 	const [networkState, setNetworkState] = useState<NetworkStatus>(
-		'online' in navigator
+		"online" in navigator
 			? navigator.onLine
 				? NetworkStatus.Online
 				: NetworkStatus.Offline
@@ -44,12 +44,12 @@ export function useNetworkState() {
 		const handleOffline = () => {
 			setNetworkState(NetworkStatus.Offline);
 		};
-		window.addEventListener('online', handleOnline);
-		window.addEventListener('offline', handleOffline);
+		window.addEventListener("online", handleOnline);
+		window.addEventListener("offline", handleOffline);
 
 		return () => {
-			window.removeEventListener('online', handleOnline);
-			window.removeEventListener('offline', handleOffline);
+			window.removeEventListener("online", handleOnline);
+			window.removeEventListener("offline", handleOffline);
 		};
 	}, []);
 

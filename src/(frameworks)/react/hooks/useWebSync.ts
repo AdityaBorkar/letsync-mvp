@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import type { DatabaseListType, SyncMethods } from '../../../types.js';
-import { Logger } from '../../../utils/Logger.js';
-import { syncData_WS } from '../../../web-client/ws/handler.js';
+import { Logger } from "@/utils/logger.js";
 
-const logger = new Logger('SYNC');
+const logger = new Logger("SYNC");
 
 type SyncState = {
 	isPending: boolean;
@@ -14,7 +12,7 @@ type SyncState = {
 
 export function useSync({
 	databases,
-	method = 'websocket',
+	method = "websocket",
 	server,
 }: {
 	databases: DatabaseListType;
@@ -34,7 +32,7 @@ export function useSync({
 		const controller = new AbortController();
 		const _PerfStart = performance.now();
 
-		if (method === 'websocket') {
+		if (method === "websocket") {
 			syncData_WS({ databases, server, signal: controller.signal })
 				.then(() => {
 					setSync({ error: null, isPending: false, isSyncing: true });
@@ -46,12 +44,12 @@ export function useSync({
 				});
 		}
 
-		if (method === 'http-short-polling') {
-			throw new Error('Not implemented');
+		if (method === "http-short-polling") {
+			throw new Error("Not implemented");
 		}
 
-		if (method === 'sse') {
-			throw new Error('Not implemented');
+		if (method === "sse") {
+			throw new Error("Not implemented");
 		}
 
 		return () => controller.abort();

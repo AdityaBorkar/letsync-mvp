@@ -1,5 +1,5 @@
 export interface ClientDBAdapter<DBClient> {
-	__brand: 'LETSYNC_CLIENT_DATABASE';
+	__brand: "LETSYNC_CLIENT_DATABASE";
 	client: DBClient;
 	name: string;
 	open: () => Promise<void>;
@@ -37,7 +37,7 @@ type MethodSql = <RT>(
 // ) => Promise<Results<T> | undefined>;
 
 type MethodExportData = (options: {
-	compression: 'none' | 'gzip' | 'auto';
+	compression: "none" | "gzip" | "auto";
 }) => Promise<File | Blob>;
 
 type MethodStorageMetrics = () => void;

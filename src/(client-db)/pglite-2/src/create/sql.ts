@@ -1,4 +1,5 @@
-import type { PGlite } from '@electric-sql/pglite';
+import type { PGlite } from "@electric-sql/pglite";
+
 // import type { Schema } from '@letsync/core';
 type Schema = null;
 

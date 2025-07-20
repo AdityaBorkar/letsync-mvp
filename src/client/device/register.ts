@@ -1,6 +1,7 @@
-import { Console } from '@/util/Console.js';
-import { Fetch } from '@/util/Fetch.js';
-import type { ClientParams } from '../functions/create.js';
+import { Console } from "@/util/Console.js";
+import { Fetch } from "@/util/Fetch.js";
+
+import type { ClientParams } from "../functions/create.js";
 
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
 interface RegisterProps {
@@ -9,12 +10,12 @@ interface RegisterProps {
 
 export async function register(props: RegisterProps, params: ClientParams) {
 	props;
-	const { debug } = Console({ fn: 'register' });
+	const { debug } = Console({ fn: "register" });
 
 	const { apiUrl } = params.config;
 	const { metadata } = params.stores;
 
-	const existingDevice = await metadata.get('device');
+	const existingDevice = await metadata.get("device");
 	debug({ existingDevice });
 
 	const data =
@@ -27,9 +28,9 @@ export async function register(props: RegisterProps, params: ClientParams) {
 		// 		})
 		// 	:
 		await Fetch({
-			method: 'POST',
 			baseUrl: apiUrl,
-			endpoint: '/device',
+			endpoint: "/device",
+			method: "POST",
 		});
 	debug({ data });
 
@@ -38,12 +39,12 @@ export async function register(props: RegisterProps, params: ClientParams) {
 	const { deviceId, userId, isActive } = device;
 
 	if (!isActive) {
-		throw new Error('Device was forcefully logged out');
+		throw new Error("Device was forcefully logged out");
 	}
 
-	await metadata.upsert('device', { userId, deviceId });
-	await metadata.upsert('cursor', { location: null });
-	await metadata.upsert('schema', schema);
+	await metadata.upsert("device", { deviceId, userId });
+	await metadata.upsert("cursor", { location: null });
+	await metadata.upsert("schema", schema);
 
-	return { deviceId, userId, isActive, pubsub };
+	return { deviceId, isActive, pubsub, userId };
 }

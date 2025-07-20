@@ -1,5 +1,6 @@
-import { type } from "arktype";
 import type { BunRequest } from "bun";
+
+import { type } from "arktype";
 import { desc, sql } from "drizzle-orm";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)

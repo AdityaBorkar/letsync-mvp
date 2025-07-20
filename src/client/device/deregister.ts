@@ -1,6 +1,7 @@
-import { Console } from '@/util/Console.js';
-import { Fetch } from '@/util/Fetch.js';
-import type { ClientParams } from '../functions/create.js';
+import { Console } from "@/util/Console.js";
+import { Fetch } from "@/util/Fetch.js";
+
+import type { ClientParams } from "../functions/create.js";
 
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
 interface DeregisterProps {
@@ -9,25 +10,25 @@ interface DeregisterProps {
 
 export async function deregister(props: DeregisterProps, params: ClientParams) {
 	props;
-	const { debug } = Console({ fn: 'deregister' });
+	const { debug } = Console({ fn: "deregister" });
 
 	const { metadata } = params.stores;
 	const { apiUrl } = params.config;
 
-	const existingDevice = await metadata.get('device');
+	const existingDevice = await metadata.get("device");
 	debug({ existingDevice });
 
 	const data = await Fetch({
-		method: 'DELETE',
-		baseUrl: apiUrl || '',
-		endpoint: '/device',
+		baseUrl: apiUrl || "",
+		endpoint: "/device",
+		method: "DELETE",
 		searchParams: { deviceId: existingDevice?.deviceId },
 	});
 	debug({ data });
 
 	if (!data.ack) {
-		throw new Error('Failed to deregister device');
+		throw new Error("Failed to deregister device");
 	}
 
-	await metadata.remove('device');
+	await metadata.remove("device");
 }

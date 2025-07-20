@@ -1,5 +1,6 @@
-import type { Client } from '@/types/client/index.js';
-import type { ClientParams } from './create.js';
+import type { Client } from "@/types/client/index.js";
+
+import type { ClientParams } from "./create.js";
 
 type SubscribeProps = {
 	eventName: Client.EventName;
@@ -8,7 +9,7 @@ type SubscribeProps = {
 
 export async function subscribe(props: SubscribeProps, params: ClientParams) {
 	// ...
-	console.log({ props, params });
+	console.log({ params, props });
 
 	const unsubscribe = () => {};
 

@@ -1,4 +1,5 @@
-import type { ClientParams } from '../functions/create.js';
+import type { ClientParams } from "../functions/create.js";
+
 // import { Fetch } from '@/util/Fetch.js';
 
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
@@ -6,7 +7,7 @@ interface PullProps {}
 
 export function pull(props: PullProps, params: ClientParams) {
 	// const { apiUrl, database, metadata } = superProps;
-	console.log({ props, params });
+	console.log({ params, props });
 	// if (WRITE_LOCK) {
 	// 	console.log("FAILED - WRITE LOCK IS ENABLED.");
 	// 	return;

@@ -1,7 +1,7 @@
-import { tenantUtils } from '../~db/tenantUtils.js';
-import { syncDbUtils } from '../~db/utils.js';
-import { changeTracker } from './changeTracker.js';
-import type { MutationMessage } from './engine.js';
+import { tenantUtils } from "../~db/tenantUtils.js";
+import { syncDbUtils } from "../~db/utils.js";
+import { changeTracker } from "./changeTracker.js";
+import type { MutationMessage } from "./engine.js";
 
 export interface TenantContext {
 	tenantId: string;
@@ -59,7 +59,7 @@ export class TenantIsolation {
 				userId, // TODO: Load actual permissions
 			};
 		} catch (error) {
-			console.error('Error getting tenant context:', error);
+			console.error("Error getting tenant context:", error);
 			return null;
 		}
 	}
@@ -80,7 +80,7 @@ export class TenantIsolation {
 			const hasAccess = await this.validateUserTenantAccess(userId, tenantId);
 			if (!hasAccess) {
 				return {
-					error: 'User does not have access to this tenant',
+					error: "User does not have access to this tenant",
 					success: false,
 					timestamp,
 				};
@@ -94,7 +94,7 @@ export class TenantIsolation {
 			};
 
 			// Add user_id for audit trail if not present
-			if (!('user_id' in scopedData)) {
+			if (!("user_id" in scopedData)) {
 				(scopedData as any).user_id = userId;
 			}
 
@@ -102,7 +102,7 @@ export class TenantIsolation {
 
 			// Execute the mutation based on operation type
 			switch (mutation.operation) {
-				case 'insert':
+				case "insert":
 					recordId = await this.executeInsert(
 						tenantId,
 						mutation.table,
@@ -110,7 +110,7 @@ export class TenantIsolation {
 					);
 					break;
 
-				case 'update':
+				case "update":
 					recordId = await this.executeUpdate(
 						tenantId,
 						mutation.table,
@@ -118,7 +118,7 @@ export class TenantIsolation {
 					);
 					break;
 
-				case 'delete':
+				case "delete":
 					recordId = await this.executeDelete(
 						tenantId,
 						mutation.table,
@@ -146,9 +146,9 @@ export class TenantIsolation {
 				timestamp,
 			};
 		} catch (error) {
-			console.error('Error executing tenant-scoped mutation:', error);
+			console.error("Error executing tenant-scoped mutation:", error);
 			return {
-				error: error instanceof Error ? error.message : 'Unknown error',
+				error: error instanceof Error ? error.message : "Unknown error",
 				success: false,
 				timestamp,
 			};
@@ -163,7 +163,7 @@ export class TenantIsolation {
 		tableName: string,
 		data: Record<string, any>,
 	): Promise<string> {
-		console.log('Executing tenant-scoped INSERT:', {
+		console.log("Executing tenant-scoped INSERT:", {
 			data,
 			tableName,
 			tenantId,
@@ -187,7 +187,7 @@ export class TenantIsolation {
 		tableName: string,
 		data: Record<string, any>,
 	): Promise<string> {
-		console.log('Executing tenant-scoped UPDATE:', {
+		console.log("Executing tenant-scoped UPDATE:", {
 			data,
 			tableName,
 			tenantId,
@@ -195,7 +195,7 @@ export class TenantIsolation {
 
 		const recordId = data.id;
 		if (!recordId) {
-			throw new Error('UPDATE operation requires record ID');
+			throw new Error("UPDATE operation requires record ID");
 		}
 
 		// TODO: Implement actual database update with table mapping
@@ -212,7 +212,7 @@ export class TenantIsolation {
 		tableName: string,
 		data: Record<string, any>,
 	): Promise<string> {
-		console.log('Executing tenant-scoped DELETE:', {
+		console.log("Executing tenant-scoped DELETE:", {
 			data,
 			tableName,
 			tenantId,
@@ -220,7 +220,7 @@ export class TenantIsolation {
 
 		const recordId = data.id;
 		if (!recordId) {
-			throw new Error('DELETE operation requires record ID');
+			throw new Error("DELETE operation requires record ID");
 		}
 
 		// TODO: Implement actual database delete with table mapping

@@ -1,4 +1,4 @@
-import type { EndpointContext } from '../../index.js';
+import type { EndpointContext } from "../../index.js";
 
 export async function getData_POLL(request: Request, context: EndpointContext) {
 	const { auth } = context;
@@ -8,15 +8,15 @@ export async function getData_POLL(request: Request, context: EndpointContext) {
 	// }
 
 	const params = new URL(request.url).searchParams;
-	const _cursor = params.get('cursor');
-	const _lastUpdatedAt = params.get('lastUpdatedAt');
+	const _cursor = params.get("cursor");
+	const _lastUpdatedAt = params.get("lastUpdatedAt");
 
 	// const data = await db
 	// 	.select()
 	// 	.from(clientLocalChanges)
 	// 	.where(eq(clientLocalChanges.userId, userId));
 
-	return Response.json({ message: 'Hello, world!' });
+	return Response.json({ message: "Hello, world!" });
 	// try {
 	// 	// Authenticate the request
 	// 	const session = await auth.api.getSession({

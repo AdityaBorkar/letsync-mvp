@@ -1,39 +1,44 @@
 {
-	"name": "@letsync/node-postgres",
-	"description": "Node-postgres adapter for Letsync",
-	"version": "0.2.0",
-	"license": "MIT",
-	"keywords": [],
 	"author": {
-		"name": "Aditya Borkar",
 		"email": "aditya.borkar.programs@gmail.com",
+		"name": "Aditya Borkar",
 		"url": "https://adityaborkar.com"
+	},
+	"dependencies": {
+		"@letsync/core": "workspace:*",
+		"pg": "^8.13.1"
+	},
+	"description": "Node-postgres adapter for Letsync",
+	"devDependencies": {
+		"@types/pg": "^8.11.10",
+		"typescript": "^5.7.3"
+	},
+	"engines": {
+		"node": ">=18.3.0"
+	},
+	"files": [
+		"dist/",
+		"package.json",
+		"LICENSE.md",
+		"README.md"
+	],
+	"keywords": [],
+	"license": "MIT",
+	"main": "./dist/index.js",
+	"name": "@letsync/node-postgres",
+	"publishConfig": {
+		"provenance": true
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/AdityaBorkar/letsync"
 	},
-	"publishConfig": {
-		"provenance": true
-	},
-	"main": "./dist/index.js",
-	"type": "module",
-	"files": ["dist/", "package.json", "LICENSE.md", "README.md"],
 	"scripts": {
-		"dev": "tsc --watch",
 		"build": "tsc --build",
-		"typecheck": "tsc --noEmit",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"dev": "tsc --watch",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"typecheck": "tsc --noEmit"
 	},
-	"engines": {
-		"node": ">=18.3.0"
-	},
-	"devDependencies": {
-		"@types/pg": "^8.11.10",
-		"typescript": "^5.7.3"
-	},
-	"dependencies": {
-		"@letsync/core": "workspace:*",
-		"pg": "^8.13.1"
-	}
+	"type": "module",
+	"version": "0.2.0"
 }

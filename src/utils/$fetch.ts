@@ -1,12 +1,11 @@
-import type { server } from '@/server/index.js';
+import type { endpoints } from "../server/endpoints.js";
+import type { HttpMethod } from "./constants.js";
 
-type ApiRouter = typeof server.router;
-
-export async function Fetch<
-	MethodType extends keyof ApiRouter,
-	EndpointType extends keyof ApiRouter[MethodType],
+export async function $fetch<
+	MethodType extends HttpMethod,
+	EndpointType extends keyof typeof endpoints,
 	// @ts-expect-error
-	SearchParamsType extends ApiRouter[MethodType][EndpointType]['searchParams'], // ! THIS DOES NOT WORk
+	SearchParamsType extends ApiRouter[MethodType][EndpointType]["searchParams"], // ! THIS DOES NOT WORk
 >(props: {
 	method: MethodType;
 	baseUrl: string;
@@ -14,7 +13,6 @@ export async function Fetch<
 	searchParams?: SearchParamsType;
 }) {
 	const { method, baseUrl, endpoint, searchParams } = props;
-	// @ts-expect-error
 	const url = `${baseUrl}${endpoint}?${new URLSearchParams(searchParams)}`;
 	const response = await fetch(url, { method })
 		.then((res) => {
