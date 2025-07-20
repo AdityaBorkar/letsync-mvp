@@ -1,7 +1,8 @@
 import type { ServerWebSocket } from "bun";
 
 import { type } from "arktype";
-import { and, asc, eq, gte } from "drizzle-orm";
+
+import type { LetSyncContext } from "@/types/context.js";
 
 import type { WebsocketData } from "../../../ws-handler.js";
 
@@ -16,8 +17,9 @@ const message = type({
 export async function handler(
 	ws: ServerWebSocket<WebsocketData>,
 	msg: typeof message.infer,
+	context: LetSyncContext<Request>,
 ) {
-	const id = ws.data.userId;
+	const userId = ws.data.userId;
 	const { cursor, name, refId } = msg;
 
 	// TODO: First sync all the `cdc_cache` records and let the client fetch what it needs.
@@ -54,21 +56,26 @@ export async function handler(
 
 	// await getDataCaches({ cursor, limit: 50 });
 
+	const serverDb = context.db.get("postgres"); // ! REPLACE HARDCODED DB NAME
+	if (!serverDb) {
+		throw new Error("Server database not found");
+	}
+
 	const getDataOps = async ({
-		cursor,
 		limit,
 	}: {
 		cursor: Date | undefined;
 		limit: number;
 	}): Promise<void> => {
-		const data_ops = await db.query.cdc.findMany({
-			limit,
-			orderBy: ({ id }) => asc(id),
-			where: ({ tenantId, timestamp }) =>
-				cursor
-					? and(eq(tenantId, id), gte(timestamp, cursor))
-					: eq(tenantId, id),
-		});
+		// @ts-expect-error FIX THIS
+		const data_ops = await serverDb.db.sql`
+		SELECT * FROM cdc
+		WHERE tenantId = ${userId}
+		ORDER BY id ASC
+		LIMIT ${limit};
+		`
+			// @ts-expect-error FIX THIS
+			.then((res) => res.rows);
 
 		const data = { data_ops, name, refId, type: "data_operations" };
 		ws.send(JSON.stringify(data));

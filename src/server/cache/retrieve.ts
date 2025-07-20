@@ -1,8 +1,8 @@
-import type { EndpointContext } from "../index.js";
+import type { LetSyncContext } from "@/types/context.js";
 
 export default async function cacheRetrieve(
 	request: Request,
-	_: EndpointContext,
+	_: LetSyncContext<Request>,
 ) {
 	const input = await request.json();
 	console.log("cacheRetrieve REQUEST RECEIVED WITH BODY: ", request);

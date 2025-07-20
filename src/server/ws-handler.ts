@@ -2,13 +2,14 @@ import type { ServerWebSocket } from "bun";
 
 import { ArkErrors } from "arktype";
 
+import type { LetSyncContext } from "@/types/context.js";
+
 import { mutation } from "./endpoints/web-sockets/messages/mutation.js";
 import { ping } from "./endpoints/web-sockets/messages/ping.js";
 import { syncRequest } from "./endpoints/web-sockets/messages/syncRequest.js";
 
 export interface WebsocketData {
 	userId: string;
-	session: Session;
 	connectionTime: number;
 }
 
@@ -19,7 +20,11 @@ export const wsHandler = {
 	// 	const { userId } = ws.data;
 	// 	console.log(`WebSocket closed for user: ${userId}`);
 	// },
-	async message(ws: ServerWebSocket<WebsocketData>, message: string) {
+	async message(
+		ws: ServerWebSocket<WebsocketData>,
+		message: string,
+		context: LetSyncContext<Request>,
+	) {
 		const data = MessageType(JSON.parse(message));
 		if (data instanceof ArkErrors) {
 			console.log({ data, message });
@@ -29,7 +34,8 @@ export const wsHandler = {
 		// TODO: Use AsyncLocalStorage for `ws` and `data`
 		if (data.type === "ping") await ping.handler(ws, data);
 		if (data.type === "mutation") await mutation.handler(ws, data);
-		if (data.type === "sync_request") await syncRequest.handler(ws, data);
+		if (data.type === "sync_request")
+			await syncRequest.handler(ws, data, context);
 	},
 	// async open(ws: ServerWebSocket<WebsocketData>) {
 	// 	const { userId } = ws.data;

@@ -1,7 +1,7 @@
 import type {
 	ClientDB_Store_Metadata,
 	ClientDB_Store_OfflineChanges,
-} from "@/types/client-db/stores.js";
+} from "@/types/client-store.js";
 import type {
 	ClientDB,
 	ClientFS,

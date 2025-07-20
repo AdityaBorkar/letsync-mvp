@@ -1,28 +1,17 @@
-import type { ServerDB } from "../../dist/types/index.js";
-import type { ServerFS, ServerPubsub } from "../types/index.js";
+import type { LetSyncContext } from "@/types/context.js";
+
 import type { HttpMethod } from "../utils/constants.js";
-import { type EndpointContext, endpoints } from "./endpoints.js";
-
-export type ApiHandlerAuth<R extends Request> = (
-	request: R,
-) =>
-	| { userId: string; deviceId: string }
-	| { message: string; status: 401 | 403 | 404 | 500 };
-
-export type ApiHandlerContext<R extends Request> = {
-	basePath: string;
-	auth: ApiHandlerAuth<R>;
-	db: ServerDB.Adapter<unknown>[];
-	fs: ServerFS.Adapter<unknown>[];
-	pubsub: ServerPubsub.Adapter;
-};
+import { endpoints } from "./endpoints.js";
 
 export function apiHandler<R extends Request>(
 	request: R,
-	ctx: ApiHandlerContext<R>,
+	ctx: LetSyncContext<R>,
 ) {
 	const url = new URL(request.url);
-	const path = url.pathname.replace(ctx.basePath, "") as keyof typeof endpoints;
+	const path = url.pathname.replace(
+		ctx.apiBasePath,
+		"",
+	) as keyof typeof endpoints;
 	if (!(path in endpoints)) {
 		return new Response("Not Found", { status: 404 });
 	}
@@ -45,6 +34,5 @@ export function apiHandler<R extends Request>(
 		return new Response(message, { status });
 	}
 
-	const context: EndpointContext = { ...ctx, auth };
-	return endpoint(request, context);
+	return endpoint(request, ctx);
 }

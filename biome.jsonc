@@ -42,10 +42,21 @@
 			"a11y": "on",
 			"complexity": "on",
 			// "correctness": "on",
-			// "nursery": "on",
 			// "security": "on",
 			// "style": "on",
 			// "suspicious": "on",
+			"nursery": {
+				// "noUnresolvedImports": "off",
+				// "useJsonImportAttribute": "off",
+				"useSortedClasses": {
+					"fix": "safe",
+					"level": "error",
+					"options": {
+						"attributes": ["classList"],
+						"functions": ["clsx", "cva", "tw", "tw.*"]
+					}
+				}
+			},
 			"performance": "on",
 			"recommended": true
 		}

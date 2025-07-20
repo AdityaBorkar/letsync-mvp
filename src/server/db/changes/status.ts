@@ -1,7 +1,10 @@
-import type { Params } from "@/server/types.js";
+import type { LetSyncContext } from "@/types/context.js";
 
-export default async function changesStatus(params: Params) {
-	const input = await params.request.json();
+export default async function changesStatus(
+	request: Request,
+	_: LetSyncContext<Request>,
+) {
+	const input = await request.json();
 	console.log("changesStatus REQUEST RECEIVED WITH BODY: ", input);
 
 	const response = {

@@ -1,7 +1,10 @@
-import type { Params } from "@/server/types.js";
+import type { LetSyncContext } from "@/types/context.js";
 
-export default async function pubsubAuthorizer(params: Params) {
-	const input = await params.request.json();
-	const response = await params.pubsub.authFn(input.token);
+export default async function pubsubAuthorizer(
+	request: Request,
+	context: LetSyncContext<Request>,
+) {
+	// const input = await request.json();
+	const response = await context.auth(request); // pubsub.authFn(input.token);
 	return new Response(JSON.stringify(response));
 }

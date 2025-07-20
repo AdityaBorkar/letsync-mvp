@@ -1,7 +1,10 @@
-import type { Params } from "@/server/types.js";
+import type { LetSyncContext } from "@/types/context.js";
 
-export default async function databaseInit(params: Params) {
-	const input = await params.request.json();
+export default async function databaseInit(
+	request: Request,
+	_: LetSyncContext<Request>,
+) {
+	const input = await request.json();
 
 	// TODO - CHANGEFEED CREATION AND SCHEMA MIGRATIONS
 

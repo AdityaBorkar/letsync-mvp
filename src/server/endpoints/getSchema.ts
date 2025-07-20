@@ -1,7 +1,8 @@
 import type { BunRequest } from "bun";
 
 import { type } from "arktype";
-import { desc, sql } from "drizzle-orm";
+
+import type { LetSyncContext } from "@/types/context.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
@@ -11,7 +12,10 @@ const schema = type({
 	"version?": "number",
 });
 
-export async function getSchema(request: BunRequest) {
+export async function getSchema(
+	request: BunRequest,
+	context: LetSyncContext<Request>,
+) {
 	// Request Validation
 	const { searchParams } = new URL(request.url);
 	const name = searchParams.get("name");
@@ -22,19 +26,22 @@ export async function getSchema(request: BunRequest) {
 	}
 
 	// Return Schema
-	const record = await _getSchema(version);
-	return Response.json(record);
-}
+	const serverDb = context.db.get("postgres"); // ! REPLACE HARDCODED DB NAME
+	if (!serverDb) {
+		throw new Error("Server database not found");
+	}
+	// @ts-expect-error
+	const record = await serverDb.db.sql`
+		SELECT * FROM client_schemas
+		WHERE version = ${version}
+		ORDER BY createdAt DESC
+		LIMIT 1;
+		`
+		// @ts-expect-error
+		.then((res) => res.rows[0]);
 
-async function _getSchema(version: string | null) {
-	const [record] = await db
-		.select()
-		.from(clientSchemas)
-		.where(version ? sql`${clientSchemas.version} = ${version}` : undefined)
-		.orderBy(desc(clientSchemas.createdAt))
-		.limit(1);
 	if (!record) {
 		throw new Error(`Schema version ${version} not found`);
 	}
-	return record;
+	return Response.json(record);
 }

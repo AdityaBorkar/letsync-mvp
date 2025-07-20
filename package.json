@@ -1,12 +1,16 @@
 {
 	"bin": "./dist/cli/index.cjs",
 	"dependencies": {
+		"@aws-sdk/client-iot-data-plane": "^3.848.0",
 		"@paralleldrive/cuid2": "^2.2.2",
+		"@types/pg": "^8.15.4",
 		"arktype": "^2.1.20",
 		"commander": "^14.0.0",
 		"jsonwebtoken": "^9.0.2",
 		"lodash.merge": "^4.6.2",
+		"mqtt": "^5.13.3",
 		"ora": "^8.2.0",
+		"pg": "^8.16.3",
 		"postgres": "^3.4.7",
 		"ws": "^8.18.3"
 	},
@@ -14,6 +18,7 @@
 		"@biomejs/biome": "^2.1.2",
 		"@types/bun": "^1.2.18",
 		"@types/express": "^5.0.3",
+		"@types/jsonwebtoken": "^9.0.10",
 		"@types/lodash.merge": "^4.6.9",
 		"@types/node": "^24.0.14",
 		"@types/ws": "^8.18.1",
@@ -26,6 +31,21 @@
 			"import": "./dist/index.js",
 			"require": "./dist/index.cjs",
 			"types": "./dist/index.d.cts"
+		},
+		"./next": {
+			"import": "./dist/(frameworks)/next/index.js",
+			"require": "./dist/(frameworks)/next/index.cjs",
+			"types": "./dist/(frameworks)/next/index.d.cts"
+		},
+		"./react": {
+			"import": "./dist/(frameworks)/react/index.js",
+			"require": "./dist/(frameworks)/react/index.cjs",
+			"types": "./dist/(frameworks)/react/index.d.cts"
+		},
+		"./server": {
+			"import": "./dist/server/index.js",
+			"require": "./dist/server/index.cjs",
+			"types": "./dist/server/index.d.cts"
 		}
 	},
 	"files": [
@@ -63,10 +83,9 @@
 		"bin": "./src/cli/index.ts",
 		"exports": {
 			".": "./src/index.ts",
-			"./blunt": "./src/(frameworks)/blunt/index.ts",
-			"./mutations": "./src/mutations/index.ts",
 			"./next": "./src/(frameworks)/next/index.ts",
-			"./react": "./src/(frameworks)/react/index.ts"
+			"./react": "./src/(frameworks)/react/index.ts",
+			"./server": "./src/server/index.ts"
 		}
 	}
 }

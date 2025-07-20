@@ -1,4 +1,4 @@
-import type { ClientDB_Store_OfflineChanges } from "@/types/client-db/stores.js";
+import type { ClientDB_Store_OfflineChanges } from "@/types/client-store.js";
 import type { Config } from "@/types/config.js";
 import type { ClientDB, ClientFS } from "@/types/index.js";
 

@@ -1,7 +1,9 @@
 import type { BunRequest } from "bun";
 
 import { ArkErrors, type } from "arktype";
-import { and, desc, gte, isNotNull, lte } from "drizzle-orm";
+
+import type { LetSyncContext } from "@/types/context.js";
+import type { ServerDB } from "@/types/index.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
@@ -14,7 +16,10 @@ const schema = type({
 	"to?": "number",
 });
 
-export async function getMigration(request: BunRequest) {
+export async function getMigration(
+	request: BunRequest,
+	context: LetSyncContext<Request>,
+) {
 	try {
 		// Request Validation
 		const { searchParams } = new URL(request.url);
@@ -46,8 +51,13 @@ export async function getMigration(request: BunRequest) {
 			return Response.json({ error }, { status: 400 });
 		}
 
+		const serverDb = context.db.get("postgres"); // ! REPLACE HARDCODED DB NAME
+		if (!serverDb) {
+			throw new Error("Server database not found");
+		}
+
 		// Generate migration SQL
-		const result = await generateMigrationSql(from, to, name);
+		const result = await generateMigrationSql(serverDb.db, from, to, name);
 
 		if (!result) {
 			return Response.json(
@@ -89,6 +99,7 @@ interface MigrationResult {
 }
 
 async function generateMigrationSql(
+	db: ServerDB.Adapter<unknown>["db"],
 	fromVersion: number,
 	toVersion?: number | null,
 	name?: string | null,
@@ -97,14 +108,15 @@ async function generateMigrationSql(
 		// If toVersion is not provided, get the latest version
 		let targetVersion = toVersion;
 		if (!targetVersion) {
-			const latestSchema = await db
-				.select({ version: clientSchemas.version })
-				.from(clientSchemas)
-				.where(
-					and(isNotNull(clientSchemas.version), isNotNull(clientSchemas.sql)),
-				)
-				.orderBy(desc(clientSchemas.createdAt))
-				.limit(1);
+			// @ts-expect-error FIX THIS
+			const latestSchema = await db.sql`
+			SELECT version FROM client_schemas
+			WHERE version IS NOT NULL AND sql IS NOT NULL
+			ORDER BY version DESC
+			LIMIT 1;
+			`
+				// @ts-expect-error FIX THIS
+				.then((res) => res.rows[0]);
 
 			if (latestSchema.length === 0) {
 				throw new Error("No schemas found in database");
@@ -119,31 +131,28 @@ async function generateMigrationSql(
 		}
 
 		// Get all schema versions between fromVersion and targetVersion (inclusive)
-		const versions = await db
-			.select({
-				checksum: clientSchemas.checksum,
-				createdAt: clientSchemas.createdAt,
-				isRolledBack: clientSchemas.isRolledBack,
-				sql: clientSchemas.sql,
-				tag: clientSchemas.tag,
-				version: clientSchemas.version,
-			})
-			.from(clientSchemas)
-			.where(
-				and(
-					gte(clientSchemas.version, String(fromVersion + 1)),
-					lte(clientSchemas.version, String(targetVersion)),
-					isNotNull(clientSchemas.sql),
-				),
-			)
-			.orderBy(clientSchemas.version);
+		// @ts-expect-error FIX THIS
+		const versions = await db.sql`
+		SELECT
+			checksum,
+			createdAt,
+			isRolledBack,
+			sql,
+			tag,
+			version
+		FROM client_schemas
+		WHERE version >= ${fromVersion + 1} AND version <= ${targetVersion} AND sql IS NOT NULL
+		ORDER BY version;
+		`.execute();
 
 		if (versions.length === 0) {
 			return null; // No migrations found in range
 		}
 
 		// Filter out rolled back migrations
-		const validMigrations = versions.filter((v) => !v.isRolledBack);
+		const validMigrations = versions.filter(
+			(v: { isRolledBack: boolean }) => !v.isRolledBack,
+		);
 
 		if (validMigrations.length === 0) {
 			return null; // All migrations in range are rolled back

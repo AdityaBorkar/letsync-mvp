@@ -1,12 +1,9 @@
 import type { NextRequest } from "next/server.js";
 
-import {
-	type ApiContext,
-	apiHandler,
-	validateContext,
-} from "../../server/index.js";
+import { apiHandler as API_HANDLER } from "@/server/index.js";
+import type { LetSyncContext } from "@/types/context.js";
 
-export function createApiHandler(params: ApiContext<NextRequest>) {
-	const context = validateContext(params);
-	return (request: NextRequest) => apiHandler(request, context);
+export function apiHandler(context: LetSyncContext<NextRequest>) {
+	const handler = (request: NextRequest) => API_HANDLER(request, context);
+	return { GET: handler, POST: handler };
 }

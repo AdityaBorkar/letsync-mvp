@@ -1,8 +1,8 @@
-import type { EndpointContext } from "../../server/index.js";
+import type { LetSyncContext } from "@/types/context.js";
 
 export default async function deviceUnregister(
 	request: Request,
-	params: EndpointContext,
+	_: LetSyncContext<Request>,
 ) {
 	const input = await request.json();
 	console.log("deviceUnregister REQUEST RECEIVED WITH BODY: ", input);

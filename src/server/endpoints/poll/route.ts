@@ -1,15 +1,14 @@
-import type { EndpointContext } from "../../index.js";
+import type { LetSyncContext } from "@/types/context.js";
 
-export async function getData_POLL(request: Request, context: EndpointContext) {
-	const { auth } = context;
+export async function getData_POLL(__: Request, _: LetSyncContext<Request>) {
 	// const isAnonymous = session?.user?.isAnonymous;
 	// if (isAnonymous) {
 	// 	return NextResponse.json({ message: 'Anonymous user' });
 	// }
 
-	const params = new URL(request.url).searchParams;
-	const _cursor = params.get("cursor");
-	const _lastUpdatedAt = params.get("lastUpdatedAt");
+	// const params = new URL(request.url).searchParams;
+	// const _cursor = params.get("cursor");
+	// const _lastUpdatedAt = params.get("lastUpdatedAt");
 
 	// const data = await db
 	// 	.select()

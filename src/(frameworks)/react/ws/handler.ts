@@ -1,6 +1,7 @@
 import { ArkErrors } from "arktype";
 import { eq } from "drizzle-orm";
 
+import type { ClientDB } from "@/types/client.js";
 import { Logger } from "@/utils/logger.js";
 
 import { dataCache } from "./messages/data-cache.js";
@@ -20,7 +21,7 @@ export async function syncData_WS({
 	server,
 }: {
 	signal: AbortSignal;
-	databases: DatabaseListType;
+	databases: Map<string, ClientDB.Adapter<unknown>>;
 	server: {
 		endpoint: string;
 		https: boolean;

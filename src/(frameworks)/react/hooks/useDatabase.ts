@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
-import type { ClientDB } from "@/types/index.js";
+import type { ClientDB } from "@/types/client.js";
 import { Logger } from "@/utils/logger.js";
 import { tryCatch } from "@/utils/try-catch.js";
 
-export function useDatabase({
-	name,
-	client,
-}: {
-	client: ClientDB.Adapter<unknown>;
-	name: string;
-}) {
+import { SyncContext } from "./SyncProvider.js";
+
+export function useDatabase({ name }: { name: string }) {
 	const [status, setStatus] = useState<{
 		isPending: boolean;
 		error: Error | null;
@@ -19,32 +15,38 @@ export function useDatabase({
 		isPending: true,
 	});
 
+	const context = useContext(SyncContext);
+	const clientDb = context?.db.get(name);
+
 	useEffect(() => {
+		if (!clientDb) return;
+
 		const _PerfStart = performance.now();
-		tryCatch(setupDb({ client, name })).then(({ error }) => {
+		tryCatch(setupDb({ db: clientDb.db, name })).then(({ error }) => {
 			setStatus({ error, isPending: false });
 			const _PerfEnd = performance.now();
 			console.log(`Database initialized in ${_PerfEnd - _PerfStart}ms`);
 		});
-	}, [client, name]);
+	}, [context, clientDb]);
 
 	return status;
 }
 
 async function setupDb({
 	name,
-	client,
+	db,
 	checkForUpdates = false,
 }: {
 	name: string;
-	client: ClientDB.Adapter<unknown>;
+	db: ClientDB.Adapter<unknown>["db"];
 	checkForUpdates?: boolean;
 }) {
 	const console = new Logger(`[DB:${name}]`);
 
 	// Get Current Schema
 	const current_schema =
-		await client.sql`SELECT * FROM client_metadata WHERE key = ${name}:schema_version`.then(
+		// @ts-expect-error FIX THIS
+		await db.sql`SELECT * FROM client_metadata WHERE key = ${name}:schema_version`.then(
 			// @ts-expect-error FIX THIS
 			(result) => result.rows[0]?.value || "",
 		);
@@ -70,15 +72,18 @@ async function setupDb({
 	}
 
 	// Update Schema
-	await executeSchema(client, schema.data.sql);
-	await client.sql`INSERT INTO client_metadata (key, value) VALUES (${name}:schema_version, ${schema.data.version})`;
+	// @ts-expect-error FIX THIS
+	await executeSchema(db, schema.data.sql);
+	// @ts-expect-error FIX THIS
+	await db.sql`INSERT INTO client_metadata (key, value) VALUES (${name}:schema_version, ${schema.data.version})`;
 }
 
-async function executeSchema(client: ClientDB.Adapter<unknown>, sql: string) {
+async function executeSchema(db: ClientDB.Adapter<unknown>, sql: string) {
 	const commands: string[] = sql.split("--> statement-breakpoint");
 	const errors: string[] = [];
 	for await (const command of commands) {
-		client.sql`${command}`.catch((err) => {
+		// @ts-expect-error FIX THIS
+		db.sql`${command}`.catch((err: Error) => {
 			errors.push(err.toString());
 		});
 	}
