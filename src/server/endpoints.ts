@@ -1,4 +1,4 @@
-import type { ServerPubsub } from "@/types/pubsub.js";
+import type { ServerPubSub } from "@/types/pubsub.js";
 
 import type { ServerDB, ServerFS } from "../types/index.js";
 import cacheDelete from "./cache/delete.js";
@@ -19,7 +19,7 @@ import { getData_WS } from "./endpoints/web-sockets/route.js";
 export type EndpointContext = {
 	db: ServerDB.Adapter<unknown>[];
 	fs: ServerFS.Adapter<unknown>[];
-	pubsub: ServerPubsub.Adapter;
+	pubsub: ServerPubSub.Adapter<unknown>;
 	auth: {
 		userId: string;
 		deviceId: string;

@@ -1,5 +1,4 @@
 import { ArkErrors } from "arktype";
-import { eq } from "drizzle-orm";
 
 import type { ClientDB } from "@/types/client.js";
 import { Logger } from "@/utils/logger.js";
@@ -16,10 +15,12 @@ const MessageType = pong.message
 	.or(dataCache.message);
 
 export async function syncData_WS({
+	// apiBasePath,
 	signal,
 	databases,
 	server,
 }: {
+	apiBasePath: string;
 	signal: AbortSignal;
 	databases: Map<string, ClientDB.Adapter<unknown>>;
 	server: {
@@ -33,12 +34,13 @@ export async function syncData_WS({
 
 	ws.onopen = async () => {
 		ws.send(JSON.stringify({ refId: generateRefId(), type: "ping" }));
-		for (const { name } of databases) {
-			const timestamp = await db.query.clientMetadata
-				.findFirst({
-					where: ({ key }) => eq(key, `${name}:cursor`),
-				})
-				.then((cursor) => cursor?.value || "");
+		for (const [name, db] of databases.entries()) {
+			const timestamp =
+				// @ts-expect-error FIX THIS
+				await db.sql`SELECT * FROM client_metadata WHERE key = ${name}:cursor`.then(
+					// @ts-expect-error FIX THIS
+					(result) => result.rows[0]?.value || "",
+				);
 			const data = {
 				cursor: timestamp ? new Date(timestamp) : undefined,
 				name,

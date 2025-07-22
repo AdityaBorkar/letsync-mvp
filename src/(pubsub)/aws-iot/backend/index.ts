@@ -3,7 +3,7 @@ import {
 	PublishCommand,
 } from "@aws-sdk/client-iot-data-plane";
 
-import type { ServerPubsub } from "@/types/pubsub.js";
+import type { ServerPubSub } from "@/types/pubsub.js";
 
 import { PubSubAuthorizer } from "./authorizer.js";
 
@@ -23,7 +23,7 @@ type PubSubProps = {
  * @param props.secret - Secret key used to validate JWT tokens for authentication
  * @returns A PubSub backend instance for real-time messaging
  */
-export function PubSub(props: PubSubProps): ServerPubsub.Adapter {
+export function PubSub(props: PubSubProps): ServerPubSub.Adapter {
 	const { client: _client, prefix, secret } = props;
 	const client = _client ?? new IoTDataPlaneClient();
 

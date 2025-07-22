@@ -1,30 +1,14 @@
-"use client";
+import { useContext, useEffect, useState } from "react";
 
-import { useEffect, useState } from "react";
+import { SyncContext } from "./SyncProvider.js";
 
 export enum NetworkStatus {
 	Online = 1,
 	Offline = 0,
 }
 
-/**
- * A React hook that provides access to the Letsync network state.
- *
- * @returns {Object} An object containing:
- *   - database: The Letsync database instance
- *   - pubsub: The publish/subscribe messaging system instance
- *
- * @example
- * ```tsx
- * function MyComponent() {
- *   const { database, pubsub } = useNetworkState();
- *
- *   // Use database or pubsub
- *   return <div>...</div>;
- * }
- * ```
- */
-export function useNetworkState() {
+export function useSyncStatus() {
+	const { isPending, isSyncing, error } = useContext(SyncContext);
 	const [networkState, setNetworkState] = useState<NetworkStatus>(
 		"online" in navigator
 			? navigator.onLine
@@ -32,6 +16,7 @@ export function useNetworkState() {
 				: NetworkStatus.Offline
 			: NetworkStatus.Online,
 	);
+	const isOffline = networkState === NetworkStatus.Offline;
 
 	useEffect(() => {
 		setNetworkState(
@@ -53,5 +38,5 @@ export function useNetworkState() {
 		};
 	}, []);
 
-	return networkState;
+	return { error, isOffline, isPending, isSyncing };
 }

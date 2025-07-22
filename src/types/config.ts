@@ -1,5 +1,5 @@
 import type { ClientDB, ClientFS } from "./client.js";
-import type { PubSub } from "./pubsub.js";
+import type { ClientPubSub, ServerPubSub } from "./pubsub.js";
 import type { ServerDB, ServerFS } from "./server.js";
 
 export type ApiHandlerAuth<R extends Request> = (
@@ -12,6 +12,6 @@ export type LetSyncConfig<R extends Request> = {
 	apiBasePath?: string;
 	auth: ApiHandlerAuth<R>;
 	client: (ClientDB.Adapter<unknown> | ClientFS.Adapter<unknown>)[];
-	pubsub: PubSub.Adapter<unknown>;
+	pubsub: ClientPubSub.Adapter<unknown> | ServerPubSub.Adapter<unknown>;
 	server: (ServerDB.Adapter<unknown> | ServerFS.Adapter<unknown>)[];
 };

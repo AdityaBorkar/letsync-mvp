@@ -1,6 +1,6 @@
 import type { MqttClient } from "mqtt";
 
-import type { PubSub } from "@/types/pubsub.js";
+import type { ClientPubSub } from "@/types/pubsub.js";
 
 import $connect from "./connect.js";
 
@@ -30,7 +30,7 @@ type PubSubProps = PubSubClient | PubSubAuthorizer;
  */
 export function PubSub_Frontend<PT extends PubSubProps>(
 	props: PT,
-): PubSub.Adapter<PT> {
+): ClientPubSub.Adapter<PT> {
 	const superProps = props;
 
 	/**
@@ -117,5 +117,5 @@ export function PubSub_Frontend<PT extends PubSubProps>(
 	return {
 		__brand: "LETSYNC_PUBSUB",
 		connect,
-	} as unknown as PubSub.Adapter<PT>;
+	} as unknown as ClientPubSub.Adapter<PT>;
 }

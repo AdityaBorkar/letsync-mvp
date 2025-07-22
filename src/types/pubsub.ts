@@ -1,4 +1,4 @@
-export namespace PubSub {
+export namespace ClientPubSub {
 	export type Adapter<T> = {
 		__brand: "LETSYNC_PUBSUB";
 		name: string;
@@ -11,16 +11,18 @@ export namespace PubSub {
 		| "sse";
 }
 
-export namespace ServerPubsub {
-	export type Adapter = {
+export namespace ServerPubSub {
+	export type Adapter<T> = {
 		__brand: "LETSYNC_PUBSUB_BACKEND";
-		secret: string;
-		publish: PublishFn;
-		subscribe: SubscribeFn;
-		authFn: (token: string) => Promise<{
-			subscribe: string[];
-			publish: string[];
-		}>;
+		name: string;
+		pubsub: T;
+		// secret: string;
+		// publish: PublishFn;
+		// subscribe: SubscribeFn;
+		// authFn: (token: string) => Promise<{
+		// 	subscribe: string[];
+		// 	publish: string[];
+		// }>;
 	};
 
 	export type Token = {
@@ -29,17 +31,17 @@ export namespace ServerPubsub {
 	};
 }
 
-type SubscribeFn = (
-	topic: string,
-	callback: (data: unknown) => void,
-) => Promise<void>;
+// type SubscribeFn = (
+// 	topic: string,
+// 	callback: (data: unknown) => void,
+// ) => Promise<void>;
 
-type PublishFn = (
-	topic: string,
-	payload: {
-		[key: string]: unknown;
-	},
-) => Promise<void>;
+// type PublishFn = (
+// 	topic: string,
+// 	payload: {
+// 		[key: string]: unknown;
+// 	},
+// ) => Promise<void>;
 
 export namespace Client {
 	export type EventName = (typeof events)[number];

@@ -1,18 +1,46 @@
 // biome-ignore lint/style/useImportType: React
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
 import type { LetSyncContext } from "@/types/context.js";
 
-export const SyncContext = createContext<LetSyncContext<Request> | null>(null);
+export const SyncContext = createContext<{
+	config: LetSyncContext<Request> | null;
+	isPending: boolean;
+	isSyncing: boolean;
+	error: string | null;
+	setStatus: (status: {
+		isPending: boolean;
+		isSyncing: boolean;
+		error: string | null;
+	}) => void;
+}>({
+	config: null,
+	error: null,
+	isPending: true,
+	isSyncing: false,
+	setStatus: () => {},
+});
 
 export function SyncProvider({
-	context,
+	config,
 	children,
 }: {
-	context: LetSyncContext<Request>;
+	config: LetSyncContext<Request>;
 	children: React.ReactNode;
 }) {
+	const [status, setStatus] = useState<{
+		isPending: boolean;
+		isSyncing: boolean;
+		error: string | null;
+	}>({
+		error: null,
+		isPending: true,
+		isSyncing: false,
+	});
+
 	return (
-		<SyncContext.Provider value={context}>{children}</SyncContext.Provider>
+		<SyncContext.Provider value={{ config, ...status, setStatus }}>
+			{children}
+		</SyncContext.Provider>
 	);
 }

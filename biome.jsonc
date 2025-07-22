@@ -46,8 +46,6 @@
 			// "style": "on",
 			// "suspicious": "on",
 			"nursery": {
-				// "noUnresolvedImports": "off",
-				// "useJsonImportAttribute": "off",
 				"useSortedClasses": {
 					"fix": "safe",
 					"level": "error",
@@ -63,6 +61,7 @@
 	},
 	"vcs": {
 		"clientKind": "git",
+		"defaultBranch": "main",
 		"enabled": true,
 		"useIgnoreFile": true
 	}
