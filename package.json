@@ -28,29 +28,29 @@
 	},
 	"exports": {
 		".": {
+			"types": "./dist/index.d.cts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.cjs",
-			"types": "./dist/index.d.cts"
+			"require": "./dist/index.cjs"
 		},
 		"./next": {
+			"types": "./dist/(frameworks)/next/index.d.cts",
 			"import": "./dist/(frameworks)/next/index.js",
-			"require": "./dist/(frameworks)/next/index.cjs",
-			"types": "./dist/(frameworks)/next/index.d.cts"
+			"require": "./dist/(frameworks)/next/index.cjs"
 		},
 		"./react": {
+			"types": "./dist/(frameworks)/react/index.d.cts",
 			"import": "./dist/(frameworks)/react/index.js",
-			"require": "./dist/(frameworks)/react/index.cjs",
-			"types": "./dist/(frameworks)/react/index.d.cts"
+			"require": "./dist/(frameworks)/react/index.cjs"
 		},
 		"./server": {
+			"types": "./dist/server/index.d.cts",
 			"import": "./dist/server/index.js",
-			"require": "./dist/server/index.cjs",
-			"types": "./dist/server/index.d.cts"
+			"require": "./dist/server/index.cjs"
 		}
 	},
 	"files": [
 		"dist",
-		"LICENSE",
+		"LICENSE.md",
 		"package.json",
 		"README.md"
 	],
@@ -59,16 +59,16 @@
 	"module": "./dist/index.js",
 	"name": "letsync",
 	"peerDependencies": {
-		"@electric-sql/pglite": "^0.3.5",
-		"drizzle-orm": "^0.44.3",
-		"express": "^5.1.0",
-		"next": "^15.4.2",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0"
+		"@electric-sql/pglite": ">=0.3",
+		"drizzle-orm": ">=0.44",
+		"express": ">=5",
+		"next": ">=15",
+		"react": ">=19",
+		"react-dom": ">=19"
 	},
 	"private": false,
 	"scripts": {
-		"build": "zshy && biome check --write ./package.json",
+		"build": "zshy",
 		"check:code": "biome check --changed --diagnostic-level=error",
 		"check:types": "tsc --noEmit",
 		"check:unused": "knip"

@@ -38,9 +38,11 @@ export function SyncProvider({
 		isSyncing: false,
 	});
 
+	console.log({ status });
+
 	return (
-		<SyncContext.Provider value={{ config, ...status, setStatus }}>
+		<SyncContext value={{ config, ...status, setStatus }}>
 			{children}
-		</SyncContext.Provider>
+		</SyncContext>
 	);
 }

@@ -27,7 +27,14 @@
 		}
 	},
 	"files": {
-		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
+		"includes": [
+			"**/*",
+			"!node_modules/**/*",
+			"!dist/**/*",
+			"!bun.lock",
+			// Exclude package.json to avoid sorting of exports.
+			"!package.json"
+		]
 	},
 	"linter": {
 		"domains": {
