@@ -1,5 +1,6 @@
-import { Console } from "@/util/Console.js";
-import { Fetch } from "@/util/Fetch.js";
+import { $fetch } from "@/utils/$fetch.js";
+
+// import { Logger } from "@/utils/logger.js";
 
 import type { ClientParams } from "../functions/create.js";
 
@@ -10,21 +11,21 @@ interface DeregisterProps {
 
 export async function deregister(props: DeregisterProps, params: ClientParams) {
 	props;
-	const { debug } = Console({ fn: "deregister" });
+	const logs = console; // Logger({ fn: "deregister" });
 
 	const { metadata } = params.stores;
-	const { apiUrl } = params.config;
+	const { apiBasePath } = params.config;
 
 	const existingDevice = await metadata.get("device");
-	debug({ existingDevice });
+	logs.debug({ existingDevice });
 
-	const data = await Fetch({
-		baseUrl: apiUrl || "",
+	const data = await $fetch({
+		baseUrl: apiBasePath || "",
 		endpoint: "/device",
 		method: "DELETE",
 		searchParams: { deviceId: existingDevice?.deviceId },
 	});
-	debug({ data });
+	logs.debug({ data });
 
 	if (!data.ack) {
 		throw new Error("Failed to deregister device");

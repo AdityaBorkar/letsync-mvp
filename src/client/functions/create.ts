@@ -2,12 +2,8 @@ import type {
 	ClientDB_Store_Metadata,
 	ClientDB_Store_OfflineChanges,
 } from "@/types/client-store.js";
-import type {
-	ClientDB,
-	ClientFS,
-	ClientPubsub,
-	Config,
-} from "@/types/index.js";
+import type { LetSyncConfig } from "@/types/config.js";
+import type { ClientDB, ClientFS, PubSub } from "@/types/index.js";
 
 import { deregister } from "../device/deregister.js";
 import { flush } from "../device/flush.js";
@@ -27,8 +23,8 @@ import { terminate as _terminate } from "./terminate.js";
 export interface ClientParams {
 	db: ClientDB.Adapter<unknown>[];
 	fs: ClientFS.Adapter<unknown>[];
-	pubsub: ClientPubsub.Adapter;
-	config: Config;
+	pubsub: PubSub.Adapter<unknown>;
+	config: LetSyncConfig<Request>;
 	stores: {
 		metadata: ClientDB_Store_Metadata;
 		offlineChanges: ClientDB_Store_OfflineChanges;
@@ -38,7 +34,7 @@ export interface ClientParams {
 export async function createClient<
 	DT extends ClientDB.Adapter<unknown>[],
 	FS extends ClientFS.Adapter<unknown>[],
-	PS extends ClientPubsub.Adapter,
+	PS extends PubSub.Adapter<unknown>,
 >({
 	db,
 	fs,
@@ -49,7 +45,7 @@ export async function createClient<
 	db: DT;
 	fs: FS;
 	pubsub: PS;
-	config: Config;
+	config: LetSyncConfig<Request>;
 	// workers?: boolean;
 }) {
 	// TODO: Validate Parameters

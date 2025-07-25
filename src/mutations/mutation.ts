@@ -67,14 +67,17 @@ export class MutationBuilder<
 	public _onError?: (error: { error: string }) => void;
 	public _validationCache = new Map<string, any>();
 
-	constructor(
-		private readonly config: {
-			env: "client" | "server";
-			db: any;
-			fs: any;
-			pubsub: any;
-		},
-	) {
+	public env: "client" | "server";
+	public db: any;
+	public fs: any;
+	public pubsub: any;
+
+	constructor(config: {
+		env: "client" | "server";
+		db: any;
+		fs: any;
+		pubsub: any;
+	}) {
 		this.env = config.env;
 		this.db = config.db;
 		this.fs = config.fs;
@@ -129,7 +132,7 @@ export class MutationBuilder<
 				options?.env || (typeof window !== "undefined" ? "client" : "server");
 
 			const context = {
-				db: await getDatabase(env),
+				// db: await getDatabase(env),
 				env,
 				...options?.context,
 			} as TContext;

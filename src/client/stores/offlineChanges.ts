@@ -1,11 +1,11 @@
 import type { ClientDB_Store_OfflineChanges } from "@/types/client-store.js";
-import type { Config } from "@/types/config.js";
+import type { LetSyncConfig } from "@/types/config.js";
 import type { ClientDB, ClientFS } from "@/types/index.js";
 
 interface Params {
 	db: ClientDB.Adapter<unknown>[];
 	fs: ClientFS.Adapter<unknown>[];
-	config: Config;
+	config: LetSyncConfig<Request>;
 }
 
 export function offlineChangesHandler(

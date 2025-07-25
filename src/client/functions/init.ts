@@ -1,4 +1,4 @@
-import { Console } from "@/util/Console.js";
+// import { Console } from "@/util/Console.js";
 
 // import { live } from '../device/live.js';
 // import { pull } from '../device/pull.js';
@@ -18,8 +18,8 @@ type InitProps =
 	  };
 
 export async function init(props: InitProps, params: ClientParams) {
-	const { debug } = Console({ fn: "init" });
-	debug({ props });
+	const logs = console; // Logger({ fn: "init" });
+	logs.debug({ props });
 
 	console.log({ params });
 
@@ -32,7 +32,7 @@ export async function init(props: InitProps, params: ClientParams) {
 		await migrate({ version: "latest" }, params);
 
 	// const device = await register({}, params);
-	// debug({ device });
+	// logs.debug({ device });
 
 	// if (props.pushOnInit !== false) await push({}, params);
 	// if (props.pullOnInit !== false) await pull({}, params);

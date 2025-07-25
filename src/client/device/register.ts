@@ -1,5 +1,4 @@
-import { Console } from "@/util/Console.js";
-import { Fetch } from "@/util/Fetch.js";
+import { $fetch } from "@/utils/$fetch.js";
 
 import type { ClientParams } from "../functions/create.js";
 
@@ -10,13 +9,13 @@ interface RegisterProps {
 
 export async function register(props: RegisterProps, params: ClientParams) {
 	props;
-	const { debug } = Console({ fn: "register" });
+	const logs = console; // Logger({ fn: "register" });
 
-	const { apiUrl } = params.config;
+	const { apiBasePath } = params.config;
 	const { metadata } = params.stores;
 
 	const existingDevice = await metadata.get("device");
-	debug({ existingDevice });
+	logs.debug({ existingDevice });
 
 	const data =
 		//  existingDevice
@@ -27,12 +26,12 @@ export async function register(props: RegisterProps, params: ClientParams) {
 		// 			searchParams: { deviceId: existingDevice.deviceId },
 		// 		})
 		// 	:
-		await Fetch({
-			baseUrl: apiUrl,
+		await $fetch({
+			baseUrl: apiBasePath || "",
 			endpoint: "/device",
 			method: "POST",
 		});
-	debug({ data });
+	logs.debug({ data });
 
 	// @ts-ignore
 	const { device, schema, pubsub } = data;

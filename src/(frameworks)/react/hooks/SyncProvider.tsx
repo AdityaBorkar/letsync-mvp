@@ -1,5 +1,5 @@
 // biome-ignore lint/style/useImportType: React
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 
 import type { LetSyncContext } from "@/types/context.js";
 
@@ -22,26 +22,33 @@ export const SyncContext = createContext<{
 });
 
 export function SyncProvider({
+	// @ts-expect-error
 	config,
 	children,
 }: {
 	config: LetSyncContext<Request>;
 	children: React.ReactNode;
 }) {
-	const [status, setStatus] = useState<{
-		isPending: boolean;
-		isSyncing: boolean;
-		error: string | null;
-	}>({
-		error: null,
-		isPending: true,
-		isSyncing: false,
-	});
+	// const [status, setStatus] = useState<{
+	// 	isPending: boolean;
+	// 	isSyncing: boolean;
+	// 	error: string | null;
+	// }>({
+	// 	error: null,
+	// 	isPending: true,
+	// 	isSyncing: false,
+	// });
+	// console.log({ status });
 
+	const status = "HELLO";
 	console.log({ status });
 
 	return (
-		<SyncContext value={{ config, ...status, setStatus }}>
+		<SyncContext
+			// @ts-expect-error
+			value={{ status }}
+			// value={{ config, ...status, setStatus }}
+		>
 			{children}
 		</SyncContext>
 	);

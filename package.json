@@ -1,5 +1,5 @@
 {
-	"bin": "./dist/cli/index.cjs",
+	"bin": "./dist/src/cli/index.js",
 	"dependencies": {
 		"@aws-sdk/client-iot-data-plane": "^3.848.0",
 		"@paralleldrive/cuid2": "^2.2.2",
@@ -28,24 +28,20 @@
 	},
 	"exports": {
 		".": {
-			"types": "./dist/index.d.cts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
+			"types": "./dist/src/index.d.ts",
+			"import": "./dist/src/index.js"
 		},
 		"./next": {
-			"types": "./dist/(frameworks)/next/index.d.cts",
-			"import": "./dist/(frameworks)/next/index.js",
-			"require": "./dist/(frameworks)/next/index.cjs"
+			"types": "./dist/src/(frameworks)/next/index.d.ts",
+			"import": "./dist/src/(frameworks)/next/index.js"
 		},
 		"./react": {
-			"types": "./dist/(frameworks)/react/index.d.cts",
-			"import": "./dist/(frameworks)/react/index.js",
-			"require": "./dist/(frameworks)/react/index.cjs"
+			"types": "./dist/src/(frameworks)/react/index.d.ts",
+			"import": "./dist/src/(frameworks)/react/index.js"
 		},
 		"./server": {
-			"types": "./dist/server/index.d.cts",
-			"import": "./dist/server/index.js",
-			"require": "./dist/server/index.cjs"
+			"types": "./dist/src/server/index.d.ts",
+			"import": "./dist/src/server/index.js"
 		}
 	},
 	"files": [
@@ -55,20 +51,19 @@
 		"README.md"
 	],
 	"license": "MIT",
-	"main": "./dist/index.cjs",
-	"module": "./dist/index.js",
+	"module": "./dist/src/index.js",
 	"name": "letsync",
 	"peerDependencies": {
 		"@electric-sql/pglite": ">=0.3",
 		"drizzle-orm": ">=0.44",
 		"express": ">=5",
 		"next": ">=15",
-		"react": ">=19",
-		"react-dom": ">=19"
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0"
 	},
 	"private": false,
 	"scripts": {
-		"build": "zshy",
+		"build": "bun build.ts",
 		"check:code": "biome check --changed --diagnostic-level=error",
 		"check:types": "tsc --noEmit",
 		"check:unused": "knip"
@@ -77,15 +72,6 @@
 		"oxc-resolver"
 	],
 	"type": "module",
-	"types": "./dist/index.d.cts",
-	"version": "0.0.2",
-	"zshy": {
-		"bin": "./src/cli/index.ts",
-		"exports": {
-			".": "./src/index.ts",
-			"./next": "./src/(frameworks)/next/index.ts",
-			"./react": "./src/(frameworks)/react/index.ts",
-			"./server": "./src/server/index.ts"
-		}
-	}
+	"types": "./dist/src/index.d.ts",
+	"version": "0.0.2"
 }
