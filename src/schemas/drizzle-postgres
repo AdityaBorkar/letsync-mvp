@@ -2,6 +2,7 @@ import { createId } from "@paralleldrive/cuid2";
 import {
 	boolean,
 	jsonb,
+	pgEnum,
 	pgTable,
 	serial,
 	text,
@@ -25,13 +26,18 @@ export const clientMetadata = pgTable("client_metadata", {
 	value: text().notNull(),
 });
 
+export const mutationStatus = pgEnum("mutation_status", [
+	"pending",
+	"processing",
+	"completed",
+	"failed",
+]);
+
 export const clientMutations = pgTable("client_mutations", {
 	createdAt: timestamp().defaultNow().notNull(),
 	mutationName: text().notNull(),
 	requestId: uuid().notNull(),
-	status: text({
-		enum: ["pending", "processing", "completed", "failed"],
-	}).notNull(),
+	status: mutationStatus().notNull(),
 });
 
 export const cdc = pgTable("cdc", {

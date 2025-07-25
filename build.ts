@@ -1,29 +1,31 @@
-import { $, build } from "bun";
-import { rm } from "fs/promises";
+// ? DEPRECATED IN FAVOR OF `zshy`
 
-await rm("dist", { force: true, recursive: true });
+// import { $, build } from "bun";
+// import { rm } from "fs/promises";
 
-const output = await build({
-	entrypoints: [
-		"src/index.ts",
-		"./src/cli/index.ts",
-		"./src/(frameworks)/next/index.ts",
-		"./src/(frameworks)/react/index.ts",
-		"./src/server/index.ts",
-		// "src/server/index.ts",
-		// "src/client/index.ts",
-		// "src/default/config.ts",
-		// "src/default/register-client-db.ts",
-		// "src/default/register-pubsub.ts",
-		// "src/default/register-server-db.ts",
-	],
-	external: ["react", "react-dom"],
-	outdir: "dist",
-	target: "bun",
-});
+// await rm("dist", { force: true, recursive: true });
 
-const types =
-	await $`tsc --outDir dist/src --emitDeclarationOnly --emitDeclarationOnly --declaration`;
+// const output = await build({
+// 	entrypoints: [
+// 		"src/index.ts",
+// 		"./src/cli/index.ts",
+// 		"./src/(frameworks)/next/index.ts",
+// 		"./src/(frameworks)/react/index.ts",
+// 		"./src/server/index.ts",
+// 		// "src/server/index.ts",
+// 		// "src/client/index.ts",
+// 		// "src/default/config.ts",
+// 		// "src/default/register-client-db.ts",
+// 		// "src/default/register-pubsub.ts",
+// 		// "src/default/register-server-db.ts",
+// 	],
+// 	external: ["react", "react-dom"],
+// 	outdir: "dist",
+// 	target: "bun",
+// });
 
-console.log("Build complete status: ", output.success);
-console.log("Types complete status: ", types.text());
+// const types =
+// 	await $`tsc --outDir dist/src --emitDeclarationOnly --emitDeclarationOnly --declaration`;
+
+// console.log("Build complete status: ", output.success);
+// console.log("Types complete status: ", types.text());

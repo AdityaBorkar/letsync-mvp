@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import { SyncContext } from "./SyncProvider.js";
 
-export function useDatabase({ name }: { name?: string }) {
+export function useDatabase({ name }: { name?: string } = {}) {
 	const { config } = useContext(SyncContext);
 	if (!config) {
 		throw new Error("No database configured");
@@ -16,6 +16,8 @@ export function useDatabase({ name }: { name?: string }) {
 	if (!clientDb) {
 		throw new Error(`Database "${name}" not found`);
 	}
+
+	console.log(clientDb);
 
 	// DATABASE RELATED FEATURES:
 	// subscribe()

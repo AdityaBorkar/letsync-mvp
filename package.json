@@ -1,77 +1,102 @@
 {
-	"bin": "./dist/src/cli/index.js",
-	"dependencies": {
-		"@aws-sdk/client-iot-data-plane": "^3.848.0",
-		"@paralleldrive/cuid2": "^2.2.2",
-		"@types/pg": "^8.15.4",
-		"arktype": "^2.1.20",
-		"commander": "^14.0.0",
-		"jsonwebtoken": "^9.0.2",
-		"lodash.merge": "^4.6.2",
-		"mqtt": "^5.13.3",
-		"ora": "^8.2.0",
-		"pg": "^8.16.3",
-		"postgres": "^3.4.7",
-		"ws": "^8.18.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.1.2",
-		"@types/bun": "^1.2.18",
-		"@types/express": "^5.0.3",
-		"@types/jsonwebtoken": "^9.0.10",
-		"@types/lodash.merge": "^4.6.9",
-		"@types/node": "^24.0.14",
-		"@types/ws": "^8.18.1",
-		"knip": "^5.62.0",
-		"typescript": "^5.8.3",
-		"zshy": "^0.2.5"
-	},
-	"exports": {
-		".": {
-			"types": "./dist/src/index.d.ts",
-			"import": "./dist/src/index.js"
-		},
-		"./next": {
-			"types": "./dist/src/(frameworks)/next/index.d.ts",
-			"import": "./dist/src/(frameworks)/next/index.js"
-		},
-		"./react": {
-			"types": "./dist/src/(frameworks)/react/index.d.ts",
-			"import": "./dist/src/(frameworks)/react/index.js"
-		},
-		"./server": {
-			"types": "./dist/src/server/index.d.ts",
-			"import": "./dist/src/server/index.js"
-		}
-	},
-	"files": [
-		"dist",
-		"LICENSE.md",
-		"package.json",
-		"README.md"
-	],
-	"license": "MIT",
-	"module": "./dist/src/index.js",
-	"name": "letsync",
-	"peerDependencies": {
-		"@electric-sql/pglite": ">=0.3",
-		"drizzle-orm": ">=0.44",
-		"express": ">=5",
-		"next": ">=15",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0"
-	},
-	"private": false,
-	"scripts": {
-		"build": "bun build.ts",
-		"check:code": "biome check --changed --diagnostic-level=error",
-		"check:types": "tsc --noEmit",
-		"check:unused": "knip"
-	},
-	"trustedDependencies": [
-		"oxc-resolver"
-	],
-	"type": "module",
-	"types": "./dist/src/index.d.ts",
-	"version": "0.0.2"
+  "bin": "./dist/cli/index.cjs",
+  "dependencies": {
+    "@aws-sdk/client-iot-data-plane": "^3.848.0",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "arktype": "^2.1.20",
+    "commander": "^14.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash.merge": "^4.6.2",
+    "mqtt": "^5.13.3",
+    "ora": "^8.2.0",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "ws": "^8.18.3",
+    "react": "link:react",
+    "react-dom": "link:react-dom"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.4",
+    "@biomejs/biome": "^2.1.2",
+    "@types/bun": "^1.2.18",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash.merge": "^4.6.9",
+    "@types/node": "^24.0.14",
+    "@types/ws": "^8.18.1",
+    "knip": "^5.62.0",
+    "typescript": "^5.8.3",
+    "zshy": "^0.2.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.cts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./next": {
+      "types": "./dist/(frameworks)/next/index.d.cts",
+      "import": "./dist/(frameworks)/next/index.js",
+      "require": "./dist/(frameworks)/next/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/(frameworks)/react/index.d.cts",
+      "import": "./dist/(frameworks)/react/index.js",
+      "require": "./dist/(frameworks)/react/index.cjs"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.cts",
+      "import": "./dist/server/index.js",
+      "require": "./dist/server/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "package.json",
+    "README.md"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "name": "letsync",
+  "peerDependencies": {
+    "@electric-sql/pglite": ">=0.3",
+    "drizzle-orm": ">=0.44",
+    "express": ">=5"
+  },
+  "private": false,
+  "scripts": {
+    "dev": "bun run build && bun link",
+    "build": "zshy",
+    "check:code": "biome check --changed --diagnostic-level=error",
+    "check:types": "tsc --noEmit",
+    "check:unused": "knip",
+    "publish": "npm publish --access public"
+  },
+  "trustedDependencies": [
+    "oxc-resolver",
+    "sharp"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.cts",
+  "version": "0.0.2",
+  "zshy": {
+    "bin": "./src/cli/index.ts",
+    "exports": {
+      ".": "./src/index.ts",
+      "./next": "./src/(frameworks)/next/index.ts",
+      "./react": "./src/(frameworks)/react/index.ts",
+      "./server": "./src/server/index.ts"
+    }
+  },
+  "keywords": [
+    "letsync"
+  ],
+  "description": "",
+  "author": "Aditya Borkar <hello@adityab.tech>",
+  "publishConfig": {
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
+  }
 }

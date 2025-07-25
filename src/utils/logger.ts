@@ -1,19 +1,31 @@
+// TODO: Make coloring compatible with server-side
+
 export class Logger {
 	private readonly prefix: string;
+	private readonly color: string;
 
-	constructor(prefix: string) {
+	constructor(prefix: string, color: null | string = null) {
 		this.prefix = prefix;
+		this.color = color ?? "#fff";
 	}
 
 	warn(title: string, ...messages: unknown[]) {
-		console.warn(`[${this.prefix}] ${title}`, ...messages);
+		console.warn(...this.render(title, ...messages));
 	}
 
 	error(title: string, ...messages: unknown[]) {
-		console.error(`[${this.prefix}] ${title}`, ...messages);
+		console.error(...this.render(title, ...messages));
 	}
 
 	log(title: string, ...messages: unknown[]) {
-		console.log(`[${this.prefix}] ${title}`, ...messages);
+		console.log(...this.render(title, ...messages));
+	}
+
+	private render(...msgs: unknown[]) {
+		return [
+			`%c[${this.prefix}]`,
+			`background-color: ${this.color}; color: #000;`,
+			...msgs,
+		];
 	}
 }

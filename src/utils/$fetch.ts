@@ -1,26 +1,27 @@
 import type { endpoints } from "../server/endpoints.js";
-import type { HttpMethod } from "./constants.js";
+
+type Endpoints = typeof endpoints;
 
 export async function $fetch<
-	MethodType extends HttpMethod,
-	EndpointType extends keyof typeof endpoints,
+	HttpMethod extends keyof Endpoints[Endpoint],
+	Endpoint extends keyof Endpoints,
 	// @ts-expect-error
-	SearchParamsType extends ApiRouter[MethodType][EndpointType]["searchParams"], // ! THIS DOES NOT WORk
+	SearchParams extends ApiRouter[Endpoint][HttpMethod]["searchParams"], // TODO: Implement This
 >(props: {
-	method: MethodType;
+	method: HttpMethod;
 	baseUrl: string;
-	endpoint: EndpointType;
-	searchParams?: SearchParamsType;
+	endpoint: Endpoint;
+	searchParams?: SearchParams;
 }) {
 	const { method, baseUrl, endpoint, searchParams } = props;
 	const url = `${baseUrl}${endpoint}?${new URLSearchParams(searchParams)}`;
+	// @ts-expect-error TODO: Fix this
 	const response = await fetch(url, { method })
-		.then((res) => {
-			const data = res.json() as Promise<
+		.then(async (res) => {
+			const data = (await res.json()) as Awaited<
 				// @ts-expect-error
-				ReturnType<ApiRouter[MethodType][EndpointType]>
-			>;
-			// TODO - zod.parse(data)
+				ReturnType<Endpoints[Endpoint][HttpMethod]>
+			>; // TODO: Implement This
 			return data;
 		})
 		.catch((error) => {
