@@ -1,6 +1,6 @@
 // import type { Client } from "@/types/client.js";
 
-import type { ClientParams } from "./create.js";
+import type { ClientParams } from "../create.js";
 
 type SubscribeProps = {
 	eventName: "data_received";

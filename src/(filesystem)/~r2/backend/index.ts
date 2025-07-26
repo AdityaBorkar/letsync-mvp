@@ -8,8 +8,8 @@ import type { ClientPubSub as ServerPubsub } from "@/types/~pubsub.js";
 // import { PubSubAuthorizer } from "./authorizer.js";
 
 export function PubSub({
-	// prefix,
-	// secret,
+	prefix,
+	secret,
 }: {
 	prefix: string;
 	secret: string;
@@ -40,6 +40,8 @@ export function PubSub({
 	// 	// 	filter: `${$app.name}/${$app.stage}/chat/room1`,
 	// 	// });
 	// }
+
+	console.log({ prefix, secret });
 
 	return {
 		__brand: "LETSYNC_PUBSUB",

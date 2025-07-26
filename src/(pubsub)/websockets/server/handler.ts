@@ -1,16 +1,32 @@
-import type { ServerWebSocket } from "bun";
+import type { BunRequest, Server, ServerWebSocket } from "bun";
 
 import { ArkErrors } from "arktype";
 
 import type { LetSyncContext } from "@/types/context.js";
 
-import { mutation } from "../../server/endpoints/web-sockets/messages/mutation.js";
-import { ping } from "../../server/endpoints/web-sockets/messages/ping.js";
-import { syncRequest } from "../../server/endpoints/web-sockets/messages/syncRequest.js";
+import { mutation } from "../client/messages/mutation.js";
+import { ping } from "../client/messages/ping.js";
+import { syncRequest } from "../client/messages/syncRequest.js";
 
 export interface WebsocketData {
 	userId: string;
 	connectionTime: number;
+}
+export async function getData_WS(
+	request: BunRequest,
+	_: LetSyncContext<Request>,
+	server: Server,
+) {
+	// Upgrade connection to WebSocket with authenticated user data
+	const connectionTime = Date.now();
+	const upgraded = server.upgrade(request, {
+		data: { connectionTime },
+	});
+	if (upgraded) return undefined;
+	return Response.json(
+		{ error: "Failed to upgrade to WebSocket" },
+		{ status: 400 },
+	);
 }
 
 const MessageType = syncRequest.message.or(mutation.message).or(ping.message);
@@ -20,6 +36,7 @@ export const wsHandler = {
 	// 	const { userId } = ws.data;
 	// 	console.log(`WebSocket closed for user: ${userId}`);
 	// },
+
 	async message(
 		ws: ServerWebSocket<WebsocketData>,
 		message: string,
@@ -37,6 +54,7 @@ export const wsHandler = {
 		if (data.type === "sync_request")
 			await syncRequest.handler(ws, data, context);
 	},
+
 	// async open(ws: ServerWebSocket<WebsocketData>) {
 	// 	const { userId } = ws.data;
 	// },

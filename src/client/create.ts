@@ -5,7 +5,7 @@
 import type { LetSyncConfig } from "@/types/config.js";
 import type { ClientDB, ClientFS, PubSub } from "@/types/index.js";
 
-import { subscribe } from "./addEventListener.js";
+import { subscribe } from "./device/addEventListener.js";
 import { deregister } from "./device/deregister.js";
 import { flush } from "./device/flush.js";
 import { live } from "./device/live.js";
@@ -13,12 +13,6 @@ import { pull } from "./device/pull.js";
 import { push } from "./device/push.js";
 import { reconcile } from "./device/reconcile.js";
 import { register } from "./device/register.js";
-import { init as _init } from "./functions/init.js";
-import { terminate as _terminate } from "./functions/terminate.js";
-import { checkForUpdates } from "./schema/checkForUpdates.js";
-import { migrate } from "./schema/migrate.js";
-import { metadataHandler } from "./stores/metadata.js";
-import { offlineChangesHandler } from "./stores/offlineChanges.js";
 
 export interface ClientParams {
 	db: ClientDB.Adapter<unknown>[];

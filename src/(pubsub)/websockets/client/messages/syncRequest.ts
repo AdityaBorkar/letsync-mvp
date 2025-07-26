@@ -4,7 +4,7 @@ import { type } from "arktype";
 
 import type { LetSyncContext } from "@/types/context.js";
 
-import type { WebsocketData } from "../../../../(pubsub)/websockets/ws-handler.js";
+import type { WebsocketData } from "../../ws-handler.js";
 
 const message = type({
 	"cursor?": "Date",

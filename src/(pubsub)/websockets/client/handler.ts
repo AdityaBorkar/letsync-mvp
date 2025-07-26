@@ -3,18 +3,16 @@ import { ArkErrors } from "arktype";
 import type { ClientDB } from "@/types/client.js";
 import { Logger } from "@/utils/logger.js";
 
-import { dataCache } from "./messages/data-cache.js";
-import { dataOperations } from "./messages/data-operations.js";
-import { pong } from "./messages/pong.js";
+import { dataCache } from "../server/messages/data-cache.js";
+import { dataOperations } from "../server/messages/data-operations.js";
+import { pong } from "../server/messages/pong.js";
 import { generateRefId } from "./utils.js";
-
-const logger = new Logger("SYNC:WS");
 
 const MessageType = pong.message
 	.or(dataOperations.message)
 	.or(dataCache.message);
 
-export async function syncData_WS({
+export async function syncData({
 	// apiBasePath,
 	signal,
 	databases,
@@ -28,6 +26,8 @@ export async function syncData_WS({
 		https: boolean;
 	};
 }): Promise<void> {
+	const logger = new Logger("SYNC:WS");
+
 	const ws = new window.WebSocket(
 		`${server.https ? "wss" : "ws"}://${server.endpoint}/ws`,
 	);

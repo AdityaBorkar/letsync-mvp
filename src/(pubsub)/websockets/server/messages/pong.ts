@@ -1,6 +1,6 @@
 import { type } from "arktype";
 
-import { getContextByRefId } from "../utils.js";
+import { getContextByRefId } from "../../client/utils/context.js";
 
 export const message = type({
 	refId: "string",

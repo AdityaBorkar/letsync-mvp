@@ -1,20 +1,17 @@
 import type { ServerPubSub } from "@/types/~pubsub.js";
 
 import type { ServerDB, ServerFS } from "../types/index.js";
-import cacheDelete from "./cache/delete.js";
-import cacheRetrieve from "./cache/retrieve.js";
-import cacheUpsert from "./cache/upsert.js";
-import cdcCapture from "./db/cdc/capture.js";
-import changesAdd from "./db/changes/add.js";
-import changesGet from "./db/changes/get.js";
-import changesStatus from "./db/changes/status.js";
-import databaseInit from "./db/init/index.js";
-import deviceRegister from "./device/register.js";
-import deviceUnregister from "./device/unregister.js";
-import { getMigration } from "./endpoints/getMigration.js";
-import { getSchema } from "./endpoints/getSchema.js";
-import { getData_SSE } from "./endpoints/sse/route.js";
-import { getData_WS } from "./endpoints/web-sockets/route.js";
+import cacheDelete from "./functions/cache-delete.js";
+import cacheRetrieve from "./functions/cache-retrieve.js";
+import cacheUpsert from "./functions/cache-upsert.js";
+import cdcCapture from "./functions/cdc-capture.js";
+import changesAdd from "./functions/changes-add.js";
+import changesGet from "./functions/changes-get.js";
+import changesStatus from "./functions/changes-status.js";
+import deviceRegister from "./functions/device-register.js";
+import deviceUnregister from "./functions/device-unregister.js";
+import { getSchema } from "./functions/schema-list.js";
+import { getMigration } from "./functions/schema-migration.js";
 
 export type EndpointContext = {
 	db: ServerDB.Adapter<unknown>[];
@@ -42,9 +39,9 @@ export const ApiEndpoints = {
 	"/db/changes/status": {
 		GET: changesStatus,
 	},
-	"/db/init": {
-		GET: databaseInit,
-	},
+	// "/db/init": {
+	// 	GET: databaseInit,
+	// },
 	"/device": {
 		DELETE: deviceUnregister,
 		POST: deviceRegister,
@@ -54,11 +51,5 @@ export const ApiEndpoints = {
 	},
 	"/schema/migration": {
 		GET: getMigration,
-	},
-	"/sse": {
-		GET: getData_SSE,
-	},
-	"/ws": {
-		GET: getData_WS,
 	},
 } as const;
