@@ -4,7 +4,7 @@ export async function upgrade(
 	version: string | { latest: true },
 	context: SyncContextType,
 ) {
-	const { config, isPending } = context;
+	const { config, isDbRunning: isPending } = context;
 
 	if (isPending || !config) {
 		console.log(
@@ -29,10 +29,7 @@ export async function upgrade(
 			// TODO: GET MIGRATION SQL
 			// @ts-expect-error
 			await executeSchema(db, schema.sql);
-			// @ts-expect-error
-			await db.execute(
-				`INSERT INTO client_metadata (key, value) VALUES ("${name}:schema_version", ${schema.version})`,
-			);
+			await db.sql`INSERT INTO client_metadata (key, value) VALUES ("${name}:schema_version", ${schema.version})`;
 		}
 	}
 }

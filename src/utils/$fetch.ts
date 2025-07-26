@@ -1,6 +1,6 @@
-import type { endpoints } from "../server/endpoints.js";
+import type { ApiEndpoints } from "../server/api-endpoints.js";
 
-type Endpoints = typeof endpoints;
+type Endpoints = typeof ApiEndpoints;
 
 export async function $fetch<
 	HttpMethod extends keyof Endpoints[Endpoint],
@@ -22,6 +22,7 @@ export async function $fetch<
 				// @ts-expect-error
 				ReturnType<Endpoints[Endpoint][HttpMethod]>
 			>; // TODO: Implement This
+			console.log("Data", res.status, data);
 			return data;
 		})
 		.catch((error) => {

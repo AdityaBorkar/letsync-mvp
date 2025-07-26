@@ -1,4 +1,4 @@
-import type { ClientPubSub } from "@/types/pubsub.js";
+import type { ClientPubSub } from "@/types/~pubsub.js";
 
 export function registerPubSub<T>({
 	name,

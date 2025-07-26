@@ -4,9 +4,9 @@ import { ArkErrors } from "arktype";
 
 import type { LetSyncContext } from "@/types/context.js";
 
-import { mutation } from "./endpoints/web-sockets/messages/mutation.js";
-import { ping } from "./endpoints/web-sockets/messages/ping.js";
-import { syncRequest } from "./endpoints/web-sockets/messages/syncRequest.js";
+import { mutation } from "../../server/endpoints/web-sockets/messages/mutation.js";
+import { ping } from "../../server/endpoints/web-sockets/messages/ping.js";
+import { syncRequest } from "../../server/endpoints/web-sockets/messages/syncRequest.js";
 
 export interface WebsocketData {
 	userId: string;

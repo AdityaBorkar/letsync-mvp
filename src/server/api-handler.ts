@@ -1,7 +1,7 @@
 import type { LetSyncContext } from "@/types/context.js";
 
 import type { HttpMethod } from "../utils/constants.js";
-import { endpoints } from "./endpoints.js";
+import { ApiEndpoints } from "./api-endpoints.js";
 
 export function apiHandler<R extends Request>(
 	request: R,
@@ -11,12 +11,12 @@ export function apiHandler<R extends Request>(
 	const path = url.pathname.replace(
 		ctx.apiBasePath,
 		"",
-	) as keyof typeof endpoints;
-	if (!(path in endpoints)) {
+	) as keyof typeof ApiEndpoints;
+	if (!(path in ApiEndpoints)) {
 		return new Response("Not Found", { status: 404 });
 	}
 
-	const methods = endpoints[path];
+	const methods = ApiEndpoints[path];
 	const method = request.method.toUpperCase() as HttpMethod;
 	if (!(method in methods)) {
 		return new Response("Not Found", { status: 404 });

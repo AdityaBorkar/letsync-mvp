@@ -5,29 +5,23 @@ import type { LetSyncContextClient } from "@/types/context.js";
 
 export type SyncContextType = {
 	config: LetSyncContextClient<Request> | null;
-	isPending: boolean;
+	isDbRunning: boolean;
 	isSyncing: boolean;
 	error: string | null;
 	setStatus: (status: {
-		isPending: boolean;
+		isDbRunning: boolean;
 		isSyncing: boolean;
 		error: string | null;
 	}) => void;
 	controller: AbortController;
 	setController: (controller: AbortController) => void;
-	// TODO: Add to `schema`
-	// const schema = {
-	// 	columns: {
-	// 		client_metadata: "client_metadata",
-	// 	},
-	// };
 };
 
 export const SyncContext = createContext<SyncContextType>({
 	config: null,
 	controller: new AbortController(),
 	error: null,
-	isPending: true,
+	isDbRunning: true,
 	isSyncing: false,
 	setController: () => {},
 	setStatus: () => {},
@@ -41,12 +35,12 @@ export function SyncProvider({
 	children: React.ReactNode;
 }) {
 	const [status, setStatus] = useState<{
-		isPending: boolean;
+		isDbRunning: boolean;
 		isSyncing: boolean;
 		error: string | null;
 	}>({
 		error: null,
-		isPending: true,
+		isDbRunning: true,
 		isSyncing: false,
 	});
 	const [controller, setController] = useState(new AbortController());

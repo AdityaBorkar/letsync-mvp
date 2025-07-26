@@ -2,7 +2,7 @@ import type { ServerWebSocket } from "bun";
 
 import { type } from "arktype";
 
-import type { WebsocketData } from "../../../ws-handler.js";
+import type { WebsocketData } from "../../../../(pubsub)/websockets/ws-handler.js";
 import type { PongMessage } from "./types.js";
 
 const message = type({

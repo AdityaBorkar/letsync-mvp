@@ -36,19 +36,39 @@
       "require": "./dist/index.cjs"
     },
     "./next": {
-      "types": "./dist/(frameworks)/next/index.d.cts",
-      "import": "./dist/(frameworks)/next/index.js",
-      "require": "./dist/(frameworks)/next/index.cjs"
+      "types": "./dist/(framework)/next/index.d.cts",
+      "import": "./dist/(framework)/next/index.js",
+      "require": "./dist/(framework)/next/index.cjs"
     },
     "./react": {
-      "types": "./dist/(frameworks)/react/index.d.cts",
-      "import": "./dist/(frameworks)/react/index.js",
-      "require": "./dist/(frameworks)/react/index.cjs"
+      "types": "./dist/(framework)/react/index.d.cts",
+      "import": "./dist/(framework)/react/index.js",
+      "require": "./dist/(framework)/react/index.cjs"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.cts",
+      "import": "./dist/client/index.js",
+      "require": "./dist/client/index.cjs"
+    },
+    "./drizzle": {
+      "types": "./dist/(orm)/drizzle/index.d.cts",
+      "import": "./dist/(orm)/drizzle/index.js",
+      "require": "./dist/(orm)/drizzle/index.cjs"
     },
     "./server": {
       "types": "./dist/server/index.d.cts",
       "import": "./dist/server/index.js",
       "require": "./dist/server/index.cjs"
+    },
+    "./mutations": {
+      "types": "./dist/mutations/index.d.cts",
+      "import": "./dist/mutations/index.js",
+      "require": "./dist/mutations/index.cjs"
+    },
+    "./ws": {
+      "types": "./dist/(pubsub)/websockets/index.d.cts",
+      "import": "./dist/(pubsub)/websockets/index.js",
+      "require": "./dist/(pubsub)/websockets/index.cjs"
     }
   },
   "files": [
@@ -86,9 +106,13 @@
     "bin": "./src/cli/index.ts",
     "exports": {
       ".": "./src/index.ts",
-      "./next": "./src/(frameworks)/next/index.ts",
-      "./react": "./src/(frameworks)/react/index.ts",
-      "./server": "./src/server/index.ts"
+      "./next": "./src/(framework)/next/index.ts",
+      "./react": "./src/(framework)/react/index.ts",
+      "./client": "./src/client/index.ts",
+      "./drizzle": "./src/(orm)/drizzle/index.ts",
+      "./server": "./src/server/index.ts",
+      "./mutations": "./src/mutations/index.ts",
+      "./ws": "./src/(pubsub)/websockets/index.ts"
     }
   },
   "keywords": [

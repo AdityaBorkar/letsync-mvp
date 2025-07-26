@@ -1,4 +1,4 @@
-import type { ServerPubSub } from "@/types/pubsub.js";
+import type { ServerPubSub } from "@/types/~pubsub.js";
 
 import type { ServerDB, ServerFS } from "../types/index.js";
 import cacheDelete from "./cache/delete.js";
@@ -26,7 +26,7 @@ export type EndpointContext = {
 	};
 };
 
-export const endpoints = {
+export const ApiEndpoints = {
 	"/cache": {
 		DELETE: cacheDelete,
 		GET: cacheRetrieve,

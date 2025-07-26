@@ -1,5 +1,5 @@
+import type { ClientPubSub, ServerPubSub } from "./~pubsub.js";
 import type { ClientDB, ClientFS } from "./client.js";
-import type { ClientPubSub, ServerPubSub } from "./pubsub.js";
 import type { ServerDB, ServerFS } from "./server.js";
 
 export type ApiHandlerAuth<R extends Request> = (

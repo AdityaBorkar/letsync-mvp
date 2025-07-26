@@ -1,20 +1,13 @@
 export namespace ServerDB {
-	export type Adapter<DT> = SqlServerDb<DT> | NoSqlServerDb<DT>;
-
-	type ServerDb<DT> = {
+	export type Adapter<DT> = {
 		__brand: "LETSYNC_SERVER_DB";
 		name: string;
-		db: DT;
+		client: DT;
+		sql: (
+			template: TemplateStringsArray,
+			...args: unknown[]
+		) => Promise<unknown>;
 		// waitUntilReady: () => Promise<void>;
-	};
-
-	type SqlServerDb<DT> = ServerDb<DT> & {
-		// type: "SQL";
-		// query: (query: string) => Promise<unknown>;
-	};
-
-	type NoSqlServerDb<DT> = ServerDb<DT> & {
-		// type: "NOSQL";
 	};
 }
 

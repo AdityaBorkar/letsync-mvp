@@ -99,7 +99,7 @@ interface MigrationResult {
 }
 
 async function generateMigrationSql(
-	db: ServerDB.Adapter<unknown>["db"],
+	db: ServerDB.Adapter<unknown>["client"],
 	fromVersion: number,
 	toVersion?: number | null,
 	name?: string | null,

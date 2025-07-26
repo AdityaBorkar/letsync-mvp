@@ -1,10 +1,11 @@
-import type {
-	ClientDB_Store_Metadata,
-	ClientDB_Store_OfflineChanges,
-} from "@/types/client-store.js";
+// import type {
+// 	ClientDB_Store_Metadata,
+// 	ClientDB_Store_OfflineChanges,
+// } from "@/types/client-store.js";
 import type { LetSyncConfig } from "@/types/config.js";
 import type { ClientDB, ClientFS, PubSub } from "@/types/index.js";
 
+import { subscribe } from "./addEventListener.js";
 import { deregister } from "./device/deregister.js";
 import { flush } from "./device/flush.js";
 import { live } from "./device/live.js";
@@ -12,7 +13,6 @@ import { pull } from "./device/pull.js";
 import { push } from "./device/push.js";
 import { reconcile } from "./device/reconcile.js";
 import { register } from "./device/register.js";
-import { subscribe } from "./functions/addEventListener.js";
 import { init as _init } from "./functions/init.js";
 import { terminate as _terminate } from "./functions/terminate.js";
 import { checkForUpdates } from "./schema/checkForUpdates.js";
@@ -26,8 +26,8 @@ export interface ClientParams {
 	pubsub: PubSub.Adapter<unknown>;
 	config: LetSyncConfig<Request>;
 	stores: {
-		metadata: ClientDB_Store_Metadata;
-		offlineChanges: ClientDB_Store_OfflineChanges;
+		metadata: any; // ClientDB_Store_Metadata;
+		offlineChanges: any; // ClientDB_Store_OfflineChanges;
 	};
 }
 

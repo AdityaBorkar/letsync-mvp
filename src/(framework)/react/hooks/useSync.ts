@@ -1,8 +1,6 @@
 import { useContext } from "react";
 
-import { start } from "@/client/db/start.js";
-import { terminate } from "@/client/db/terminate.js";
-import { upgrade } from "@/client/db/upgrade.js";
+import { start, terminate, upgrade } from "@/client/index.js";
 
 import { SyncContext } from "./SyncProvider.js";
 

@@ -1,4 +1,4 @@
-import type { ClientPubSub as ClientPubsub } from "@/types/pubsub.js";
+import type { ClientPubSub as ClientPubsub } from "@/types/~pubsub.js";
 
 import $connect from "./connect.js";
 

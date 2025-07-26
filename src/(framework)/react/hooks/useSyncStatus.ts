@@ -8,7 +8,7 @@ export enum NetworkStatus {
 }
 
 export function useSyncStatus() {
-	const { isPending, isSyncing, error } = useContext(SyncContext);
+	const { isDbRunning: isPending, isSyncing, error } = useContext(SyncContext);
 	const [networkState, setNetworkState] = useState<NetworkStatus>(
 		"online" in navigator
 			? navigator.onLine

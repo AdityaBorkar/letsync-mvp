@@ -54,6 +54,6 @@ export async function getSchema(
 
 function getServerDb(db: Map<string, ServerDB.Adapter<unknown>>) {
 	const DEFAULT_DB = "postgres"; // TODO: Make this dynamic
-	if (db.size === 1) return db.values().next().value?.db;
-	return db.get(DEFAULT_DB)?.db;
+	if (db.size === 1) return db.values().next().value?.client;
+	return db.get(DEFAULT_DB)?.client;
 }

@@ -1,5 +1,4 @@
 /** biome-ignore-all lint/performance/noBarrelFile: THIS IS A LIBRARY */
 
+export { ApiEndpoints } from "./api-endpoints.js";
 export { apiHandler } from "./api-handler.js";
-export { endpoints } from "./endpoints.js";
-export { wsHandler } from "./ws-handler.js";

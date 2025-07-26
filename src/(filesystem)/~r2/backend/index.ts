@@ -3,7 +3,7 @@
 // 	PublishCommand,
 // } from "@aws-sdk/client-iot-data-plane";
 
-import type { ClientPubSub as ServerPubsub } from "@/types/pubsub.js";
+import type { ClientPubSub as ServerPubsub } from "@/types/~pubsub.js";
 
 // import { PubSubAuthorizer } from "./authorizer.js";
 

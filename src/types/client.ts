@@ -16,14 +16,5 @@ export namespace ClientDB {
 			template: TemplateStringsArray,
 			...args: unknown[]
 		): Promise<R>;
-		// open: () => Promise<void>;
-		// close: () => Promise<void>;
-		// flush: () => Promise<void>;
-		// buildSchema: (schema: null) => Promise<void>;
-		// sql: any;
-		// exportData: (options: {
-		// 	compression: "none" | "gzip" | "auto";
-		// }) => Promise<File | Blob>;
-		// storageMetrics: () => void;
 	};
 }
