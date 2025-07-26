@@ -2,7 +2,7 @@ import { $fetch } from "@/utils/$fetch.js";
 
 // import { Logger } from "@/utils/logger.js";
 
-import type { ClientParams } from "../functions/create.js";
+import type { ClientParams } from "../create.js";
 
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
 interface DeregisterProps {

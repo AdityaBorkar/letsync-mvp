@@ -1,4 +1,4 @@
-import type { ClientParams } from "../functions/create.js";
+import type { ClientParams } from "../create.js";
 
 // biome-ignore lint/suspicious/noEmptyInterface: <explanation>
 interface PushProps {}

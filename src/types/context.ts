@@ -6,7 +6,7 @@ export type LetSyncContext<R extends Request> =
 	| LetSyncContextClient<R>
 	| LetSyncContextServer<R>;
 
-type LetSyncContextClient<R extends Request> = {
+export type LetSyncContextClient<R extends Request> = {
 	apiBasePath: string;
 	auth: ApiHandlerAuth<R>;
 	env: "CLIENT";
@@ -14,7 +14,7 @@ type LetSyncContextClient<R extends Request> = {
 	fs: Map<string, ClientFS.Adapter<unknown>>;
 };
 
-type LetSyncContextServer<R extends Request> = {
+export type LetSyncContextServer<R extends Request> = {
 	apiBasePath: string;
 	auth: ApiHandlerAuth<R>;
 	env: "SERVER";

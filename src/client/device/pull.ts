@@ -1,4 +1,4 @@
-import type { ClientParams } from "../functions/create.js";
+import type { ClientParams } from "../create.js";
 
 // import { Fetch } from '@/util/Fetch.js';
 

@@ -57,7 +57,7 @@ export async function getMigration(
 		}
 
 		// Generate migration SQL
-		const result = await generateMigrationSql(serverDb.db, from, to, name);
+		const result = await generateMigrationSql(serverDb.client, from, to, name);
 
 		if (!result) {
 			return Response.json(

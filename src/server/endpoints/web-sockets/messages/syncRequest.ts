@@ -68,7 +68,7 @@ export async function handler(
 		limit: number;
 	}): Promise<void> => {
 		// @ts-expect-error FIX THIS
-		const data_ops = await serverDb.db.sql`
+		const data_ops = await serverDb.client.sql`
 		SELECT * FROM cdc
 		WHERE tenantId = ${userId}
 		ORDER BY id ASC

@@ -10,8 +10,12 @@ export namespace ClientFS {
 export namespace ClientDB {
 	export type Adapter<T> = {
 		__brand: "LETSYNC_CLIENT_DB";
-		db: T;
+		client: T;
 		name: string;
+		sql<R extends unknown[]>(
+			template: TemplateStringsArray,
+			...args: unknown[]
+		): Promise<R>;
 		// open: () => Promise<void>;
 		// close: () => Promise<void>;
 		// flush: () => Promise<void>;

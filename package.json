@@ -16,15 +16,16 @@
     "react-dom": "link:react-dom"
   },
   "devDependencies": {
-    "@types/pg": "^8.15.4",
     "@biomejs/biome": "^2.1.2",
     "@types/bun": "^1.2.18",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "^24.0.14",
+    "@types/pg": "^8.15.4",
     "@types/ws": "^8.18.1",
     "knip": "^5.62.0",
+    "next": "^15.4.4",
     "typescript": "^5.8.3",
     "zshy": "^0.2.5"
   },
@@ -61,8 +62,8 @@
   "module": "./dist/index.js",
   "name": "letsync",
   "peerDependencies": {
-    "@electric-sql/pglite": ">=0.3",
-    "drizzle-orm": ">=0.44",
+    "@electric-sql/pglite": "^0.3.5",
+    "drizzle-orm": "^0.44.3",
     "express": ">=5"
   },
   "private": false,

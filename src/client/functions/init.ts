@@ -1,12 +1,12 @@
 // import { Console } from "@/util/Console.js";
 
+import type { ClientParams } from "../create.js";
 // import { live } from '../device/live.js';
 // import { pull } from '../device/pull.js';
 // import { push } from '../device/push.js';
 // import { register } from '../device/register.js';
 import { checkForUpdates } from "../schema/checkForUpdates.js";
 import { migrate } from "../schema/migrate.js";
-import type { ClientParams } from "./create.js";
 
 type InitProps =
 	| undefined

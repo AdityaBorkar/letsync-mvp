@@ -1,4 +1,4 @@
-import type { ClientParams } from "./create.js";
+import type { ClientParams } from "../create.js";
 
 type TerminateProps = undefined;
 

@@ -1,6 +1,6 @@
 // import { Console } from "@/util/Console.js";
 
-import type { ClientParams } from "../functions/create.js";
+import type { ClientParams } from "../create.js";
 
 interface MigrateSchemaProps {
 	version: number | "latest";
