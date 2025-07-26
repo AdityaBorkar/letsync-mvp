@@ -6,7 +6,11 @@ import type { ServerDB, ServerFS } from "@/types/server.js";
 export function LetSync<R extends Request>(config: LetSyncConfig<R>) {
 	const env = typeof window !== "undefined" ? "CLIENT" : "SERVER";
 	const env_lowercase = env.toLowerCase() as "client" | "server";
-	const apiBasePath = config.apiBasePath || "/api/sync";
+	const api = config.api || {
+		basePath: "/api/sync",
+		domain: "localhost",
+		https: false,
+	};
 
 	// TODO - Auth Provider check
 	if (!config.auth) {
@@ -45,5 +49,5 @@ export function LetSync<R extends Request>(config: LetSyncConfig<R>) {
 
 	// const mutation = new MutationBuilder(config);
 
-	return { apiBasePath, auth, db, env, fs } as LetSyncContext<R>;
+	return { api, auth, db, env, fs } as LetSyncContext<R>;
 }

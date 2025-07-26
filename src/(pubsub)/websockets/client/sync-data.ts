@@ -1,42 +1,32 @@
 import { ArkErrors } from "arktype";
 
-import type { ClientDB } from "@/types/client.js";
+import type { LetSyncContextClient } from "@/types/context.js";
 import { Logger } from "@/utils/logger.js";
 
 import { dataCache } from "../server/messages/data-cache.js";
 import { dataOperations } from "../server/messages/data-operations.js";
 import { pong } from "../server/messages/pong.js";
-import { generateRefId } from "./utils.js";
+import { generateRefId } from "./utils/generate-ref-id.js";
 
 const MessageType = pong.message
 	.or(dataOperations.message)
 	.or(dataCache.message);
 
-export async function syncData({
-	// apiBasePath,
-	signal,
-	databases,
-	server,
-}: {
-	apiBasePath: string;
-	signal: AbortSignal;
-	databases: Map<string, ClientDB.Adapter<unknown>>;
-	server: {
-		endpoint: string;
-		https: boolean;
-	};
-}): Promise<void> {
+export async function syncData(
+	context: LetSyncContextClient<Request>,
+): Promise<void> {
+	const { api, db } = context;
 	const logger = new Logger("SYNC:WS");
 
 	const ws = new window.WebSocket(
-		`${server.https ? "wss" : "ws"}://${server.endpoint}/ws`,
+		`${api.https ? "wss" : "ws"}://${api.domain}/${api.basePath}/ws`,
 	);
 
 	ws.onopen = async () => {
 		ws.send(JSON.stringify({ refId: generateRefId(), type: "ping" }));
-		for (const [name, db] of databases.entries()) {
+		for (const [name, database] of db.entries()) {
 			const timestamp =
-				await db.sql`SELECT * FROM client_metadata WHERE key = ${name}:cursor`.then(
+				await database.sql`SELECT * FROM client_metadata WHERE key="${name}:cursor"`.then(
 					// @ts-expect-error FIX THIS
 					(result) => result.rows[0]?.value || "",
 				);
@@ -61,7 +51,7 @@ export async function syncData({
 		if (data.type === "pong") pong.handler(ws, data);
 		if (data.type === "data_cache") dataCache.handler(ws, data);
 		if (data.type === "data_operations") dataOperations.handler(ws, data);
-		// mutation_ack
+		// TODO: `mutation_ack`
 	};
 
 	ws.onerror = (error) => {
@@ -75,7 +65,5 @@ export async function syncData({
 		// TODO: Report Status
 	};
 
-	signal.addEventListener("abort", () => {
-		ws.close();
-	});
+	// signal.addEventListener("abort", () => ws.close());
 }

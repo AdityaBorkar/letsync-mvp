@@ -8,10 +8,7 @@ export function apiHandler<R extends Request>(
 	ctx: LetSyncContext<R>,
 ) {
 	const url = new URL(request.url);
-	const path = url.pathname.replace(
-		ctx.apiBasePath,
-		"",
-	) as keyof typeof ApiEndpoints;
+	const path = url.pathname.replace(ctx.api, "") as keyof typeof ApiEndpoints;
 	if (!(path in ApiEndpoints)) {
 		return new Response("Not Found", { status: 404 });
 	}

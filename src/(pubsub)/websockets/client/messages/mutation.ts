@@ -2,6 +2,8 @@ import type { ServerWebSocket } from "bun";
 
 import { type } from "arktype";
 
+import type { WebsocketData } from "../../server/handler.js";
+
 const message = type({
 	database: [{ cursor: "string", name: "string" }, "[]"],
 	refId: "string",

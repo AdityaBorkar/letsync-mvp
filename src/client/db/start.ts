@@ -22,7 +22,7 @@ export async function start(
 
 	// Config
 	if (!config) throw new Error("No config found");
-	const { apiBasePath, db: databases } = config;
+	const { api, db: databases } = config;
 	const { autoUpgrade, checkForUpdates } = params;
 
 	// Setup Databases
@@ -43,7 +43,7 @@ export async function start(
 
 			const schema = await tryCatch(
 				$fetch({
-					baseUrl: apiBasePath,
+					baseUrl: api.basePath,
 					endpoint: "/schema",
 					method: "GET",
 					searchParams: CurrentVersion

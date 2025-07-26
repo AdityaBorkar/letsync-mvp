@@ -33,6 +33,6 @@
 		"strict": true,
 		"target": "es2020"
 	},
-	"exclude": ["node_modules", "build.ts"],
+	"exclude": ["node_modules", "build.ts", "dist"],
 	"include": ["**/*.ts", "**/*.tsx", "**/**/*.ts", "**/**/*.tsx"]
 }

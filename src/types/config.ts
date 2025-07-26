@@ -9,7 +9,7 @@ export type ApiHandlerAuth<R extends Request> = (
 	| { message: string; status: 401 | 403 | 404 | 500 };
 
 export type LetSyncConfig<R extends Request> = {
-	apiBasePath?: string;
+	api?: { basePath: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	client: (ClientDB.Adapter<unknown> | ClientFS.Adapter<unknown>)[];
 	pubsub: ClientPubSub.Adapter<unknown> | ServerPubSub.Adapter<unknown>;

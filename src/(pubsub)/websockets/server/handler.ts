@@ -19,9 +19,7 @@ export async function getData_WS(
 ) {
 	// Upgrade connection to WebSocket with authenticated user data
 	const connectionTime = Date.now();
-	const upgraded = server.upgrade(request, {
-		data: { connectionTime },
-	});
+	const upgraded = server.upgrade(request, { data: { connectionTime } });
 	if (upgraded) return undefined;
 	return Response.json(
 		{ error: "Failed to upgrade to WebSocket" },
