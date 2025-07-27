@@ -3,7 +3,7 @@ import { $fetch } from "@/utils/$fetch.js";
 import { Logger } from "@/utils/logger.js";
 import { tryCatch } from "@/utils/try-catch.js";
 
-import { syncData } from "./syncData.js";
+import { syncData } from "./sync-data.js";
 import { upgrade } from "./upgrade.js";
 import { getSchema, insertSchemas } from "./utils/schema.js";
 

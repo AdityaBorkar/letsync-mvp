@@ -1,6 +1,5 @@
 import type { LetSyncContext } from "@/types/context.js";
 
-import type { HttpMethod } from "../utils/constants.js";
 import { ApiEndpoints } from "./api-endpoints.js";
 
 export function apiHandler<R extends Request>(
@@ -8,18 +7,20 @@ export function apiHandler<R extends Request>(
 	ctx: LetSyncContext<R>,
 ) {
 	const url = new URL(request.url);
-	const path = url.pathname.replace(ctx.api, "") as keyof typeof ApiEndpoints;
+	const path = url.pathname.replace(
+		ctx.api.basePath,
+		"",
+	) as keyof typeof ApiEndpoints;
 	if (!(path in ApiEndpoints)) {
 		return new Response("Not Found", { status: 404 });
 	}
 
 	const methods = ApiEndpoints[path];
-	const method = request.method.toUpperCase() as HttpMethod;
+	const method = request.method.toUpperCase() as keyof typeof methods;
 	if (!(method in methods)) {
 		return new Response("Not Found", { status: 404 });
 	}
 
-	// @ts-expect-error - TODO: Fix this
 	const endpoint = methods[method];
 	if (!endpoint) {
 		return new Response("Not Found", { status: 404 });
@@ -31,5 +32,6 @@ export function apiHandler<R extends Request>(
 		return new Response(message, { status });
 	}
 
+	// @ts-expect-error - TODO: Fix this
 	return endpoint(request, ctx);
 }

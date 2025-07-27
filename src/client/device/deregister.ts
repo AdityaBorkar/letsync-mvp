@@ -14,13 +14,13 @@ export async function deregister(props: DeregisterProps, params: ClientParams) {
 	const logs = console; // Logger({ fn: "deregister" });
 
 	const { metadata } = params.stores;
-	const { apiBasePath } = params.config;
+	const { api } = params.config;
 
 	const existingDevice = await metadata.get("device");
 	logs.debug({ existingDevice });
 
 	const data = await $fetch({
-		baseUrl: apiBasePath || "",
+		baseUrl: api.basePath,
 		endpoint: "/device",
 		method: "DELETE",
 		searchParams: { deviceId: existingDevice?.deviceId },

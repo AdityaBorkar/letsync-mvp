@@ -11,7 +11,7 @@ export async function register(props: RegisterProps, params: ClientParams) {
 	props;
 	const logs = console; // Logger({ fn: "register" });
 
-	const { apiBasePath } = params.config;
+	const { api } = params.config;
 	const { metadata } = params.stores;
 
 	const existingDevice = await metadata.get("device");
@@ -27,7 +27,7 @@ export async function register(props: RegisterProps, params: ClientParams) {
 		// 		})
 		// 	:
 		await $fetch({
-			baseUrl: apiBasePath || "",
+			baseUrl: api.basePath,
 			endpoint: "/device",
 			method: "POST",
 		});

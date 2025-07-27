@@ -7,7 +7,7 @@ type SubscribeProps = {
 	callback: (data: any) => void;
 };
 
-export async function subscribe(props: SubscribeProps, params: ClientParams) {
+export async function subscribe(__: SubscribeProps, _: ClientParams) {
 	const unsubscribe = () => {};
 	return unsubscribe;
 }

@@ -12,6 +12,7 @@ export type LetSyncContextClient<R extends Request> = {
 	env: "CLIENT";
 	db: Map<string, ClientDB.Adapter<unknown>>;
 	fs: Map<string, ClientFS.Adapter<unknown>>;
+	addEventListener: () => void;
 };
 
 export type LetSyncContextServer<R extends Request> = {
