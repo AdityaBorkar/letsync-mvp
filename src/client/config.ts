@@ -1,21 +1,21 @@
 import type { ClientDB, ClientFS, ClientPubSub } from "@/types/client.js";
 import type { ApiHandlerAuth } from "@/types/context.js";
 import { FetchClient } from "@/utils/fetch-client.js";
-import { DataExport } from "./functions/data-export.js";
-import { DataFlush } from "./functions/data-flush.js";
-import { DataPull } from "./functions/data-pull.js";
-import { DataPush } from "./functions/data-push.js";
-import { DataReset } from "./functions/data-reset.js";
-import { DataSize } from "./functions/data-size.js";
-import { DataSync } from "./functions/data-sync.js";
-import { DataVerify } from "./functions/data-verify.js";
-import { DeviceDeregister } from "./functions/device-deregister.js";
-import { DeviceRegister } from "./functions/device-register.js";
+// import { DataExport } from "./functions/data-export.js";
+// import { DataFlush } from "./functions/data-flush.js";
+// import { DataPull } from "./functions/data-pull.js";
+// import { DataPush } from "./functions/data-push.js";
+// import { DataReset } from "./functions/data-reset.js";
+// import { DataSize } from "./functions/data-size.js";
+// import { DataSync } from "./functions/data-sync.js";
+// import { DataVerify } from "./functions/data-verify.js";
+// import { DeviceDeregister } from "./functions/device-deregister.js";
+// import { DeviceRegister } from "./functions/device-register.js";
 import { EventManager } from "./functions/event-manager.js";
+import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.js";
 import { SchemaList } from "./functions/schema-list.js";
-import { SchemaPull } from "./functions/schema-pull.js";
-import { SchemaPush } from "./functions/schema-push.js";
 import { SchemaUpgrade } from "./functions/schema-upgrade.js";
+import { SchemaVerify } from "./functions/schema-verify.js";
 import { SyncStart } from "./functions/sync-start.js";
 import { SyncTerminate } from "./functions/sync-terminate.js";
 import { Signal } from "./utils/signal.js";
@@ -27,6 +27,12 @@ export type Context = {
 	fs: Map<string, ClientFS.Adapter<unknown>>;
 	pubsub: Map<string, ClientPubSub.Adapter<unknown>>;
 	controller: AbortController;
+	status: {
+		isDbRunning: Signal<boolean>;
+		isFsRunning: Signal<boolean>;
+		isSyncing: Signal<boolean>;
+		isOnline: Signal<boolean>;
+	};
 	fetch: ReturnType<typeof FetchClient>;
 };
 
@@ -83,8 +89,8 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 
 	// * Event Manager
 	const { subscribe } = EventManager();
-
 	// * Status
+
 	const isOnline = new Signal(false);
 	const isSyncing = new Signal(false);
 	const isDbRunning = new Signal(false);
@@ -107,37 +113,44 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	});
 
 	// * Context
-	const context: Context = { fetch, controller, db, fs, pubsub };
+	const status = { isDbRunning, isFsRunning, isSyncing, isOnline };
+	const context: Context = { fetch, controller, db, fs, pubsub, status };
 
 	// * Primitive Functions
 	const data = {
-		sync: (_: Parameters<typeof DataSync>[0]) => DataSync(_, context),
-		export: (_: Parameters<typeof DataExport>[0]) => DataExport(_, context),
-		flush: (_: Parameters<typeof DataFlush>[0]) => DataFlush(_, context),
-		pull: (_: Parameters<typeof DataPull>[0]) => DataPull(_, context),
-		push: (_: Parameters<typeof DataPush>[0]) => DataPush(_, context),
-		reset: (_: Parameters<typeof DataReset>[0]) => DataReset(_, context),
-		verify: (_: Parameters<typeof DataVerify>[0]) => DataVerify(_, context),
-		size: (_: Parameters<typeof DataSize>[0]) => DataSize(_, context),
+		// sync: (_: Parameters<typeof DataSync>[0]) => DataSync(_, context),
+		// export: (_: Parameters<typeof DataExport>[0]) => DataExport(_, context),
+		// flush: (_: Parameters<typeof DataFlush>[0]) => DataFlush(_, context),
+		// pull: (_: Parameters<typeof DataPull>[0]) => DataPull(_, context),
+		// push: (_: Parameters<typeof DataPush>[0]) => DataPush(_, context),
+		// reset: (_: Parameters<typeof DataReset>[0]) => DataReset(_, context),
+		// verify: (_: Parameters<typeof DataVerify>[0]) => DataVerify(_, context),
+		// size: (_: Parameters<typeof DataSize>[0]) => DataSize(_, context),
 	};
 	const device = {
 		// deviceId: "",
-		register: (_: Parameters<typeof DeviceRegister>[0]) =>
-			DeviceRegister(_, context),
-		deregister: (_: Parameters<typeof DeviceDeregister>[0]) =>
-			DeviceDeregister(_, context),
+		// register: (_: Parameters<typeof DeviceRegister>[0]) =>
+		// 	DeviceRegister(_, context),
+		// deregister: (_: Parameters<typeof DeviceDeregister>[0]) =>
+		// 	DeviceDeregister(_, context),
 	};
 	const schema = {
-		push: (_: Parameters<typeof SchemaPush>[0]) => SchemaPush(_, context),
-		pull: (_: Parameters<typeof SchemaPull>[0]) => SchemaPull(_, context),
+		checkForUpdates: (_: Parameters<typeof SchemaCheckForUpdates>[0]) =>
+			SchemaCheckForUpdates(_, context),
 		list: (_: Parameters<typeof SchemaList>[0]) => SchemaList(_, context),
 		upgrade: (_: Parameters<typeof SchemaUpgrade>[0]) =>
 			SchemaUpgrade(_, context),
+		verify: (_: Parameters<typeof SchemaVerify>[0]) => SchemaVerify(_, context),
 	};
 
 	// * Compound Functions
 	const sync = {
-		start: (_: Parameters<typeof SyncStart>[0]) => SyncStart(_, context),
+		start: (
+			_: Parameters<typeof SyncStart>[0] = {
+				autoUpgrade: true,
+				checkForUpdates: true,
+			},
+		) => SyncStart(_, context),
 		terminate: () => SyncTerminate(undefined, context),
 	};
 

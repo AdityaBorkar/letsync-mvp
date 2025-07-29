@@ -33,9 +33,9 @@ export async function getSchema(
 
 	// TODO: Implement `name`
 	// AND name = '${name}'
-	const { rows: records } = await serverDb.sql<
-		SQL_Schemas.Schema[]
-	>`SELECT * FROM client_schemas ${version ? `WHERE version > ${version}` : ""} ORDER BY created_at ${version ? "ASC" : "DESC LIMIT 1;"}`;
+	const { rows: records } = await serverDb.sql<SQL_Schemas.Schema[]>(
+		`SELECT * FROM client_schemas ${version ? `WHERE version > ${version}` : ""} ORDER BY created_at ${version ? "ASC" : "DESC LIMIT 1;"}`,
+	);
 
 	if (records.length === 0) {
 		return Response.json(

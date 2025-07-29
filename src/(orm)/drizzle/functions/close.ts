@@ -9,6 +9,6 @@ export function close(client: DrizzleDB) {
 		return $client.end() as unknown as Promise<void>;
 	}
 	throw new Error(
-		"Closing is not supported by the Database Client. Kindly raise a GitHub Issue.",
+		".close() is not supported by the Database Client. Kindly raise a GitHub Issue [INSERT PRE-FILLED DATA HERE].",
 	);
 }

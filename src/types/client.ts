@@ -16,9 +16,10 @@ export namespace ClientDB {
 		client: T;
 		name: string;
 		sql<R>(
-			template: TemplateStringsArray,
+			template: TemplateStringsArray | string,
 			...args: unknown[]
 		): Promise<{ affectedRows: number; rows: R[]; fields: unknown[] }>; // TODO: Write Types for `fields`
+		start: () => Promise<void>;
 		close: () => Promise<void>;
 	};
 }

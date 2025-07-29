@@ -13,5 +13,6 @@ export namespace SQL_Schemas {
 		sql: string;
 		tag: string;
 		version: number;
+		applied_at: string;
 	};
 }

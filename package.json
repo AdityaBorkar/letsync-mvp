@@ -11,9 +11,10 @@
 		"ora": "^8.2.0",
 		"pg": "^8.16.3",
 		"postgres": "^3.4.7",
-		"ws": "^8.18.3",
 		"react": "link:react",
-		"react-dom": "link:react-dom"
+		"react-dom": "link:react-dom",
+		"sqlstring": "^2.3.3",
+		"ws": "^8.18.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.0.0-beta.6",

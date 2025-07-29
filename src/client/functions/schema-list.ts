@@ -1,14 +1,32 @@
+import type { SQL_Schemas } from "@/types/schemas.js";
 import type { Context } from "../config.js";
+import { metadata } from "../utils/metadata.js";
+import { schema } from "../utils/schema.js";
 
-// biome-ignore lint/suspicious/noEmptyInterface: <explanation>
-interface ListProps {}
+export async function SchemaList(
+	props: {
+		dbName: string;
+		filterByUpgrade: boolean;
+	},
+	context: Context,
+) {
+	const { dbName, filterByUpgrade } = props;
 
-export function SchemaList(props: ListProps, context: Context) {
-	console.log({ context, props });
-	// TODO - (WRITE LOCK) ENABLE
-	// TODO - PUSH WRITE REQUESTS
-	// TODO - COLLECT ERRORS (DO NOT DO ANYTHING WITH THEM FOR NOW)
-	// TODO - (WRITE LOCK) RELEASE
-	// const CurrentVersion = await getSchema(db);
-	// const versions = await this.schema.listUpdates(db, CurrentVersion);
+	const data: SQL_Schemas.Schema[] = [];
+
+	const db = context.db.get(dbName);
+	if (!db) {
+		return { data: undefined, error: "No database found." };
+	}
+
+	const CurrentVersion = await metadata.get(db, `${db.name}:schema_version`);
+	if (!CurrentVersion) {
+		return { data: undefined, error: "No version found." };
+	}
+
+	const aboveVersion = filterByUpgrade ? CurrentVersion : undefined;
+	const list = await schema.list(db, aboveVersion);
+	data.push(...list);
+
+	return { data, error: undefined };
 }

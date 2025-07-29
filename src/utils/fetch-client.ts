@@ -23,26 +23,32 @@ export function FetchClient(apiUrl: {
 			// TODO: Do not allow Body on GET & HEAD requests
 		},
 	) => {
-		const url = new URL(`${baseUrl}${endpoint}`);
-		Object.entries(props?.searchParams ?? {}).forEach(([key, value]) => {
-			url.searchParams.set(key, String(value));
-		});
+		try {
+			const url = new URL(`${baseUrl}${endpoint}`);
+			Object.entries(props?.searchParams ?? {}).forEach(([key, value]) => {
+				url.searchParams.set(key, String(value));
+			});
 
-		const hasBody = props?.body && Object.keys(props.body).length > 0;
-		const response = await fetch(url, {
-			method: method as string,
-			...(hasBody && {
-				// headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(props.body),
-			}),
-		});
+			const hasBody = props?.body && Object.keys(props.body).length > 0;
+			const response = await fetch(url, {
+				method: method as string,
+				...(hasBody && {
+					// headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(props.body),
+				}),
+			});
 
-		if (!response.ok) {
-			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			if (!response.ok) {
+				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+			}
+
+			const data = (await response.json()) as unknown;
+			return { data, error: undefined };
+		} catch (err) {
+			console.error(err);
+			const error = err as Error;
+			return { data: undefined, error };
 		}
-
-		const data = await response.json();
-		return data as unknown; // TODO: Write Type Definitions
 	};
 
 	return $fetch;
