@@ -1,6 +1,4 @@
-import type { SQL_Schemas } from "@/types/schemas.js";
 import type { Context } from "../config.js";
-import { metadata } from "../utils/metadata.js";
 
 export async function SchemaUpgrade(
 	props: { dbName: string; version: number | { latest: true } },
@@ -12,16 +10,12 @@ export async function SchemaUpgrade(
 		throw new Error("Database not found");
 	}
 
-	const current_version = await metadata.get(db, `${db.name}:schema_version`);
+	const current_version = await db.metadata.get(`${db.name}:schema_version`);
 
-	let sql = `SELECT * FROM client_schemas`;
-	if (current_version) {
-		sql += ` WHERE version > ${current_version}`;
-		sql += typeof version === "string" ? ` AND version <= ${version}` : "";
-	}
-	sql += " ORDER BY created_at ASC";
-
-	const { rows: schemas } = await db.sql<SQL_Schemas.Schema>(sql);
+	const schemas = await db.schema.list(
+		String(current_version),
+		String(version),
+	);
 	if (schemas.length === 0) {
 		console.log("No updates found");
 		return;

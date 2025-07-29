@@ -1,6 +1,7 @@
 import type { ClientDB, ClientFS, ClientPubSub } from "@/types/client.js";
 import type { ApiHandlerAuth } from "@/types/context.js";
 import { FetchClient } from "@/utils/fetch-client.js";
+import { Signal } from "../utils/signal.js";
 // import { DataExport } from "./functions/data-export.js";
 // import { DataFlush } from "./functions/data-flush.js";
 // import { DataPull } from "./functions/data-pull.js";
@@ -18,7 +19,6 @@ import { SchemaUpgrade } from "./functions/schema-upgrade.js";
 import { SchemaVerify } from "./functions/schema-verify.js";
 import { SyncStart } from "./functions/sync-start.js";
 import { SyncTerminate } from "./functions/sync-terminate.js";
-import { Signal } from "./utils/signal.js";
 
 export type Client = ReturnType<typeof LetSyncClient>;
 
@@ -127,13 +127,6 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 		// verify: (_: Parameters<typeof DataVerify>[0]) => DataVerify(_, context),
 		// size: (_: Parameters<typeof DataSize>[0]) => DataSize(_, context),
 	};
-	const device = {
-		// deviceId: "",
-		// register: (_: Parameters<typeof DeviceRegister>[0]) =>
-		// 	DeviceRegister(_, context),
-		// deregister: (_: Parameters<typeof DeviceDeregister>[0]) =>
-		// 	DeviceDeregister(_, context),
-	};
 	const schema = {
 		checkForUpdates: (_: Parameters<typeof SchemaCheckForUpdates>[0]) =>
 			SchemaCheckForUpdates(_, context),
@@ -154,8 +147,5 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 		terminate: () => SyncTerminate(undefined, context),
 	};
 
-	// TODO: pull (to verify integrity), generate, push, migrate (pull, generate, push)
-	// TODO: export: https://orm.drizzle.team/docs/drizzle-kit-export
-
-	return { db, fs, pubsub, data, device, sync, getStatus, schema, subscribe };
+	return { db, fs, pubsub, data, sync, getStatus, schema, subscribe };
 }

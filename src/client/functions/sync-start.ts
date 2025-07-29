@@ -1,8 +1,5 @@
 import type { SQL_Schemas } from "@/types/schemas.js";
 import type { Context } from "../config.js";
-import { executeSQL } from "../utils/execute-sql.js";
-import { metadata } from "../utils/metadata.js";
-import { schema } from "../utils/schema.js";
 import { DataSync } from "./data-sync.js";
 import { SchemaCheckForUpdates } from "./schema-check-for-updates.js";
 import { SchemaUpgrade } from "./schema-upgrade.js";
@@ -16,7 +13,20 @@ export async function SyncStart(
 	for await (const [, db] of context.db.entries()) {
 		await db.start();
 
-		const version = await metadata.get(db, `${db.name}:schema_version`);
+		// TODO: THIS THING IS DEPRECATED
+		// TODO: USE DIFFERENT METHOD TO GET THE SCHEMA VERSION
+		// 	if (
+		// 		error.cause
+		// 			?.toString()
+		// 			.endsWith('relation "client_metadata" does not exist')
+		// 	) {
+		// 		return null;
+		// 	}
+		// 	console.error("Error fetching schema", error);
+		// 	throw error.cause;
+		// }
+		// return data.rows[0]?.value || null;
+		const version = await db.metadata.get(`${db.name}:schema_version`);
 
 		if (!version) {
 			const response = await context.fetch("GET", "/schema", {
@@ -27,14 +37,11 @@ export async function SyncStart(
 				continue;
 			}
 			const _schema = response.data as SQL_Schemas.Schema;
-			await executeSQL(db, _schema.sql);
-			await metadata.set(
-				db,
+			await db.schema.apply(_schema);
+			await db.metadata.set(
 				`${db.name}:schema_version`,
 				String(_schema.version),
 			);
-			const applied_at = new Date().toISOString();
-			await schema.upsert(db, { ..._schema, applied_at });
 			continue;
 		}
 

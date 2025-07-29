@@ -1,6 +1,7 @@
 export namespace SQL_Schemas {
 	export type Metadata = {
 		key: string;
+		type: "string" | "boolean" | "object";
 		value: string;
 	};
 
