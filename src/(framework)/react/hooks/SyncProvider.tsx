@@ -1,55 +1,17 @@
 // biome-ignore lint/style/useImportType: React
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
+import type { LetSyncClient } from "@/client/config.js";
 
-import type { LetSyncContextClient } from "@/types/context.js";
+type Client = ReturnType<typeof LetSyncClient>;
 
-export type SyncContextType = {
-	config: LetSyncContextClient<Request> | null;
-	isDbRunning: boolean;
-	isSyncing: boolean;
-	error: string | null;
-	setStatus: (status: {
-		isDbRunning: boolean;
-		isSyncing: boolean;
-		error: string | null;
-	}) => void;
-	controller: AbortController;
-	setController: (controller: AbortController) => void;
-};
-
-export const SyncContext = createContext<SyncContextType>({
-	config: null,
-	controller: new AbortController(),
-	error: null,
-	isDbRunning: true,
-	isSyncing: false,
-	setController: () => {},
-	setStatus: () => {},
-});
+export const SyncContext = createContext<Client>(null as unknown as Client);
 
 export function SyncProvider({
-	config,
+	client,
 	children,
 }: {
-	config: LetSyncContextClient<Request>;
+	client: Client;
 	children: React.ReactNode;
 }) {
-	const [status, setStatus] = useState<{
-		isDbRunning: boolean;
-		isSyncing: boolean;
-		error: string | null;
-	}>({
-		error: null,
-		isDbRunning: true,
-		isSyncing: false,
-	});
-	const [controller, setController] = useState(new AbortController());
-
-	return (
-		<SyncContext
-			value={{ config, ...status, controller, setController, setStatus }}
-		>
-			{children}
-		</SyncContext>
-	);
+	return <SyncContext value={client}>{children}</SyncContext>;
 }

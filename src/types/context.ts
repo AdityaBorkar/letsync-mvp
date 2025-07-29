@@ -1,13 +1,18 @@
 import type { ClientDB, ClientFS } from "./client.js";
-import type { ApiHandlerAuth } from "./config.js";
 import type { ServerDB, ServerFS } from "./server.js";
+
+export type ApiHandlerAuth<R extends Request> = (
+	request: R,
+) =>
+	| { userId: string; deviceId: string }
+	| { message: string; status: 401 | 403 | 404 | 500 };
 
 export type LetSyncContext<R extends Request> =
 	| LetSyncContextClient<R>
 	| LetSyncContextServer<R>;
 
 export type LetSyncContextClient<R extends Request> = {
-	api: { basePath: string; domain: string; https: boolean };
+	apiUrl: { path: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	env: "CLIENT";
 	db: Map<string, ClientDB.Adapter<unknown>>;
@@ -16,7 +21,7 @@ export type LetSyncContextClient<R extends Request> = {
 };
 
 export type LetSyncContextServer<R extends Request> = {
-	api: { basePath: string; domain: string; https: boolean };
+	apiUrl: { path: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	env: "SERVER";
 	db: Map<string, ServerDB.Adapter<unknown>>;

@@ -1,6 +1,5 @@
-import type { ServerPubSub } from "@/types/~pubsub.js";
+import type { ServerDB, ServerFS, ServerPubSub } from "@/types/server.js";
 
-import type { ServerDB, ServerFS } from "../types/index.js";
 import cacheDelete from "./functions/cache-delete.js";
 import cacheRetrieve from "./functions/cache-retrieve.js";
 import cacheUpsert from "./functions/cache-upsert.js";

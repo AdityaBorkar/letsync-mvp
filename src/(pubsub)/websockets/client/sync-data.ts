@@ -15,11 +15,11 @@ const MessageType = pong.message
 export async function syncData(
 	context: LetSyncContextClient<Request>,
 ): Promise<void> {
-	const { api, db } = context;
+	const { db, apiUrl } = context;
 	const logger = new Logger("SYNC:WS");
 
 	const ws = new window.WebSocket(
-		`${api.https ? "wss" : "ws"}://${api.domain}/${api.basePath}/ws`,
+		`${apiUrl.https ? "wss" : "ws"}://${apiUrl.domain}/${apiUrl.path}/ws`,
 	);
 
 	ws.onopen = async () => {

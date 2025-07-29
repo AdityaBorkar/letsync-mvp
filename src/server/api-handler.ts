@@ -8,7 +8,7 @@ export function apiHandler<R extends Request>(
 ) {
 	const url = new URL(request.url);
 	const path = url.pathname.replace(
-		ctx.api.basePath,
+		ctx.apiUrl.path,
 		"",
 	) as keyof typeof ApiEndpoints;
 	if (!(path in ApiEndpoints)) {

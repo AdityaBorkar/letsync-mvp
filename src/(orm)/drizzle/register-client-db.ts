@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 
 import type { ClientDB } from "@/types/client.js";
+import { generateName } from "@/utils/generate-name.js";
 
 import { close } from "./functions/close.js";
 import { flush } from "./functions/flush.js";
@@ -8,10 +9,10 @@ import type { DrizzleDB } from "./types.js";
 
 // TODO: Change the drizzle-orm type
 export function registerClientDb<T extends DrizzleDB>({
-	name,
+	name = generateName(),
 	client,
 }: {
-	name: string;
+	name?: string;
 	client: T;
 }) {
 	return {

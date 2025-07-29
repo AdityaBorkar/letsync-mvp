@@ -1,9 +1,9 @@
+import type { ServerPubSub } from "@/types/server.js";
+
 // import {
 // 	IoTDataPlaneClient,
 // 	PublishCommand,
 // } from "@aws-sdk/client-iot-data-plane";
-
-import type { ClientPubSub as ServerPubsub } from "@/types/~pubsub.js";
 
 // import { PubSubAuthorizer } from "./authorizer.js";
 
@@ -13,7 +13,7 @@ export function PubSub({
 }: {
 	prefix: string;
 	secret: string;
-}): ServerPubsub.Adapter<unknown> {
+}): ServerPubSub.Adapter<unknown> {
 	// const client = new IoTDataPlaneClient();
 
 	// async function publish(
@@ -49,5 +49,5 @@ export function PubSub({
 		// publish,
 		// secret,
 		// subscribe,
-	} as unknown as ServerPubsub.Adapter<unknown>;
+	} as unknown as ServerPubSub.Adapter<unknown>;
 }

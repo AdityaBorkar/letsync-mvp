@@ -1,4 +1,4 @@
-import type { ClientPubSub as ClientPubsub } from "@/types/~pubsub.js";
+import type { ClientPubSub } from "@/types/client.js";
 
 import $connect from "./connect.js";
 
@@ -8,7 +8,7 @@ export function PubSub(props: {
 	prefix: string;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	client: any;
-}): ClientPubsub.Adapter<unknown> {
+}): ClientPubSub.Adapter<unknown> {
 	const superProps = props;
 
 	async function connect(props?: { token: string; clientId: string }) {
@@ -67,5 +67,5 @@ export function PubSub(props: {
 	return {
 		__brand: "LETSYNC_PUBSUB",
 		connect,
-	} as unknown as ClientPubsub.Adapter<unknown>;
+	} as unknown as ClientPubSub.Adapter<unknown>;
 }

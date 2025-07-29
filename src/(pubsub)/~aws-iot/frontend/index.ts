@@ -1,7 +1,5 @@
 import type { MqttClient } from "mqtt";
-
-import type { ClientPubSub } from "@/types/~pubsub.js";
-
+import type { ClientPubSub } from "@/types/client.js";
 import $connect from "./connect.js";
 
 type PubSubClient = {

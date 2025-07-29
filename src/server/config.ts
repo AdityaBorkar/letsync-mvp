@@ -1,17 +1,64 @@
-import type { ClientDB, ClientFS } from "@/types/client.js";
-import type { LetSyncConfig } from "@/types/config.js";
-import type { LetSyncContext } from "@/types/context.js";
+import type {
+	ApiHandlerAuth,
+	LetSyncContextServer,
+	ServerDB,
+	ServerFS,
+	ServerPubSub,
+} from "@/types/index.js";
 
-export function LetSync_ServerConfig<R extends Request>(
-	config: LetSyncConfig<R>,
-) {
-	const isClient = typeof window !== "undefined";
-	if (!isClient) {
-		throw new Error("LetSync can only be used in the client");
+export type Server = ReturnType<typeof LetSyncServer>;
+
+export type Context = {
+	db: Map<string, ServerDB.Adapter<unknown>>;
+	fs: Map<string, ServerFS.Adapter<unknown>>;
+	pubsub: Map<string, ServerPubSub.Adapter<unknown>>;
+};
+
+export type LetSyncConfig<R extends Request> = {
+	apiUrl: { path: string; domain: string; https: boolean };
+	auth: ApiHandlerAuth<R>;
+	connections: (
+		| ServerPubSub.Adapter<unknown>
+		| ServerDB.Adapter<unknown>
+		| ServerFS.Adapter<unknown>
+	)[];
+};
+
+export function LetSyncServer<R extends Request>(config: LetSyncConfig<R>) {
+	if (typeof window !== "undefined" || typeof process === "undefined") {
+		throw new Error("LetSync can only be used in the server");
 	}
 
-	const api = config.api || {
-		basePath: "/api/sync",
+	// * Adapters
+	const db: Map<string, ServerDB.Adapter<unknown>> = new Map();
+	const fs: Map<string, ServerFS.Adapter<unknown>> = new Map();
+	const pubsub: Map<string, ServerPubSub.Adapter<unknown>> = new Map();
+	for (const item of config.connections) {
+		if (item.__brand === `LETSYNC_SERVER_DB`) {
+			db.set(item.name, item);
+			continue;
+		}
+		if (item.__brand === `LETSYNC_SERVER_FS`) {
+			fs.set(item.name, item);
+			continue;
+		}
+		if (item.__brand === `LETSYNC_PUBSUB_SERVER`) {
+			pubsub.set(item.name, item);
+			continue;
+		}
+		throw new Error("Invalid adapter type");
+	}
+	if (fs.size === 0 && db.size === 0) {
+		throw new Error("No database or filesystem configured");
+	}
+	if (pubsub.size === 0) {
+		throw new Error("No pubsub configured");
+	}
+
+	// ! --------------------------------------------------------------
+
+	const apiUrl = config.apiUrl || {
+		path: "/api/sync",
 		domain: "localhost",
 		https: false,
 	};
@@ -22,32 +69,6 @@ export function LetSync_ServerConfig<R extends Request>(
 	}
 	const { auth } = config;
 
-	const db: Map<string, ClientDB.Adapter<unknown>> = new Map();
-	const fs: Map<string, ClientFS.Adapter<unknown>> = new Map();
-	for (const item of config.client) {
-		if (item.__brand === `LETSYNC_CLIENT_DB`) {
-			db.set(item.name, item);
-			continue;
-		}
-		if (item.__brand === `LETSYNC_CLIENT_FS`) {
-			fs.set(item.name, item);
-			continue;
-		}
-		throw new Error("Invalid adapter type");
-	}
-
-	// TODO - Pubsub check
-	// if (!params.pubsub) {
-	// 	throw new Error('Pubsub adapter is required');
-	// }
-	// if (pubsub.__brand !== 'LETSYNC_PUBSUB_BACKEND')
-	// 	throw new Error('Invalid pubsub');
-
-	// const mutation = new MutationBuilder(config);
-
-	// TODO: Implement Events
-	const addEventListener = () => {};
-
 	// TODO: OLDER API:
 	// stores: { metadata, offlineChanges }
 	// device: { deregister, flush, live, pull, push, reconcile, register }
@@ -56,14 +77,14 @@ export function LetSync_ServerConfig<R extends Request>(
 
 	return {
 		addEventListener,
-		api,
+		apiUrl,
 		auth,
 		db,
-		env: "CLIENT",
+		env: "SERVER",
 		fs,
 		// isOnline,
 		// isSyncing,
 		// isDbRunning,
 		// isFsRunning,
-	} as LetSyncContext<R>;
+	} as LetSyncContextServer<R>;
 }

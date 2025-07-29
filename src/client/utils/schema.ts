@@ -1,8 +1,8 @@
 import type { ClientDB } from "@/types/client.js";
 
-export async function getSchema(db: ClientDB.Adapter<unknown>, name: string) {
+export async function getSchema(db: ClientDB.Adapter<unknown>) {
 	const schema =
-		await db.sql`SELECT * FROM client_metadata WHERE key=${`${name}:schema_version`} LIMIT 1`
+		await db.sql`SELECT * FROM client_metadata WHERE key=${`${db.name}:schema_version`} LIMIT 1`
 			.then(
 				// @ts-expect-error - result type from database adapter
 				(result) => result.rows?.[0]?.value || null,
