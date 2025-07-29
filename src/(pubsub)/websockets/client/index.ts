@@ -1,8 +1,7 @@
 import type { ClientPubSub } from "@/types/client.js";
 import { generateName } from "@/utils/generate-name.js";
-import { syncData } from "./sync-data.js";
 
-export function PubSubClient<T>({
+export function PubSubClient({
 	name = generateName(),
 	// method,
 }: {
@@ -12,9 +11,9 @@ export function PubSubClient<T>({
 	// TODO: Create a pubsub client
 
 	return {
-		__brand: "LETSYNC_PUBSUB_CLIENT",
+		__brand: "LETSYNC_CLIENT_PUBSUB",
+		close: () => Promise.resolve(),
 		name,
-		syncData,
-		close: () => {},
-	} as ClientPubSub.Adapter<T>;
+		// syncData,
+	} satisfies ClientPubSub.Adapter;
 }

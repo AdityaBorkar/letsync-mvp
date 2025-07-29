@@ -1,6 +1,6 @@
-import type { DrizzleDB } from "../types.js";
+import type { DrizzleClientDb } from "./types.js";
 
-export async function start(client: DrizzleDB) {
+export async function connect(client: DrizzleClientDb) {
 	const { $client } = client;
 	if ("waitReady" in $client) {
 		return $client.waitReady;

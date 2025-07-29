@@ -1,9 +1,9 @@
 import { sql as drizzle_sql } from "drizzle-orm";
 
-import type { DrizzleDB } from "../types.js";
+import type { DrizzleClientDb } from "./types.js";
 
 export function sql<T>(
-	db: DrizzleDB,
+	db: DrizzleClientDb,
 	template: TemplateStringsArray | string,
 	...args: unknown[]
 ) {

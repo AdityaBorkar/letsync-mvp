@@ -1,4 +1,5 @@
 import type { SQL_Schemas } from "@/types/schemas.js";
+
 import type { Context } from "../config.js";
 import { DataSync } from "./data-sync.js";
 import { SchemaCheckForUpdates } from "./schema-check-for-updates.js";
@@ -11,22 +12,21 @@ export async function SyncStart(
 	const { checkForUpdates, autoUpgrade } = props;
 
 	for await (const [, db] of context.db.entries()) {
-		await db.start();
+		await db.connect();
 
-		// TODO: THIS THING IS DEPRECATED
-		// TODO: USE DIFFERENT METHOD TO GET THE SCHEMA VERSION
-		// 	if (
-		// 		error.cause
-		// 			?.toString()
-		// 			.endsWith('relation "client_metadata" does not exist')
-		// 	) {
-		// 		return null;
-		// 	}
-		// 	console.error("Error fetching schema", error);
-		// 	throw error.cause;
-		// }
-		// return data.rows[0]?.value || null;
-		const version = await db.metadata.get(`${db.name}:schema_version`);
+		const version = await db.metadata
+			.get(`${db.name}:schema_version`)
+			.catch((error) => {
+				if (
+					error.cause
+						?.toString()
+						.endsWith('relation "client_metadata" does not exist')
+				) {
+					return null;
+				}
+				console.error("Error fetching schema version", error);
+				throw error.cause;
+			});
 
 		if (!version) {
 			const response = await context.fetch("GET", "/schema", {

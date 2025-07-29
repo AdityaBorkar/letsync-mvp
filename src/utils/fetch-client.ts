@@ -25,9 +25,9 @@ export function FetchClient(apiUrl: {
 	) => {
 		try {
 			const url = new URL(`${baseUrl}${endpoint}`);
-			Object.entries(props?.searchParams ?? {}).forEach(([key, value]) => {
+			for (const [key, value] of Object.entries(props?.searchParams ?? {})) {
 				url.searchParams.set(key, String(value));
-			});
+			}
 
 			const hasBody = props?.body && Object.keys(props.body).length > 0;
 			const response = await fetch(url, {

@@ -1,4 +1,5 @@
 import type { SQL_Schemas } from "@/types/schemas.js";
+
 import type { Context } from "../config.js";
 
 export async function SchemaCheckForUpdates(
@@ -17,7 +18,7 @@ export async function SchemaCheckForUpdates(
 	}
 
 	const schemas = await context.fetch("GET", "/schema", {
-		searchParams: { name: db.name, from: String(CurrentVersion) },
+		searchParams: { from: String(CurrentVersion), name: db.name },
 	});
 	if (schemas.error) {
 		throw new Error(schemas.error.toString());

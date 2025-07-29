@@ -2,7 +2,14 @@ import type { BunRequest, Server, ServerWebSocket } from "bun";
 
 import { ArkErrors } from "arktype";
 
-import type { LetSyncContext } from "@/types/context.js";
+import type { ServerContext } from "@/types/context.js";
+
+export type SyncMethod =
+	| "sse"
+	| "websocket"
+	| "webtransport"
+	| "http-long-polling"
+	| "http-short-polling";
 
 import { mutation } from "../client/messages/mutation.js";
 import { ping } from "../client/messages/ping.js";
@@ -14,7 +21,7 @@ export interface WebsocketData {
 }
 export async function getData_WS(
 	request: BunRequest,
-	_: LetSyncContext<Request>,
+	_: ServerContext<Request>,
 	server: Server,
 ) {
 	// Upgrade connection to WebSocket with authenticated user data

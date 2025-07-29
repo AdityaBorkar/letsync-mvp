@@ -1,8 +1,7 @@
 import { ArkErrors } from "arktype";
 
-import type { ClientContext } from "@/types/context.js";
-import type { SQL_Schemas } from "@/types/schemas.js";
 import { Logger } from "@/utils/logger.js";
+
 import { dataCache } from "../server/messages/data-cache.js";
 import { dataOperations } from "../server/messages/data-operations.js";
 import { pong } from "../server/messages/pong.js";
@@ -12,8 +11,8 @@ const MessageType = pong.message
 	.or(dataOperations.message)
 	.or(dataCache.message);
 
-export async function syncData(context: ClientContext<Request>): Promise<void> {
-	const { db, apiUrl } = context;
+export async function syncData(context: any): Promise<void> {
+	const { apiUrl } = context;
 	const logger = new Logger("SYNC:WS");
 
 	const ws = new window.WebSocket(
@@ -22,18 +21,18 @@ export async function syncData(context: ClientContext<Request>): Promise<void> {
 
 	ws.onopen = async () => {
 		ws.send(JSON.stringify({ refId: generateRefId(), type: "ping" }));
-		for (const [name, database] of db.entries()) {
-			const { rows: metadata } =
-				await database.sql<SQL_Schemas.Metadata>`SELECT * FROM client_metadata WHERE key="${name}:cursor"`;
-			const timestamp = metadata[0]?.value;
-			const data = {
-				cursor: timestamp ? new Date(timestamp) : undefined,
-				name,
-				refId: generateRefId(),
-				type: "sync_request",
-			};
-			ws.send(JSON.stringify(data));
-		}
+		// for (const [name, database] of db.entries()) {
+		// 	const metadata =
+		// 		await database.sql<SQL_Schemas.Metadata>`SELECT * FROM client_metadata WHERE key="${name}:cursor"`;
+		// 	const timestamp = rows[0]?.value;
+		// 	const data = {
+		// 		cursor: timestamp ? new Date(timestamp) : undefined,
+		// 		name,
+		// 		refId: generateRefId(),
+		// 		type: "sync_request",
+		// 	};
+		// 	ws.send(JSON.stringify(data));
+		// }
 	};
 
 	ws.onmessage = ({ data: message }) => {

@@ -1,11 +1,7 @@
-import type { ServerContext } from "@/types/context.js";
-
 import { ApiEndpoints } from "./api-endpoints.js";
+import type { Context } from "./config.js";
 
-export function apiHandler<R extends Request>(
-	request: R,
-	ctx: ServerContext<R>,
-) {
+export function apiHandler<R extends Request>(request: R, ctx: Context) {
 	const url = new URL(request.url);
 	const path = url.pathname.replace(
 		ctx.apiUrl.path,
@@ -21,6 +17,7 @@ export function apiHandler<R extends Request>(
 		return new Response("Not Found", { status: 404 });
 	}
 
+	// biome-ignore lint/complexity/noBannedTypes: <explanation>
 	const endpoint = methods[method] as Function;
 	if (!endpoint) {
 		return new Response("Not Found", { status: 404 });

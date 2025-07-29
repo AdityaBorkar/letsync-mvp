@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
 	"assist": {
 		"actions": {
 			"source": {
@@ -42,8 +42,8 @@
 			"project": "all",
 			"react": "all",
 			"solid": "none",
-			"test": "all",
-			"vue": "none"
+			"test": "all"
+			// "vue": "none"
 		},
 		"rules": {
 			"a11y": "on",
@@ -53,6 +53,7 @@
 			// "style": "on",
 			// "suspicious": "on",
 			"nursery": {
+				"noUnresolvedImports": "off",
 				"useSortedClasses": {
 					"fix": "safe",
 					"level": "error",

@@ -1,7 +1,7 @@
-import type { DrizzleDB } from "../types.js";
+import type { DrizzleClientDb } from "./types.js";
 
 export async function dump(
-	client: DrizzleDB,
+	client: DrizzleClientDb,
 	{ compression }: { compression: "auto" | "gzip" | "none" },
 ): Promise<File | Blob> {
 	const { $client } = client;

@@ -1,5 +1,6 @@
-// biome-ignore lint/style/useImportType: React
+// biome-ignore lint/style/useImportType: REACT
 import React, { createContext } from "react";
+
 import type { LetSyncClient } from "@/client/config.js";
 
 type Client = ReturnType<typeof LetSyncClient>;

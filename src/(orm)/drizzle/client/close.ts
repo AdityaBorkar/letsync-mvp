@@ -1,6 +1,6 @@
-import type { DrizzleDB } from "../types.js";
+import type { DrizzleClientDb } from "./types.js";
 
-export function close(client: DrizzleDB) {
+export function close(client: DrizzleClientDb) {
 	const { $client } = client;
 	if ("close" in $client) {
 		return $client.close() as unknown as Promise<void>;

@@ -1,9 +1,6 @@
-import type { ServerContext } from "@/types/context.js";
+import type { Context } from "../config.js";
 
-export default async function cdcCapture(
-	__: Request,
-	_: ServerContext<Request>,
-) {
+export default async function cdcCapture(__: Request, _: Context) {
 	// const { pubsub, db } = _;
 	// // const db = databases[0]; // TODO - How to select the correct database?
 	// if (!db)

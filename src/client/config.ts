@@ -1,6 +1,7 @@
 import type { ClientDB, ClientFS, ClientPubSub } from "@/types/client.js";
 import type { ApiHandlerAuth } from "@/types/context.js";
 import { FetchClient } from "@/utils/fetch-client.js";
+
 import { Signal } from "../utils/signal.js";
 // import { DataExport } from "./functions/data-export.js";
 // import { DataFlush } from "./functions/data-flush.js";
@@ -25,7 +26,7 @@ export type Client = ReturnType<typeof LetSyncClient>;
 export type Context = {
 	db: Map<string, ClientDB.Adapter<unknown>>;
 	fs: Map<string, ClientFS.Adapter<unknown>>;
-	pubsub: Map<string, ClientPubSub.Adapter<unknown>>;
+	pubsub: Map<string, ClientPubSub.Adapter>;
 	controller: AbortController;
 	status: {
 		isDbRunning: Signal<boolean>;
@@ -40,7 +41,7 @@ export type LetSyncConfig<R extends Request> = {
 	apiUrl: { path: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	connections: (
-		| ClientPubSub.Adapter<unknown>
+		| ClientPubSub.Adapter
 		| ClientDB.Adapter<unknown>
 		| ClientFS.Adapter<unknown>
 	)[];
@@ -54,7 +55,7 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	// * Adapters
 	const db = new Map<string, ClientDB.Adapter<unknown>>();
 	const fs = new Map<string, ClientFS.Adapter<unknown>>();
-	const pubsub = new Map<string, ClientPubSub.Adapter<unknown>>();
+	const pubsub = new Map<string, ClientPubSub.Adapter>();
 	for (const item of config.connections) {
 		if (item.__brand === `LETSYNC_CLIENT_DB`) {
 			db.set(item.name, item);
@@ -64,7 +65,7 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 			fs.set(item.name, item);
 			continue;
 		}
-		if (item.__brand === `LETSYNC_PUBSUB_CLIENT`) {
+		if (item.__brand === `LETSYNC_CLIENT_PUBSUB`) {
 			pubsub.set(item.name, item);
 			continue;
 		}
@@ -96,10 +97,10 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	const isDbRunning = new Signal(false);
 	const isFsRunning = new Signal(false);
 	const getStatus = () => ({
-		isOnline: isOnline.get(),
-		isSyncing: isSyncing.get(),
 		isDbRunning: isDbRunning.get(),
 		isFsRunning: isFsRunning.get(),
+		isOnline: isOnline.get(),
+		isSyncing: isSyncing.get(),
 	});
 
 	// * Online Check
@@ -113,8 +114,8 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	});
 
 	// * Context
-	const status = { isDbRunning, isFsRunning, isSyncing, isOnline };
-	const context: Context = { fetch, controller, db, fs, pubsub, status };
+	const status = { isDbRunning, isFsRunning, isOnline, isSyncing };
+	const context: Context = { controller, db, fetch, fs, pubsub, status };
 
 	// * Primitive Functions
 	const data = {
@@ -147,5 +148,5 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 		terminate: () => SyncTerminate(undefined, context),
 	};
 
-	return { db, fs, pubsub, data, sync, getStatus, schema, subscribe };
+	return { data, db, fs, getStatus, pubsub, schema, subscribe, sync };
 }

@@ -11,8 +11,13 @@ export async function SchemaVerify(
 		throw new Error("Database not found");
 	}
 
-	const CurrentVersion = await db.metadata.get(`${db.name}:schema_version`);
+	const version = await db.metadata.get(`${db.name}:schema_version`);
 	const schema = await db.schema.pull();
-	console.log({ schema, CurrentVersion });
-	// TODO: Send a FetchRequest to verify the schema for the relevant version
+
+	const body = { schema, version };
+	const response = await context.fetch("POST", "/schema/verify", { body });
+	if (response.error) {
+		throw new Error(response.error.toString());
+	}
+	return response.data;
 }

@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server.js";
 
-import { apiHandler as API_HANDLER } from "@/index.js";
-import type { ServerContext } from "@/types/context.js";
+import { LetSyncServer } from "@/index.js";
 
-export function apiHandler(context: ServerContext<NextRequest>) {
-	const handler = (request: NextRequest) => API_HANDLER(request, context);
+export function apiHandler(config: Parameters<typeof LetSyncServer>[0]) {
+	const { apiHandler } = LetSyncServer(config);
+	const handler = (request: NextRequest) => apiHandler(request);
 	return { GET: handler, POST: handler };
 }

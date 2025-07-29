@@ -11,7 +11,6 @@ export async function SchemaUpgrade(
 	}
 
 	const current_version = await db.metadata.get(`${db.name}:schema_version`);
-
 	const schemas = await db.schema.list(
 		String(current_version),
 		String(version),
@@ -21,11 +20,9 @@ export async function SchemaUpgrade(
 		return;
 	}
 
-	for (const schema of schemas) {
-		// TODO: GET MIGRATION SQL
-		// TODO: executeSQL()
-		console.log({ schema });
-		// await executeSchema(db, schema.sql);
-		// await db.sql`INSERT INTO client_metadata (key, value) VALUES ("${db.name}:schema_version", ${schema.version})`;
+	for await (const schema of schemas) {
+		await db.schema.apply(schema);
 	}
+
+	return;
 }

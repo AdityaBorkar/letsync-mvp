@@ -1,14 +1,13 @@
 import { ArkErrors, type } from "arktype";
 import type { BunRequest } from "bun";
-
-import type { ServerContext } from "@/types/context.js";
 import type { ServerDB } from "@/types/index.js";
-import type { SQL_Schemas } from "@/types/schemas.js";
+import type { Context } from "../config.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
 
 // ! WORK ON THIS ENTIRE API ENDPOINT
+// TODO: HANDLE MIGRATION SCRIPTS IN THE CLOUD AND EXECUTE ONLY CALLS OVER HERE. MAKE SURE THEY ARE IDEMPOTENT.
 
 const schema = type({
 	from: "number",
@@ -16,10 +15,7 @@ const schema = type({
 	"to?": "number",
 });
 
-export async function getMigration(
-	request: BunRequest,
-	context: ServerContext<Request>,
-) {
+export async function getMigration(request: BunRequest, context: Context) {
 	try {
 		// Request Validation
 		const { searchParams } = new URL(request.url);
@@ -108,16 +104,11 @@ async function generateMigrationSql(
 		// If toVersion is not provided, get the latest version
 		let targetVersion = toVersion;
 		if (!targetVersion) {
-			const { rows: schemas } = await db.sql<SQL_Schemas.Schema>`
-			SELECT version FROM client_schemas
-			WHERE version IS NOT NULL AND sql IS NOT NULL
-			ORDER BY version DESC
-			LIMIT 1;`;
-			const latestVersion = schemas[0]?.version;
+			const latestVersion = await db.schema.list(undefined, undefined);
 			if (!latestVersion) {
 				throw new Error("No schemas found in database");
 			}
-			targetVersion = latestVersion;
+			targetVersion = Number(latestVersion);
 		}
 
 		// Validate fromVersion exists and is valid
@@ -126,10 +117,10 @@ async function generateMigrationSql(
 		}
 
 		// Get all schema versions between fromVersion and targetVersion (inclusive)
-		const { rows: versions } = await db.sql<SQL_Schemas.Schema>`
-		SELECT checksum, created_at, is_rolled_back, sql, tag, version FROM client_schemas
-		WHERE version >= ${fromVersion + 1} AND version <= ${targetVersion} AND sql IS NOT NULL
-		ORDER BY version;`;
+		const versions = await db.schema.list(
+			(fromVersion + 1).toString(),
+			targetVersion.toString(),
+		);
 
 		if (versions.length === 0) {
 			return null; // No migrations found in range

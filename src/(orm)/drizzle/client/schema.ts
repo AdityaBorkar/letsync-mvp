@@ -1,10 +1,11 @@
 import type { SQL_Schemas } from "@/types/schemas.js";
-import type { DrizzleDB } from "../types.js";
+
 import { sql } from "./sql.js";
+import type { DrizzleClientDb } from "./types.js";
 
-export const schema = { pull, insert, list, apply };
+export const schema = { apply, insert, list, pull };
 
-export async function pull(db: DrizzleDB) {
+export async function pull(db: DrizzleClientDb) {
 	return sql(
 		db,
 		`SELECT table_name, string_agg(column_name || ' (' || data_type || ')', ', ' ORDER BY ordinal_position) as columns
@@ -15,7 +16,7 @@ export async function pull(db: DrizzleDB) {
 	);
 }
 
-async function insert(db: DrizzleDB, records: SQL_Schemas.Schema[]) {
+async function insert(db: DrizzleClientDb, records: SQL_Schemas.Schema[]) {
 	for (const record of records) {
 		await sql(
 			db,
@@ -25,7 +26,7 @@ async function insert(db: DrizzleDB, records: SQL_Schemas.Schema[]) {
 }
 
 async function list(
-	db: DrizzleDB,
+	db: DrizzleClientDb,
 	aboveVersion?: string,
 	belowVersion?: string,
 ) {
@@ -40,7 +41,7 @@ async function list(
 	return schemas.rows;
 }
 
-async function apply(db: DrizzleDB, record: SQL_Schemas.Schema) {
+async function apply(db: DrizzleClientDb, record: SQL_Schemas.Schema) {
 	await sql(
 		db,
 		`INSERT INTO client_schemas (checksum, created_at, id, is_rolled_back, snapshot, sql, tag, version) VALUES (${record.checksum}, ${record.created_at}, ${record.id}, ${record.is_rolled_back}, ${record.snapshot}, ${record.sql}, ${record.tag}, ${record.version}) ON DUPLICATE KEY UPDATE version = ${record.version}`,

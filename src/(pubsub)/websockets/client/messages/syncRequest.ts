@@ -1,8 +1,6 @@
 import { type } from "arktype";
 import type { ServerWebSocket } from "bun";
 
-import type { LetSyncContext } from "@/types/context.js";
-
 import type { WebsocketData } from "../../server/handler.js";
 
 const message = type({
@@ -16,7 +14,7 @@ const message = type({
 export async function handler(
 	ws: ServerWebSocket<WebsocketData>,
 	msg: typeof message.infer,
-	context: LetSyncContext<Request>,
+	context: any,
 ) {
 	const userId = ws.data.userId;
 	const { cursor, name, refId } = msg;
@@ -71,7 +69,7 @@ export async function handler(
 		WHERE tenantId = ${userId}
 		ORDER BY id ASC
 		LIMIT ${limit};
-		`.then((res) => res.rows);
+		`;
 
 		const data = { data_ops, name, refId, type: "data_operations" };
 		ws.send(JSON.stringify(data));

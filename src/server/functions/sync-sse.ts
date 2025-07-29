@@ -1,7 +1,7 @@
 import type { BunRequest } from "bun";
 
-import type { ServerContext } from "@/types/context.js";
+import type { Context } from "../config.js";
 
-export async function getData_SSE(__: BunRequest, _: ServerContext<Request>) {
+export async function getData_SSE(__: BunRequest, _: Context) {
 	return;
 }

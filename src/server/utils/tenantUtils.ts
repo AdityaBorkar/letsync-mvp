@@ -11,7 +11,7 @@
 // 	 */
 // 	async getTenantIdForUser(userId: string): Promise<string | null> {
 // 		try {
-// 			// TODO: This should query the actual user-tenant relationship
+// 			// TOD This should query the actual user-tenant relationship
 // 			// For now, we'll create a default tenant or use a mapping strategy
 
 // 			// In a real system, this would look something like:

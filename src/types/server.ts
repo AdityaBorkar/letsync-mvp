@@ -1,34 +1,35 @@
-import type { ServerContext } from "./context.js";
+import type { SQL_Schemas } from "./schemas.js";
 
 export namespace ServerDB {
-	export type Adapter<DT> = {
+	export type Adapter<T> = {
 		__brand: "LETSYNC_SERVER_DB";
 		name: string;
-		client: DT;
-		sql<R>(
-			template: TemplateStringsArray | string,
-			...args: unknown[]
-		): Promise<{ affectedRows: number; rows: R[]; fields: unknown[] }>; // TODO: Write Types for `fields`
-		// waitUntilReady: () => Promise<void>;
+		client: T;
+		close: () => Promise<void>;
+		connect: () => Promise<void>;
+		schema: {
+			list: (
+				aboveVersion?: string,
+				belowVersion?: string,
+			) => Promise<SQL_Schemas.Schema[]>;
+		};
 	};
 }
 
 export namespace ServerFS {
-	export type Adapter<DT> = ServerFS<DT>;
-
-	type ServerFS<DT> = {
+	export type Adapter<T> = {
 		__brand: "LETSYNC_SERVER_FS";
 		name: string;
-		filesystem: DT;
+		filesystem: T;
 	};
 }
 
 export namespace ServerPubSub {
-	export type Adapter<T> = {
-		__brand: "LETSYNC_PUBSUB_SERVER";
+	export type Adapter = {
+		__brand: "LETSYNC_SERVER_PUBSUB";
 		name: string;
-		pubsub: T;
-		syncData: (context: ServerContext<Request>) => Promise<void>;
+		// pubsub: T;
+		// syncData: (context: any) => Promise<void>;
 		// secret: string;
 		// publish: PublishFn;
 		// subscribe: SubscribeFn;
