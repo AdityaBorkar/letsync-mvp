@@ -1,9 +1,8 @@
+import { ArkErrors, type } from "arktype";
 import type { BunRequest } from "bun";
 
-import { ArkErrors, type } from "arktype";
-
-import type { LetSyncContext } from "@/types/context.js";
-import type { ServerDB } from "@/types/server.js";
+import type { ServerContext } from "@/types/context.js";
+import type { SQL_Schemas } from "@/types/schemas.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
@@ -15,7 +14,7 @@ const schema = type({
 
 export async function getSchema(
 	request: BunRequest,
-	context: LetSyncContext<Request>,
+	context: ServerContext<Request>,
 ) {
 	const { searchParams } = new URL(request.url);
 	const data = schema({
@@ -27,23 +26,18 @@ export async function getSchema(
 	}
 	const { version } = data;
 
-	// @ts-expect-error
-	const serverDb = getServerDb(context.db);
+	const serverDb = getServerDb(context);
 	if (!serverDb) {
 		throw new Error("Server database not found");
 	}
 
-	const records = await serverDb
-		// @ts-expect-error
-		.execute(
-			`SELECT * FROM client_schemas ${version ? `WHERE version > ${version}` : ""} ORDER BY created_at ${version ? "ASC" : "DESC LIMIT 1;"}`,
-			// TODO: Implement `name`
-			// AND name = '${name}'
-		)
-		// @ts-expect-error
-		.then((res) => res.rows);
+	// TODO: Implement `name`
+	// AND name = '${name}'
+	const { rows: records } = await serverDb.sql<
+		SQL_Schemas.Schema[]
+	>`SELECT * FROM client_schemas ${version ? `WHERE version > ${version}` : ""} ORDER BY created_at ${version ? "ASC" : "DESC LIMIT 1;"}`;
 
-	if (!records.length) {
+	if (records.length === 0) {
 		return Response.json(
 			{ error: `Schema version '${version}' not found` },
 			{ status: 400 },
@@ -52,8 +46,9 @@ export async function getSchema(
 	return Response.json(records);
 }
 
-function getServerDb(db: Map<string, ServerDB.Adapter<unknown>>) {
+function getServerDb(context: ServerContext<Request>) {
+	const { db } = context;
 	const DEFAULT_DB = "postgres"; // TODO: Make this dynamic
-	if (db.size === 1) return db.values().next().value?.client;
-	return db.get(DEFAULT_DB)?.client;
+	if (db.size === 1) return db.values().next().value;
+	return db.get(DEFAULT_DB);
 }

@@ -1,8 +1,3 @@
-## TODO:
-
-- Support Mixed Schema (local and server)
-- How to use composite indices?
-
 ## Think:
 
 - Evaluate using WAL approach

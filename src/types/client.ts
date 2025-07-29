@@ -1,4 +1,4 @@
-import type { LetSyncContextClient } from "./context.js";
+import type { ClientContext } from "./context.js";
 
 export namespace ClientFS {
 	export type Adapter<RT> = {
@@ -15,10 +15,10 @@ export namespace ClientDB {
 		__brand: "LETSYNC_CLIENT_DB";
 		client: T;
 		name: string;
-		sql<R extends unknown[]>(
+		sql<R>(
 			template: TemplateStringsArray,
 			...args: unknown[]
-		): Promise<R>;
+		): Promise<{ affectedRows: number; rows: R[]; fields: unknown[] }>; // TODO: Write Types for `fields`
 		close: () => Promise<void>;
 	};
 }
@@ -28,7 +28,7 @@ export namespace ClientPubSub {
 		__brand: "LETSYNC_PUBSUB_CLIENT";
 		name: string;
 		pubsub: T;
-		syncData: (context: LetSyncContextClient<Request>) => Promise<void>;
+		syncData: (context: ClientContext<Request>) => Promise<void>;
 		close: () => Promise<void>;
 	};
 

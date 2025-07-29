@@ -7,11 +7,11 @@ export type ApiHandlerAuth<R extends Request> = (
 	| { userId: string; deviceId: string }
 	| { message: string; status: 401 | 403 | 404 | 500 };
 
-export type LetSyncContext<R extends Request> =
-	| LetSyncContextClient<R>
-	| LetSyncContextServer<R>;
+// export type LetSyncContext<R extends Request> =
+// 	| LetSyncContextClient<R>
+// 	| LetSyncContextServer<R>;
 
-export type LetSyncContextClient<R extends Request> = {
+export type ClientContext<R extends Request> = {
 	apiUrl: { path: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	env: "CLIENT";
@@ -20,7 +20,7 @@ export type LetSyncContextClient<R extends Request> = {
 	addEventListener: () => void;
 };
 
-export type LetSyncContextServer<R extends Request> = {
+export type ServerContext<R extends Request> = {
 	apiUrl: { path: string; domain: string; https: boolean };
 	auth: ApiHandlerAuth<R>;
 	env: "SERVER";

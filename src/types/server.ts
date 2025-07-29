@@ -1,14 +1,14 @@
-import type { LetSyncContextServer } from "./context.js";
+import type { ServerContext } from "./context.js";
 
 export namespace ServerDB {
 	export type Adapter<DT> = {
 		__brand: "LETSYNC_SERVER_DB";
 		name: string;
 		client: DT;
-		sql: (
+		sql<R>(
 			template: TemplateStringsArray,
 			...args: unknown[]
-		) => Promise<unknown>;
+		): Promise<{ affectedRows: number; rows: R[]; fields: unknown[] }>; // TODO: Write Types for `fields`
 		// waitUntilReady: () => Promise<void>;
 	};
 }
@@ -28,7 +28,7 @@ export namespace ServerPubSub {
 		__brand: "LETSYNC_PUBSUB_SERVER";
 		name: string;
 		pubsub: T;
-		syncData: (context: LetSyncContextServer<Request>) => Promise<void>;
+		syncData: (context: ServerContext<Request>) => Promise<void>;
 		// secret: string;
 		// publish: PublishFn;
 		// subscribe: SubscribeFn;

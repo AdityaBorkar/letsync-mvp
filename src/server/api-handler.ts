@@ -1,10 +1,10 @@
-import type { LetSyncContext } from "@/types/context.js";
+import type { ServerContext } from "@/types/context.js";
 
 import { ApiEndpoints } from "./api-endpoints.js";
 
 export function apiHandler<R extends Request>(
 	request: R,
-	ctx: LetSyncContext<R>,
+	ctx: ServerContext<R>,
 ) {
 	const url = new URL(request.url);
 	const path = url.pathname.replace(
@@ -21,7 +21,7 @@ export function apiHandler<R extends Request>(
 		return new Response("Not Found", { status: 404 });
 	}
 
-	const endpoint = methods[method];
+	const endpoint = methods[method] as Function;
 	if (!endpoint) {
 		return new Response("Not Found", { status: 404 });
 	}
@@ -32,6 +32,5 @@ export function apiHandler<R extends Request>(
 		return new Response(message, { status });
 	}
 
-	// @ts-expect-error - TODO: Fix this
 	return endpoint(request, ctx);
 }

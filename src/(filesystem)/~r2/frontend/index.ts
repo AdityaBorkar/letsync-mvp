@@ -15,8 +15,7 @@ export function PubSub(props: {
 		const connection =
 			"client" in superProps
 				? superProps.client
-				: // @ts-expect-error - TODO
-					await $connect({ ...props, ...superProps });
+				: await $connect({ ...props, ...superProps });
 
 		async function subscribe(topic: string, callback: (data: string) => void) {
 			if (!connection.connected) {

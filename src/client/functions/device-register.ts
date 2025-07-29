@@ -22,7 +22,6 @@ export async function DeviceRegister(_: RegisterProps, context: Context) {
 	// 	// 	:
 	// 	await context.fetch("POST", "/device", {});
 	// console.log({ data });
-	// // @ts-ignore
 	// const { device, schema, pubsub } = data;
 	// const { deviceId, userId, isActive } = device;
 	// if (!isActive) {

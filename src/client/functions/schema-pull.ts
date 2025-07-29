@@ -29,24 +29,21 @@ export async function SchemaPull(
 						: { name: db.name },
 				}),
 			);
-			// @ts-expect-error FIX THIS
-			if (schema.error || schema.data.error) {
-				// @ts-expect-error FIX THIS
-				const error = schema.error || schema.data.error;
-				console.error("Error fetching schema", error);
-				throw error;
-			}
-			console.log("Latest Schema", schema.data);
-			// @ts-expect-error FIX THIS
-			await insertSchemas(db, schema.data);
-			// Auto Upgrade
-			// @ts-expect-error FIX THIS
-			const LatestVersion = schema.data[0]?.version;
-			if (CurrentVersion > LatestVersion) {
-				throw new Error(
-					"Database is corrupted. Current Version is greater than Latest Version.",
-				);
-			}
+			console.log("BREAKPOINT Schema: ", schema);
+			// if (schema.error || schema.data?.error) {
+			// 	const error = schema.error || schema.data?.error;
+			// 	console.error("Error fetching schema", error);
+			// 	throw error;
+			// }
+			// console.log("Latest Schema", schema.data);
+			// await insertSchemas(db, schema.data as unknown);
+			// // Auto Upgrade
+			// const LatestVersion = schema.data[0]?.version as string;
+			// if (CurrentVersion > LatestVersion) {
+			// 	throw new Error(
+			// 		"Database is corrupted. Current Version is greater than Latest Version.",
+			// 	);
+			// }
 		} catch (error: unknown) {
 			throw new Error(error instanceof Error ? error.message : String(error));
 		} finally {

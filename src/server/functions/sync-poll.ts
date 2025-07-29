@@ -1,6 +1,6 @@
-import type { LetSyncContext } from "@/types/context.js";
+import type { ServerContext } from "@/types/context.js";
 
-export async function getData_POLL(__: Request, _: LetSyncContext<Request>) {
+export async function getData_POLL(__: Request, _: ServerContext<Request>) {
 	// const isAnonymous = session?.user?.isAnonymous;
 	// if (isAnonymous) {
 	// 	return NextResponse.json({ message: 'Anonymous user' });

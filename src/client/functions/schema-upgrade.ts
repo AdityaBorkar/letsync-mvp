@@ -1,4 +1,6 @@
+import type { SQL_Schemas } from "@/types/schemas.js";
 import type { Context } from "../config.js";
+import { getSchema } from "../utils/schema.js";
 
 export async function SchemaUpgrade(
 	props: string | { latest: true },
@@ -14,20 +16,13 @@ export async function SchemaUpgrade(
 		const version =
 			typeof props === "string" ? props : "TODO: GET LATEST VERSION";
 
-		const current_version =
-			await db.sql`SELECT * FROM client_metadata WHERE key = "${db.name}:schema_version" LIMIT 1`
-				// @ts-expect-error
-				.then((res) => res.rows[0].value)
-				.catch(() => null);
+		const current_version = await getSchema(db);
 
-		const schemas =
-			await db.sql`SELECT * FROM client_schemas WHERE version > ${current_version} ${typeof version === "string" ? `AND version <= ${version}` : ""} ORDER BY created_at DESC`
-				// @ts-expect-error
-				.then((res) => res.rows)
-				.catch(() => null);
+		const { rows: schemas } =
+			await db.sql<SQL_Schemas.Schema>`SELECT * FROM client_schemas WHERE version > ${current_version} ${typeof version === "string" ? `AND version <= ${version}` : ""} ORDER BY created_at DESC`;
 
 		console.log("No updates found");
-		for (const schema of schemas ?? []) {
+		for (const schema of schemas) {
 			// TODO: GET MIGRATION SQL
 			// await executeSchema(db, schema.sql);
 			await db.sql`INSERT INTO client_metadata (key, value) VALUES ("${db.name}:schema_version", ${schema.version})`;

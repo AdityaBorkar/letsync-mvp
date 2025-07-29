@@ -1,6 +1,5 @@
-import type { ServerWebSocket } from "bun";
-
 import { type } from "arktype";
+import type { ServerWebSocket } from "bun";
 
 import type { LetSyncContext } from "@/types/context.js";
 
@@ -67,15 +66,12 @@ export async function handler(
 		cursor: Date | undefined;
 		limit: number;
 	}): Promise<void> => {
-		// @ts-expect-error FIX THIS
 		const data_ops = await serverDb.client.sql`
 		SELECT * FROM cdc
 		WHERE tenantId = ${userId}
 		ORDER BY id ASC
 		LIMIT ${limit};
-		`
-			// @ts-expect-error FIX THIS
-			.then((res) => res.rows);
+		`.then((res) => res.rows);
 
 		const data = { data_ops, name, refId, type: "data_operations" };
 		ws.send(JSON.stringify(data));

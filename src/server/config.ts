@@ -1,6 +1,6 @@
 import type {
 	ApiHandlerAuth,
-	LetSyncContextServer,
+	ServerContext,
 	ServerDB,
 	ServerFS,
 	ServerPubSub,
@@ -86,5 +86,5 @@ export function LetSyncServer<R extends Request>(config: LetSyncConfig<R>) {
 		// isSyncing,
 		// isDbRunning,
 		// isFsRunning,
-	} as LetSyncContextServer<R>;
+	} as ServerContext<R>;
 }

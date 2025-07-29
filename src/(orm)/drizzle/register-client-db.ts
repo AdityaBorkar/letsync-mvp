@@ -21,8 +21,12 @@ export function registerClientDb<T extends DrizzleDB>({
 		close: () => close(client),
 		flush: () => flush(client),
 		name,
-		sql: (template: TemplateStringsArray, ...args: unknown[]) =>
-			client.execute(sql(template, ...args)),
+		sql: (template: TemplateStringsArray | string, ...args: unknown[]) => {
+			if (!args.length) {
+				return client.execute(template as string);
+			}
+			return client.execute(sql(template as TemplateStringsArray, ...args));
+		},
 		// open: () => open(client),
 		// ---
 		// TODO - ADD OPTION TO SUBSCRIBE, TO READ OPTIMISTIC OR NOT

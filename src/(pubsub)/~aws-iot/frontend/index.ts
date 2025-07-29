@@ -47,8 +47,7 @@ export function PubSub_Frontend<PT extends PubSubProps>(
 		const connection =
 			"client" in superProps
 				? superProps.client
-				: // @ts-expect-error - TODO
-					await $connect({ ...props, ...superProps });
+				: await $connect({ ...props, ...superProps });
 
 		/**
 		 * Subscribes to messages on a specific topic

@@ -1,13 +1,13 @@
 // import { createId } from "@paralleldrive/cuid2";
 // import jwt from "jsonwebtoken";
 
-import type { LetSyncContext } from "@/types/context.js";
+import type { ServerContext } from "@/types/context.js";
 
 // import getLatestSchema from "../schema/getLatest.js";
 
 export default async function deviceRegister(
 	__: Request,
-	_: LetSyncContext<Request>,
+	_: ServerContext<Request>,
 ) {
 	// try {
 	// 	const { db: databases, pubsub, auth } = context;

@@ -2,7 +2,7 @@ import type { ClientPubSub } from "@/types/client.js";
 import { generateName } from "@/utils/generate-name.js";
 import { syncData } from "./sync-data.js";
 
-export function registerPubSub<T>({
+export function PubSubClient<T>({
 	name = generateName(),
 	// method,
 }: {
@@ -15,5 +15,6 @@ export function registerPubSub<T>({
 		__brand: "LETSYNC_PUBSUB_CLIENT",
 		name,
 		syncData,
+		close: () => {},
 	} as ClientPubSub.Adapter<T>;
 }

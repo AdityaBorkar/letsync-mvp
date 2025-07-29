@@ -8,9 +8,8 @@ export async function executeSchema(
 	const errors: string[] = [];
 	for await (const command of commands) {
 		try {
-			// @ts-expect-error - db type from database adapter
 			// Note: This executes trusted schema SQL from the server, not user input
-			await db.execute(command.trim());
+			await db.sql(command);
 		} catch (err: unknown) {
 			errors.push(err instanceof Error ? err.toString() : String(err));
 		}

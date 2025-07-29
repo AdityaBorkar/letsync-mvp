@@ -1,43 +1,48 @@
 import type { ApiEndpoints } from "../server/api-endpoints.js";
 
-type Endpoints = typeof ApiEndpoints;
+type ApiPaths = keyof typeof ApiEndpoints;
+type ApiMethods<T extends ApiPaths> = keyof (typeof ApiEndpoints)[T];
 
 export function FetchClient(apiUrl: {
 	path: string;
 	domain: string;
 	https: boolean;
 }) {
-	const baseUrl = `http${apiUrl.https && "s"}://${apiUrl.domain}${apiUrl.path}`;
+	const baseUrl = `http${apiUrl.https ? "s" : ""}://${apiUrl.domain}${apiUrl.path}`;
 
 	const $fetch = async <
-		HttpMethod extends keyof Endpoints[Endpoint],
-		Endpoint extends keyof Endpoints,
-		// @ts-expect-error
-		SearchParams extends ApiRouter[Endpoint][HttpMethod]["searchParams"], // TODO: Implement This
+		TPath extends ApiPaths,
+		TMethod extends ApiMethods<TPath>,
 	>(
-		method: HttpMethod,
-		endpoint: Endpoint,
-		props: {
-			searchParams?: SearchParams;
+		method: TMethod,
+		endpoint: TPath,
+		props?: {
+			// TODO: Write Type Definitions
+			searchParams?: Record<string, string | number | boolean>;
 			body?: Record<string, unknown>;
+			// TODO: Do not allow Body on GET & HEAD requests
 		},
 	) => {
-		const { searchParams = {}, body = {} } = props;
-		const url = `${baseUrl}${endpoint}?${new URLSearchParams(searchParams)}`;
-		const response = await fetch(url, {
-			// @ts-expect-error
-			method,
-			body: body ? JSON.stringify(body) : undefined,
-		}).catch((error) => {
-			console.error({ error });
-			throw error;
+		const url = new URL(`${baseUrl}${endpoint}`);
+		Object.entries(props?.searchParams ?? {}).forEach(([key, value]) => {
+			url.searchParams.set(key, String(value));
 		});
-		const data = (await response.json()) as Awaited<
-			// @ts-expect-error
-			ReturnType<Endpoints[Endpoint][HttpMethod]>
-		>;
-		console.log("Data", response.status, data);
-		return data;
+
+		const hasBody = props?.body && Object.keys(props.body).length > 0;
+		const response = await fetch(url, {
+			method: method as string,
+			...(hasBody && {
+				// headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(props.body),
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		return data as unknown; // TODO: Write Type Definitions
 	};
 
 	return $fetch;

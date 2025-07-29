@@ -2,7 +2,7 @@ import { useContext } from "react";
 
 import { SyncContext } from "./SyncProvider.js";
 
-export function useDatabase({ name }: { name?: string } = {}) {
+export function useDatabase<T>({ name }: { name?: string } = {}) {
 	const client = useContext(SyncContext);
 
 	if (!name && client.db.size !== 1) {
@@ -21,5 +21,5 @@ export function useDatabase({ name }: { name?: string } = {}) {
 	// write()
 	// read()
 	// delete()
-	return clientDb.client;
+	return clientDb.client as T;
 }

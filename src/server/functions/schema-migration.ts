@@ -1,9 +1,9 @@
+import { ArkErrors, type } from "arktype";
 import type { BunRequest } from "bun";
 
-import { ArkErrors, type } from "arktype";
-
-import type { LetSyncContext } from "@/types/context.js";
+import type { ServerContext } from "@/types/context.js";
 import type { ServerDB } from "@/types/index.js";
+import type { SQL_Schemas } from "@/types/schemas.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)
@@ -18,7 +18,7 @@ const schema = type({
 
 export async function getMigration(
 	request: BunRequest,
-	context: LetSyncContext<Request>,
+	context: ServerContext<Request>,
 ) {
 	try {
 		// Request Validation
@@ -57,7 +57,7 @@ export async function getMigration(
 		}
 
 		// Generate migration SQL
-		const result = await generateMigrationSql(serverDb.client, from, to, name);
+		const result = await generateMigrationSql(serverDb, from, to, name);
 
 		if (!result) {
 			return Response.json(
@@ -91,15 +91,15 @@ interface MigrationResult {
 	sql: string;
 	toVersion: number;
 	migrations: Array<{
-		version: string;
+		version: number;
 		tag: string | null;
-		createdAt: Date;
+		created_at: string;
 		checksum: string;
 	}>;
 }
 
 async function generateMigrationSql(
-	db: ServerDB.Adapter<unknown>["client"],
+	db: ServerDB.Adapter<unknown>,
 	fromVersion: number,
 	toVersion?: number | null,
 	name?: string | null,
@@ -108,21 +108,16 @@ async function generateMigrationSql(
 		// If toVersion is not provided, get the latest version
 		let targetVersion = toVersion;
 		if (!targetVersion) {
-			// @ts-expect-error FIX THIS
-			const latestSchema = await db.sql`
+			const { rows: schemas } = await db.sql<SQL_Schemas.Schema>`
 			SELECT version FROM client_schemas
 			WHERE version IS NOT NULL AND sql IS NOT NULL
 			ORDER BY version DESC
-			LIMIT 1;
-			`
-				// @ts-expect-error FIX THIS
-				.then((res) => res.rows[0]);
-
-			if (latestSchema.length === 0) {
+			LIMIT 1;`;
+			const latestVersion = schemas[0]?.version;
+			if (!latestVersion) {
 				throw new Error("No schemas found in database");
 			}
-
-			targetVersion = Number.parseInt(latestSchema[0].version);
+			targetVersion = latestVersion;
 		}
 
 		// Validate fromVersion exists and is valid
@@ -131,19 +126,10 @@ async function generateMigrationSql(
 		}
 
 		// Get all schema versions between fromVersion and targetVersion (inclusive)
-		// @ts-expect-error FIX THIS
-		const versions = await db.sql`
-		SELECT
-			checksum,
-			createdAt,
-			isRolledBack,
-			sql,
-			tag,
-			version
-		FROM client_schemas
+		const { rows: versions } = await db.sql<SQL_Schemas.Schema>`
+		SELECT checksum, created_at, is_rolled_back, sql, tag, version FROM client_schemas
 		WHERE version >= ${fromVersion + 1} AND version <= ${targetVersion} AND sql IS NOT NULL
-		ORDER BY version;
-		`.execute();
+		ORDER BY version;`;
 
 		if (versions.length === 0) {
 			return null; // No migrations found in range
@@ -151,7 +137,7 @@ async function generateMigrationSql(
 
 		// Filter out rolled back migrations
 		const validMigrations = versions.filter(
-			(v: { isRolledBack: boolean }) => !v.isRolledBack,
+			(v: { is_rolled_back: boolean }) => !v.is_rolled_back,
 		);
 
 		if (validMigrations.length === 0) {
@@ -166,7 +152,7 @@ async function generateMigrationSql(
 			// Add migration info for response
 			migrationInfo.push({
 				checksum: migration.checksum,
-				createdAt: migration.createdAt,
+				created_at: new Date(migration.created_at).toISOString(),
 				tag: migration.tag,
 				version: migration.version,
 			});
