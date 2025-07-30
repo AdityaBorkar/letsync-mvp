@@ -1,5 +1,6 @@
-import { type } from "arktype";
 import type { ServerWebSocket } from "bun";
+
+import { type } from "arktype";
 
 import type { WebsocketData } from "../../server/handler.js";
 
@@ -64,18 +65,18 @@ export async function handler(
 		cursor: Date | undefined;
 		limit: number;
 	}): Promise<void> => {
-		const data_ops = await serverDb.client.sql`
+		const dataOps = await serverDb.client.sql`
 		SELECT * FROM cdc
 		WHERE tenantId = ${userId}
 		ORDER BY id ASC
 		LIMIT ${limit};
 		`;
 
-		const data = { data_ops, name, refId, type: "data_operations" };
+		const data = { data_ops: dataOps, name, refId, type: "data_operations" };
 		ws.send(JSON.stringify(data));
 
-		if (data_ops.length && data_ops.length !== limit) {
-			const cursor = data_ops[data_ops.length - 1].timestamp;
+		if (dataOps.length > 0 && dataOps.length !== limit) {
+			const cursor = dataOps.at(-1).timestamp;
 			await getDataOps({ cursor, limit });
 		}
 	};

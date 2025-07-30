@@ -38,10 +38,7 @@ interface MutationExecuteResult<T = any> {
 	error?: string;
 }
 
-async function validateWithSchema<T extends Type>(
-	schema: T,
-	data: any,
-): Promise<InferArkType<T>> {
+function validateWithSchema<T extends Type>(schema: T, data: any) {
 	const result = schema(data);
 	if (
 		result instanceof Error ||
@@ -61,7 +58,7 @@ export class MutationBuilder<
 > {
 	public _name = "";
 	public _schema?: Type;
-	public _middlewares: Array<MutationMiddleware<any, any>> = [];
+	public _middlewares: MutationMiddleware<any, any>[] = [];
 	public _handler?: MutationHandlerFn<TData, TContext>;
 	public _onSuccess?: (result: { data: any }) => void;
 	public _onError?: (error: { error: string }) => void;

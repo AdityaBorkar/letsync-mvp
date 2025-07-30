@@ -1,17 +1,15 @@
 // biome-ignore lint/style/useImportType: REACT
-import React, { createContext } from "react";
+import React from "react";
 
 import type { LetSyncClient } from "@/client/config.js";
 
-type Client = ReturnType<typeof LetSyncClient>;
-
-export const SyncContext = createContext<Client>(null as unknown as Client);
+import { SyncContext } from "./context.js";
 
 export function SyncProvider({
 	client,
 	children,
 }: {
-	client: Client;
+	client: ReturnType<typeof LetSyncClient>;
 	children: React.ReactNode;
 }) {
 	return <SyncContext value={client}>{children}</SyncContext>;

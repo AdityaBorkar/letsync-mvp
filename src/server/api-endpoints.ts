@@ -1,12 +1,14 @@
-import type { ServerDB, ServerFS, ServerPubSub } from "@/types/server.js";
+// biome-ignore-all lint/style/useNamingConvention: API Methods must be in uppercase
+
+import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.js";
 
 import { getSchema } from "./functions/schema-list.js";
 import { getMigration } from "./functions/schema-migrate.js";
 import { verifySchema } from "./functions/schema-verify.js";
 
 export type EndpointContext = {
-	db: ServerDB.Adapter<unknown>[];
-	fs: ServerFS.Adapter<unknown>[];
+	db: ServerDb.Adapter<unknown>[];
+	fs: ServerFs.Adapter<unknown>[];
 	pubsub: ServerPubSub.Adapter;
 	auth: {
 		userId: string;

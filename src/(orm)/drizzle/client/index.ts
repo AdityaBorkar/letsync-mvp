@@ -1,4 +1,4 @@
-import type { ClientDB, GenericObject } from "@/types/client.js";
+import type { ClientDb, GenericObject } from "@/types/client.js";
 import type { SQL_Schemas } from "@/types/schemas.js";
 import { generateName } from "@/utils/generate-name.js";
 
@@ -40,5 +40,5 @@ export function registerClientDb<T extends DrizzleClientDb>({
 			pull: () => schema.pull(client),
 		},
 		size: () => size(client),
-	} satisfies ClientDB.Adapter<T>;
+	} satisfies ClientDb.Adapter<T>;
 }

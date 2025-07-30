@@ -1,6 +1,6 @@
 import type { Context } from "../config.js";
 
-export default async function cdcCapture(__: Request, _: Context) {
+export async function cdcCapture(__: Request, _: Context) {
 	// const { pubsub, db } = _;
 	// // const db = databases[0]; // TODO - How to select the correct database?
 	// if (!db)
@@ -12,7 +12,7 @@ export default async function cdcCapture(__: Request, _: Context) {
 	// 	return Response.json({ error: "Invalid Authorization" }, { status: 401 });
 	// const input = await request.json();
 	// // TODO: Zod verify `input`
-	// // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// // biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 	// const cdc = input.payload as unknown as any[];
 	// console.log({
 	// 	payload: JSON.stringify(input, null, 4),

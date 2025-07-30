@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/performance/noBarrelFile: THIS IS A LIBRARY */
 export {
 	composeMiddleware,
 	type MiddlewareComposer,

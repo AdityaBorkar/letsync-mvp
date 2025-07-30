@@ -10,12 +10,9 @@ export function FetchClient(apiUrl: {
 }) {
 	const baseUrl = `http${apiUrl.https ? "s" : ""}://${apiUrl.domain}${apiUrl.path}`;
 
-	const $fetch = async <
-		TPath extends ApiPaths,
-		TMethod extends ApiMethods<TPath>,
-	>(
-		method: TMethod,
-		endpoint: TPath,
+	const $fetch = async <Path extends ApiPaths, Method extends ApiMethods<Path>>(
+		method: Method,
+		endpoint: Path,
 		props?: {
 			// TODO: Write Type Definitions
 			searchParams?: Record<string, string | number | boolean>;

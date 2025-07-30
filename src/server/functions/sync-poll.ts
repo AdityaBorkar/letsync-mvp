@@ -1,6 +1,6 @@
 import type { Context } from "../config.js";
 
-export async function getData_POLL(__: Request, _: Context) {
+export function getData_POLL(__: Request, _: Context) {
 	// const isAnonymous = session?.user?.isAnonymous;
 	// if (isAnonymous) {
 	// 	return NextResponse.json({ message: 'Anonymous user' });

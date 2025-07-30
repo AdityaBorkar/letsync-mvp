@@ -1,6 +1,7 @@
+// biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
 import type { SQL_Schemas } from "./schemas.js";
 
-export namespace ServerDB {
+export namespace ServerDb {
 	export type Adapter<T> = {
 		__brand: "LETSYNC_SERVER_DB";
 		name: string;
@@ -16,7 +17,7 @@ export namespace ServerDB {
 	};
 }
 
-export namespace ServerFS {
+export namespace ServerFs {
 	export type Adapter<T> = {
 		__brand: "LETSYNC_SERVER_FS";
 		name: string;

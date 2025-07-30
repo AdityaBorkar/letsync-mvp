@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { copyFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { file } from "bun";
 
 import { performDrizzleGenerate } from "./utils/drizzle.js";
 import { JOURNAL_VERSION } from "./utils/letsync.js";
@@ -20,29 +21,33 @@ export async function generate(options: GenerateOptions) {
 	await copyFile(`../schemas/${options.schema}`, schemaPath);
 	console.log(`   Copied file: ${schemaPath}`);
 
-	const DRY_RUN = options.dryRun;
-	if (DRY_RUN) console.log("   Mode: Dry run (no files will be created)");
+	const DryRun = options.dryRun;
+	if (DryRun) {
+		console.log("   Mode: Dry run (no files will be created)");
+	}
 
 	const { dialect, content, migration, config } =
 		await performDrizzleGenerate();
 
 	const path = join(process.cwd(), config.out, "../migrations-client/");
-	if (!existsSync(path)) await mkdir(path, { recursive: true });
+	if (!existsSync(path)) {
+		await mkdir(path, { recursive: true });
+	}
 
-	const journal = Bun.file(join(path, "_journal.json"));
+	const journal = file(join(path, "_journal.json"));
 	const exists = await journal.exists();
-	const DEFAULT_JOURNAL = { dialect, entries: [], version: JOURNAL_VERSION };
+	const DefaultJournal = { dialect, entries: [], version: JOURNAL_VERSION };
 	if (!exists) {
 		console.log("   Creating journal file...");
-		const content = JSON.stringify(DEFAULT_JOURNAL, null, 2);
-		if (DRY_RUN) {
+		const content = JSON.stringify(DefaultJournal, null, 2);
+		if (DryRun) {
 			console.log(`\n\n\n Write to file: ${journal.name} \n`);
 			console.log(content);
 		} else {
 			await journal.write(content);
 		}
 	}
-	const journalData = exists ? await journal.json() : DEFAULT_JOURNAL;
+	const journalData = exists ? await journal.json() : DefaultJournal;
 	// TODO: Validate journalData
 
 	const journalEntry = {
@@ -52,7 +57,7 @@ export async function generate(options: GenerateOptions) {
 	};
 	journalData.entries.push(journalEntry);
 	const journalContent = JSON.stringify(journalData, null, 2);
-	if (DRY_RUN) {
+	if (DryRun) {
 		console.log(`\n\n\n Write to file: ${journal.name} \n`);
 		console.log(journalContent);
 	} else {
@@ -62,8 +67,8 @@ export async function generate(options: GenerateOptions) {
 	// TODO: Implement DIRECTIVES later.
 	// TODO: Implement Transformation later.
 
-	const sqlFile = Bun.file(join(path, `${migration.tag}.sql`));
-	if (DRY_RUN) {
+	const sqlFile = file(join(path, `${migration.tag}.sql`));
+	if (DryRun) {
 		console.log(`\n\n\n Write to file: ${sqlFile.name} \n`);
 		console.log(content);
 	} else {

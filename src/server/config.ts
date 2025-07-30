@@ -1,9 +1,10 @@
 import type {
 	ApiHandlerAuth,
-	ServerDB,
-	ServerFS,
+	ServerDb,
+	ServerFs,
 	ServerPubSub,
 } from "@/types/index.js";
+
 import { apiHandler } from "./api-handler.js";
 
 export type Server = ReturnType<typeof LetSyncServer>;
@@ -11,8 +12,8 @@ export type Server = ReturnType<typeof LetSyncServer>;
 export type Context = {
 	auth: ApiHandlerAuth<Request>;
 	apiUrl: { path: string; domain: string; https: boolean };
-	db: Map<string, ServerDB.Adapter<unknown>>;
-	fs: Map<string, ServerFS.Adapter<unknown>>;
+	db: Map<string, ServerDb.Adapter<unknown>>;
+	fs: Map<string, ServerFs.Adapter<unknown>>;
 	pubsub: Map<string, ServerPubSub.Adapter>;
 };
 
@@ -21,8 +22,8 @@ export type LetSyncConfig<R extends Request> = {
 	auth: ApiHandlerAuth<R>;
 	connections: (
 		| ServerPubSub.Adapter
-		| ServerDB.Adapter<unknown>
-		| ServerFS.Adapter<unknown>
+		| ServerDb.Adapter<unknown>
+		| ServerFs.Adapter<unknown>
 	)[];
 };
 
@@ -32,19 +33,19 @@ export function LetSyncServer<R extends Request>(config: LetSyncConfig<R>) {
 	}
 
 	// * Adapters
-	const db: Map<string, ServerDB.Adapter<unknown>> = new Map();
-	const fs: Map<string, ServerFS.Adapter<unknown>> = new Map();
+	const db: Map<string, ServerDb.Adapter<unknown>> = new Map();
+	const fs: Map<string, ServerFs.Adapter<unknown>> = new Map();
 	const pubsub: Map<string, ServerPubSub.Adapter> = new Map();
 	for (const item of config.connections) {
-		if (item.__brand === `LETSYNC_SERVER_DB`) {
+		if (item.__brand === "LETSYNC_SERVER_DB") {
 			db.set(item.name, item);
 			continue;
 		}
-		if (item.__brand === `LETSYNC_SERVER_FS`) {
+		if (item.__brand === "LETSYNC_SERVER_FS") {
 			fs.set(item.name, item);
 			continue;
 		}
-		if (item.__brand === `LETSYNC_SERVER_PUBSUB`) {
+		if (item.__brand === "LETSYNC_SERVER_PUBSUB") {
 			pubsub.set(item.name, item);
 			continue;
 		}
@@ -70,7 +71,7 @@ export function LetSyncServer<R extends Request>(config: LetSyncConfig<R>) {
 	};
 
 	// @ts-expect-error
-	const context: Context = { db, fs, pubsub, auth, apiUrl };
+	const context: Context = { apiUrl, auth, db, fs, pubsub };
 
 	return {
 		apiHandler: (request: Request) => apiHandler(request, context),

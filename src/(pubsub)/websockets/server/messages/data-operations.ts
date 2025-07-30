@@ -20,10 +20,10 @@ const message = type({
 function handler(_ws: WebSocket, msg: typeof message.infer) {
 	const { data_ops } = msg;
 
-	const data_ops_map = new Map<number, (typeof data_ops)[number]>();
+	const dataOpsMap = new Map<number, (typeof data_ops)[number]>();
 
-	for (const data_op of data_ops) {
-		data_ops_map.set(data_op.id, data_op);
+	for (const dataOp of data_ops) {
+		dataOpsMap.set(dataOp.id, dataOp);
 	}
 }
 

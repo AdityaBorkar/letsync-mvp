@@ -6,7 +6,7 @@ import type { DrizzleClientDb } from "./types.js";
 export const schema = { apply, insert, list, pull };
 
 export async function pull(db: DrizzleClientDb) {
-	return sql(
+	return await sql(
 		db,
 		`SELECT table_name, string_agg(column_name || ' (' || data_type || ')', ', ' ORDER BY ordinal_position) as columns
         FROM information_schema.columns
@@ -32,10 +32,10 @@ async function list(
 ) {
 	const schemas = await sql(
 		db,
-		`SELECT * FROM client_schemas` +
+		"SELECT * FROM client_schemas" +
 			(aboveVersion ? ` WHERE version > ${aboveVersion}` : "") +
 			(belowVersion ? ` AND version <= ${belowVersion}` : "") +
-			` ORDER BY version ASC`,
+			" ORDER BY version ASC",
 	);
 	// @ts-expect-error - TODO: Fix this
 	return schemas.rows;

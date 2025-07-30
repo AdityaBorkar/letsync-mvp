@@ -1,9 +1,29 @@
-import { useContext } from "react";
+import { useContext, useSyncExternalStore } from "react";
 
-import { SyncContext } from "./SyncProvider.js";
+import { SyncContext } from "./context.js";
 
 export function useSyncStatus() {
 	const client = useContext(SyncContext);
-	// TODO: Add a externalUseState hook to update the status
-	return client.getStatus();
+	const status = useSyncExternalStore(
+		(callback) => {
+			const unsubscribe = client.subscribe(
+				[
+					"network:online",
+					"network:offline",
+					"sync:start",
+					"sync:stop",
+					"db:start",
+					"db:stop",
+					"fs:start",
+					"fs:stop",
+				],
+				callback,
+			);
+			return unsubscribe;
+		},
+		() => client.getStatus(),
+		// () => client.getStatus(),
+	);
+
+	return status;
 }

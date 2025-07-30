@@ -17,7 +17,7 @@ export function apiHandler<R extends Request>(request: R, ctx: Context) {
 		return new Response("Not Found", { status: 404 });
 	}
 
-	// biome-ignore lint/complexity/noBannedTypes: <explanation>
+	// biome-ignore lint/complexity/noBannedTypes: TEMPORARY
 	const endpoint = methods[method] as Function;
 	if (!endpoint) {
 		return new Response("Not Found", { status: 404 });

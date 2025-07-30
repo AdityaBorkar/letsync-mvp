@@ -10,7 +10,7 @@ const message = type({
 	type: '"mutation"',
 });
 
-export async function handler(
+export function handler(
 	ws: ServerWebSocket<WebsocketData>,
 	msg: typeof message.infer,
 ) {

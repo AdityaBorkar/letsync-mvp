@@ -1,11 +1,11 @@
 import type { Context } from "../config.js";
 
-// biome-ignore lint/suspicious/noEmptyInterface: <explanation>
+// biome-ignore lint/suspicious/noEmptyInterface: TEMPORARY
 interface DeregisterProps {
 	// TODO - DE-REGISTER OTHER DEVICES
 }
 
-export async function DeviceDeregister(_: DeregisterProps, context: Context) {
+export function DeviceDeregister(_: DeregisterProps, context: Context) {
 	context;
 	// props;
 	// const console = new Logger("deregister");

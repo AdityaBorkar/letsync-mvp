@@ -1,6 +1,9 @@
-import { ArkErrors, type } from "arktype";
 import type { BunRequest } from "bun";
-import type { ServerDB } from "@/types/index.js";
+
+import { ArkErrors, type } from "arktype";
+
+import type { ServerDb } from "@/types/index.js";
+
 import type { Context } from "../config.js";
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
@@ -89,13 +92,14 @@ interface MigrationResult {
 	migrations: Array<{
 		version: number;
 		tag: string | null;
+		// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 		created_at: string;
 		checksum: string;
 	}>;
 }
 
 async function generateMigrationSql(
-	db: ServerDB.Adapter<unknown>,
+	db: ServerDb.Adapter<unknown>,
 	fromVersion: number,
 	toVersion?: number | null,
 	name?: string | null,
@@ -128,6 +132,7 @@ async function generateMigrationSql(
 
 		// Filter out rolled back migrations
 		const validMigrations = versions.filter(
+			// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 			(v: { is_rolled_back: boolean }) => !v.is_rolled_back,
 		);
 
@@ -143,6 +148,7 @@ async function generateMigrationSql(
 			// Add migration info for response
 			migrationInfo.push({
 				checksum: migration.checksum,
+				// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 				created_at: new Date(migration.created_at).toISOString(),
 				tag: migration.tag,
 				version: migration.version,

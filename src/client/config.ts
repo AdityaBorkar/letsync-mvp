@@ -1,4 +1,4 @@
-import type { ClientDB, ClientFS, ClientPubSub } from "@/types/client.js";
+import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.js";
 import type { ApiHandlerAuth } from "@/types/context.js";
 import { FetchClient } from "@/utils/fetch-client.js";
 
@@ -24,8 +24,8 @@ import { SyncTerminate } from "./functions/sync-terminate.js";
 export type Client = ReturnType<typeof LetSyncClient>;
 
 export type Context = {
-	db: Map<string, ClientDB.Adapter<unknown>>;
-	fs: Map<string, ClientFS.Adapter<unknown>>;
+	db: Map<string, ClientDb.Adapter<unknown>>;
+	fs: Map<string, ClientFs.Adapter<unknown>>;
 	pubsub: Map<string, ClientPubSub.Adapter>;
 	controller: AbortController;
 	status: {
@@ -42,8 +42,8 @@ export type LetSyncConfig<R extends Request> = {
 	auth: ApiHandlerAuth<R>;
 	connections: (
 		| ClientPubSub.Adapter
-		| ClientDB.Adapter<unknown>
-		| ClientFS.Adapter<unknown>
+		| ClientDb.Adapter<unknown>
+		| ClientFs.Adapter<unknown>
 	)[];
 };
 
@@ -53,19 +53,19 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	}
 
 	// * Adapters
-	const db = new Map<string, ClientDB.Adapter<unknown>>();
-	const fs = new Map<string, ClientFS.Adapter<unknown>>();
+	const db = new Map<string, ClientDb.Adapter<unknown>>();
+	const fs = new Map<string, ClientFs.Adapter<unknown>>();
 	const pubsub = new Map<string, ClientPubSub.Adapter>();
 	for (const item of config.connections) {
-		if (item.__brand === `LETSYNC_CLIENT_DB`) {
+		if (item.__brand === "LETSYNC_CLIENT_DB") {
 			db.set(item.name, item);
 			continue;
 		}
-		if (item.__brand === `LETSYNC_CLIENT_FS`) {
+		if (item.__brand === "LETSYNC_CLIENT_FS") {
 			fs.set(item.name, item);
 			continue;
 		}
-		if (item.__brand === `LETSYNC_CLIENT_PUBSUB`) {
+		if (item.__brand === "LETSYNC_CLIENT_PUBSUB") {
 			pubsub.set(item.name, item);
 			continue;
 		}
@@ -84,12 +84,12 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	// }
 
 	// * Utils
-	const GARBAGE_COLLECTOR: (() => void)[] = [];
+	const GarbageCollector: (() => void)[] = [];
 	const controller = new AbortController();
 	const fetch = FetchClient(config.apiUrl);
 
 	// * Event Manager
-	const { subscribe } = EventManager();
+	const { subscribe, unsubscribe } = EventManager();
 	// * Status
 
 	const isOnline = new Signal(false);
@@ -108,7 +108,7 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 	const handleOffline = () => isOnline.set(false);
 	window.addEventListener("online", handleOnline);
 	window.addEventListener("offline", handleOffline);
-	GARBAGE_COLLECTOR.push(() => {
+	GarbageCollector.push(() => {
 		window.removeEventListener("online", handleOnline);
 		window.removeEventListener("offline", handleOffline);
 	});
@@ -148,5 +148,15 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
 		terminate: () => SyncTerminate(undefined, context),
 	};
 
-	return { data, db, fs, getStatus, pubsub, schema, subscribe, sync };
+	return {
+		data,
+		db,
+		fs,
+		getStatus,
+		pubsub,
+		schema,
+		subscribe,
+		sync,
+		unsubscribe,
+	};
 }

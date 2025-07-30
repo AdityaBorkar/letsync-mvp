@@ -11,7 +11,7 @@ const MessageType = pong.message
 	.or(dataOperations.message)
 	.or(dataCache.message);
 
-export async function syncData(context: any): Promise<void> {
+export function syncData(context: any) {
 	const { apiUrl } = context;
 	const logger = new Logger("SYNC:WS");
 
@@ -19,7 +19,7 @@ export async function syncData(context: any): Promise<void> {
 		`${apiUrl.https ? "wss" : "ws"}://${apiUrl.domain}/${apiUrl.path}/ws`,
 	);
 
-	ws.onopen = async () => {
+	ws.onopen = () => {
 		ws.send(JSON.stringify({ refId: generateRefId(), type: "ping" }));
 		// for (const [name, database] of db.entries()) {
 		// 	const metadata =
@@ -43,9 +43,13 @@ export async function syncData(context: any): Promise<void> {
 			return;
 		}
 
-		if (data.type === "pong") pong.handler(ws, data);
-		if (data.type === "data_cache") dataCache.handler(ws, data);
-		if (data.type === "data_operations") dataOperations.handler(ws, data);
+		if (data.type === "pong") {
+			pong.handler(ws, data);
+		} else if (data.type === "data_cache") {
+			dataCache.handler(ws, data);
+		} else if (data.type === "data_operations") {
+			dataOperations.handler(ws, data);
+		}
 		// TODO: `mutation_ack`
 	};
 

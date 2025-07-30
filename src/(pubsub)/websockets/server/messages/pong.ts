@@ -10,7 +10,9 @@ export const message = type({
 
 function handler(_: WebSocket, data: typeof message.infer) {
 	const request = getContextByRefId(data.refId);
-	if (!request) throw new Error("Request not found");
+	if (!request) {
+		throw new Error("Request not found");
+	}
 
 	const totalLatency = Date.now() - request.timestamp;
 	console.log(`Total Latency: ${totalLatency}ms`);

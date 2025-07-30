@@ -5,7 +5,8 @@ export function close(client: DrizzleServerDb) {
 	if ("close" in $client) {
 		// @ts-expect-error
 		return $client.close() as unknown as Promise<void>;
-	} else if ("end" in $client) {
+	}
+	if ("end" in $client) {
 		return $client.end() as unknown as Promise<void>;
 	}
 	throw new Error(

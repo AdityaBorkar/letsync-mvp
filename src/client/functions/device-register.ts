@@ -1,11 +1,11 @@
 import type { Context } from "../config.js";
 
-// biome-ignore lint/suspicious/noEmptyInterface: <explanation>
+// biome-ignore lint/suspicious/noEmptyInterface: TEMPORARY
 interface RegisterProps {
 	// TODO - ADD METADATA for { organizationId, projectId }
 }
 
-export async function DeviceRegister(_: RegisterProps, context: Context) {
+export function DeviceRegister(_: RegisterProps, context: Context) {
 	context;
 	// const console = new Logger("register");
 	// const metadata = context.db.get("metadata");

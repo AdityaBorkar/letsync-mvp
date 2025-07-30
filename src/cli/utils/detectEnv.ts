@@ -23,7 +23,10 @@ const ENVIRONMENTS: Record<string, EnvironmentConfig> = {
 };
 
 export function detectEnvironment() {
+	// biome-ignore lint/style/noProcessEnv: Environment Detection
 	const nodeEnv = process.env.NODE_ENV?.toLowerCase();
-	if (nodeEnv && ENVIRONMENTS[nodeEnv]) return ENVIRONMENTS[nodeEnv];
+	if (nodeEnv && ENVIRONMENTS[nodeEnv]) {
+		return ENVIRONMENTS[nodeEnv];
+	}
 	return ENVIRONMENTS.development;
 }

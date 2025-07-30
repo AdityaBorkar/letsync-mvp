@@ -30,9 +30,7 @@ export class MutationList<T extends MutationMap = MutationMap> {
 	}
 
 	[Symbol.iterator](): Iterator<[keyof T, T[keyof T]]> {
-		const entries = Object.entries(this._mutations) as Array<
-			[keyof T, T[keyof T]]
-		>;
+		const entries = Object.entries(this._mutations) as [keyof T, T[keyof T]][];
 		let index = 0;
 
 		return {

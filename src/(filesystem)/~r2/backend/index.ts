@@ -19,7 +19,7 @@
 // 	// async function publish(
 // 	// 	topic: string,
 // 	// 	payload: {
-// 	// 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// 	// 		// biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 // 	// 		[key: string]: any;
 // 	// 	},
 // 	// ) {
@@ -31,7 +31,7 @@
 // 	// 	console.log({ response });
 // 	// }
 
-// 	// // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// 	// // biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 // 	// async function subscribe(topic: string, callback: (data: any) => void) {
 // 	// 	// TODO - WRITE THIS CODE
 // 	// 	console.log({ callback, prefix, topic });

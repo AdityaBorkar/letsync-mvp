@@ -1,13 +1,12 @@
-import { execSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { $ } from "bun";
+
+import type { Options, PostgresType } from "postgres";
 
 export async function generateSchema() {
 	console.log("🔄 Running drizzle generate...");
-	execSync("bunx drizzle-kit generate", {
-		cwd: process.cwd(),
-		encoding: "utf-8",
-	});
+	await $`bunx drizzle-kit generate`;
 	// TODO: Print Logs
 	// TODO: Error Handling
 	console.log("   Generated migrations");
@@ -17,7 +16,7 @@ interface DrizzleConfig {
 	schema: string | string[];
 	out: string;
 	dialect: string;
-	dbCredentials?: any;
+	dbCredentials?: Options<Record<string, PostgresType<unknown>>>;
 }
 
 export async function getConfig() {
@@ -59,8 +58,10 @@ export async function performDrizzleGenerate() {
 	console.log("📄 Processing Migration");
 	console.log(`   Dialect: ${journal.dialect}`);
 
-	const migration = journal.entries[journal.entries.length - 1];
-	if (!migration) throw new Error("No migrations found");
+	const migration = journal.entries.at(-1);
+	if (!migration) {
+		throw new Error("No migrations found");
+	}
 	console.log(`   Latest migration: ${migration.tag}`);
 	const content = await getMigrationSchema(config.out, migration.tag);
 

@@ -81,7 +81,7 @@
 // 		async function publish(
 // 			topic: string,
 // 			payload: {
-// 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// 				// biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 // 				[key: string]: any;
 // 			},
 // 		) {

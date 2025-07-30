@@ -5,7 +5,7 @@ import type { Context } from "../config.js";
 
 // import getLatestSchema from "../schema/getLatest.js";
 
-export default async function deviceRegister(__: Request, _: Context) {
+export async function deviceRegister(__: Request, _: Context) {
 	// try {
 	// 	const { db: databases, pubsub, auth } = context;
 	// 	const { userId } = auth(request);

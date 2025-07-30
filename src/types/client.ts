@@ -1,8 +1,9 @@
+// biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
 import type { SQL_Schemas } from "./schemas.js";
 
 export type GenericObject = { [key: string]: string | boolean | GenericObject };
 
-export namespace ClientDB {
+export namespace ClientDb {
 	export type Adapter<T> = {
 		__brand: "LETSYNC_CLIENT_DB";
 		client: T;
@@ -43,11 +44,11 @@ export namespace ClientPubSub {
 	};
 }
 
-export namespace ClientFS {
-	export type Adapter<RT> = {
+export namespace ClientFs {
+	export type Adapter<T> = {
 		__brand: "LETSYNC_CLIENT_FS";
 		name: string;
-		filesystem: RT;
+		filesystem: T;
 		init: () => Promise<void>;
 		close: () => Promise<void>;
 	};

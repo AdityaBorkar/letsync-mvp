@@ -10,11 +10,8 @@ export async function SchemaUpgrade(
 		throw new Error("Database not found");
 	}
 
-	const current_version = await db.metadata.get(`${db.name}:schema_version`);
-	const schemas = await db.schema.list(
-		String(current_version),
-		String(version),
-	);
+	const currentVersion = await db.metadata.get(`${db.name}:schema_version`);
+	const schemas = await db.schema.list(String(currentVersion), String(version));
 	if (schemas.length === 0) {
 		console.log("No updates found");
 		return;

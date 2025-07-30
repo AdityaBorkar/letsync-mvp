@@ -2,8 +2,6 @@ import type { BunRequest, Server, ServerWebSocket } from "bun";
 
 import { ArkErrors } from "arktype";
 
-import type { ServerContext } from "@/types/context.js";
-
 export type SyncMethod =
 	| "sse"
 	| "websocket"
@@ -19,15 +17,13 @@ export interface WebsocketData {
 	userId: string;
 	connectionTime: number;
 }
-export async function getData_WS(
-	request: BunRequest,
-	_: ServerContext<Request>,
-	server: Server,
-) {
+export function getData_WS(request: BunRequest, _: unknown, server: Server) {
 	// Upgrade connection to WebSocket with authenticated user data
 	const connectionTime = Date.now();
 	const upgraded = server.upgrade(request, { data: { connectionTime } });
-	if (upgraded) return undefined;
+	if (upgraded) {
+		return undefined;
+	}
 	return Response.json(
 		{ error: "Failed to upgrade to WebSocket" },
 		{ status: 400 },
@@ -45,7 +41,7 @@ export const wsHandler = {
 	async message(
 		ws: ServerWebSocket<WebsocketData>,
 		message: string,
-		context: LetSyncContext<Request>,
+		context: unknown,
 	) {
 		const data = MessageType(JSON.parse(message));
 		if (data instanceof ArkErrors) {
@@ -54,10 +50,15 @@ export const wsHandler = {
 		}
 
 		// TODO: Use AsyncLocalStorage for `ws` and `data`
-		if (data.type === "ping") await ping.handler(ws, data);
-		if (data.type === "mutation") await mutation.handler(ws, data);
-		if (data.type === "sync_request")
+		if (data.type === "ping") {
+			await ping.handler(ws, data);
+		}
+		if (data.type === "mutation") {
+			await mutation.handler(ws, data);
+		}
+		if (data.type === "sync_request") {
 			await syncRequest.handler(ws, data, context);
+		}
 	},
 
 	// async open(ws: ServerWebSocket<WebsocketData>) {

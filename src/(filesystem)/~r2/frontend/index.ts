@@ -6,7 +6,7 @@
 // 	// authorizer: string;
 // 	// endpoint: string;
 // 	prefix: string;
-// 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// 	// biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 // 	client: any;
 // }): ClientPubSub.Adapter<unknown> {
 // 	const superProps = props;
@@ -37,7 +37,7 @@
 // 		async function publish(
 // 			topic: string,
 // 			payload: {
-// 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// 				// biome-ignore lint/suspicious/noExplicitAny: TEMPORARY
 // 				[key: string]: any;
 // 			},
 // 		) {

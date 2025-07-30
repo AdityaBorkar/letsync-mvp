@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { SyncContext } from "./SyncProvider.js";
+import { SyncContext } from "./context.js";
 
 export function useSync() {
 	const client = useContext(SyncContext);

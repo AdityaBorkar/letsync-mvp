@@ -1,54 +1,56 @@
-namespace ClientEvents {
-	export type List = {
-		online: () => void;
-		offline: () => void;
-		syncing: () => void;
-		synced: () => void;
-		dbRunning: () => void;
-		dbStopped: () => void;
-		// "auth.grant": (data: { userId: string; deviceId: string }) => void;
-		// "auth.refresh": (data: { userId: string; deviceId: string }) => void;
-		// "auth.revoke": (data: { userId: string; deviceId: string }) => void;
-		"device:register": () => void;
-		"device:deregister": () => void;
-		"device:connected": () => void;
-		"device:disconnected": () => void;
-		"^pull": () => void;
-		"^push": () => void;
-		"^sync": () => void;
-	};
+export type Events = {
+	"network:offline": () => void;
+	"network:online": () => void;
+	"sync:start": () => void;
+	"sync:stop": () => void;
+	"db:start": () => void;
+	"db:stop": () => void;
+	"fs:start": () => void;
+	"fs:stop": () => void;
+	// "auth.grant": (data: { userId: string; deviceId: string }) => void;
+	// "auth.refresh": (data: { userId: string; deviceId: string }) => void;
+	// "auth.revoke": (data: { userId: string; deviceId: string }) => void;
+	// "device:register": () => void;
+	// "device:deregister": () => void;
+	// "device:connected": () => void;
+	// "device:disconnected": () => void;
+	// "^pull": () => void;
+	// "^push": () => void;
+	// "^sync": () => void;
+};
 
-	export type Name = keyof List;
-}
-
-export const events = ["device:register", "device:unregister"];
+export type EventName = keyof Events;
 
 export function EventManager() {
 	const subscribers: Map<
-		ClientEvents.Name,
-		Set<(event: ClientEvents.List[ClientEvents.Name]) => void>
+		EventName,
+		Set<(event: Events[EventName]) => void>
 	> = new Map();
 
 	return {
-		subscribe: <EventName extends ClientEvents.Name>(
-			event: EventName,
-			callback: (event: ClientEvents.List[EventName]) => void,
+		subscribe: <E extends EventName>(
+			event: E | E[],
+			callback: (event: Events[E]) => void,
 		) => {
-			if (!subscribers.has(event)) {
-				subscribers.set(event, new Set());
+			const events = Array.isArray(event) ? event : [event];
+			for (const event of events) {
+				if (!subscribers.has(event)) {
+					subscribers.set(event, new Set());
+				}
+				subscribers.get(event)?.add(callback);
 			}
-			subscribers.get(event)!.add(callback);
 			return () => {
-				subscribers.get(event)!.delete(callback);
+				for (const event of events) {
+					subscribers.get(event)?.delete(callback);
+				}
 			};
 		},
-		// unsubscribe: <
-		// 	Callback extends (event: ClientEvents.List[ClientEvents.Name]) => void,
-		// >(
-		// 	event: ClientEvents.Name,
-		// 	callback: Callback,
-		// ) => {
-		// 	subscribers.get(event)?.delete(callback);
-		// },
+		unsubscribe: <E extends EventName>(
+			callback: (event: Events[E]) => void,
+		) => {
+			for (const [, callbacks] of subscribers.entries()) {
+				callbacks.delete(callback);
+			}
+		},
 	};
 }

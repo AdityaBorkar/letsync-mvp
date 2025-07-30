@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
+import { file } from "bun";
 
 import postgres from "postgres";
 
@@ -24,8 +25,9 @@ interface Journal {
 
 export async function migrate(options: MigrateOptions) {
 	console.log("📦 Migrating schema changes...");
-	if (options.dryRun)
+	if (options.dryRun) {
 		console.log("   Mode: Dry run (no files will be created)");
+	}
 
 	const config = await getConfig();
 	console.log("✅ Got database config");
@@ -35,10 +37,12 @@ export async function migrate(options: MigrateOptions) {
 	const db = postgres(dbCredentials);
 	console.log("✅ Database connection established");
 
-	const letsync_path = join(process.cwd(), config.out, "../migrations-client");
-	if (!existsSync(letsync_path)) await mkdir(letsync_path, { recursive: true });
+	const letsyncPath = join(process.cwd(), config.out, "../migrations-client");
+	if (!existsSync(letsyncPath)) {
+		await mkdir(letsyncPath, { recursive: true });
+	}
 
-	const journalPath = Bun.file(join(letsync_path, "_journal.json"));
+	const journalPath = file(join(letsyncPath, "_journal.json"));
 	const journal: Journal = await journalPath.json();
 	console.log(`✅ Read ${journal.entries.length} entries from _journal.json`);
 
@@ -56,8 +60,8 @@ export async function migrate(options: MigrateOptions) {
 	if (missingEntries.length > 0) {
 		console.log(`📥 Inserting ${missingEntries.length} missing entries...`);
 		for (const entry of missingEntries) {
-			const file = Bun.file(join(letsync_path, `${entry.tag}.sql`));
-			const content = await file.text();
+			const _file = file(join(letsyncPath, `${entry.tag}.sql`));
+			const content = await _file.text();
 			await db`INSERT INTO schema (tag, version, schema, created_at) VALUES (${entry.tag}, ${entry.version}, ${content}, ${new Date(entry.createdAt)})`;
 			console.log(`✅ Inserted ${entry.tag} schema`);
 		}

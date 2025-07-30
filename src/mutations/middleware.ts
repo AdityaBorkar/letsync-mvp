@@ -1,8 +1,8 @@
 import type { MutationContext, MutationMiddleware } from "./mutation.js";
 
 export type MiddlewareComposer = <T extends MutationContext>(
-	...middlewares: Array<MutationMiddleware<any, T>>
-) => MutationMiddleware<any, T>;
+	...middlewares: MutationMiddleware<unknown, T>[]
+) => MutationMiddleware<unknown, T>;
 
 export const composeMiddleware: MiddlewareComposer = (...middlewares) => {
 	return async (data, context) => {
