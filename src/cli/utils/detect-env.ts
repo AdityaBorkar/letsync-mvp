@@ -1,9 +1,9 @@
-interface EnvironmentConfig {
+interface EnvConfig {
 	name: string;
 	description: string;
 }
 
-const ENVIRONMENTS: Record<string, EnvironmentConfig> = {
+const ENVIRONMENTS: Record<string, EnvConfig> = {
 	development: {
 		description: "Local development environment",
 		name: "Development",
@@ -22,8 +22,7 @@ const ENVIRONMENTS: Record<string, EnvironmentConfig> = {
 	},
 };
 
-export function detectEnvironment() {
-	// biome-ignore lint/style/noProcessEnv: Environment Detection
+export function detectEnv() {
 	const nodeEnv = process.env.NODE_ENV?.toLowerCase();
 	if (nodeEnv && ENVIRONMENTS[nodeEnv]) {
 		return ENVIRONMENTS[nodeEnv];

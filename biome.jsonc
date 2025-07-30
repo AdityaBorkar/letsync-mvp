@@ -69,7 +69,10 @@
 			},
 			"performance": "on",
 			"security": "on",
-			"style": "on",
+			"style": {
+				"recommended": true,
+				"useNamingConvention": "off"
+			},
 			"suspicious": {
 				"noConsole": "off",
 				"noExplicitAny": "off", // TODO: Turn "on"

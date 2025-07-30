@@ -3,21 +3,19 @@
 import { Command } from "commander";
 
 import { generate } from "./generate.js";
-import { migrate } from "./migrate.js";
-import { detectEnvironment } from "./utils/detectEnv.js";
+import { push } from "./push.js";
+import { detectEnv } from "./utils/detect-env.js";
 
 const program = new Command();
 
 program
 	.name("letsync")
-	.description("LetSync - Schema Propagation Tool")
-	.version("1.0.0")
+	.description("LetSync")
+	.version("0.0.1")
 	.hook("preAction", () => {
-		const env = detectEnvironment();
-		console.log("🔧 LetSync - Schema Propagation Tool");
-		console.log(
-			`📍 Environment: ${env.name.toUpperCase()} (${env.description})`,
-		);
+		const env = detectEnv();
+		console.log("--- LetSync ---");
+		console.log(`Environment: ${env.name.toUpperCase()} (${env.description})`);
 		console.log("");
 	});
 
@@ -25,19 +23,20 @@ program
 	.command("generate")
 	.description("Generate a schema for use in a client")
 	.option("--dry-run", "Show what would be generated without creating files")
-	.option("--schema <schema>", "The schema to generate", "drizzle-postgres")
-	.option(
-		"--output <output>",
-		"The output directory",
-		"schemas/letsync.generated.ts",
-	)
+	// .option("--config <config>", "The config file to use")
 	.action(generate);
 
 program
-	.command("migrate")
-	.description("Migrate schema changes to the database")
+	.command("push")
+	.description("Push a schema to the database")
 	.option("--dry-run", "Show what would be generated without creating files")
-	.action(migrate);
+	.action(push);
+
+// program
+// 	.command("migrate")
+// 	.description("Migrate schema changes to the database")
+// 	.option("--dry-run", "Show what would be generated without creating files")
+// 	.action(migrate);
 
 program.on("command:*", () => {
 	console.error(

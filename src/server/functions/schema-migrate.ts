@@ -92,7 +92,6 @@ interface MigrationResult {
 	migrations: Array<{
 		version: number;
 		tag: string | null;
-		// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 		created_at: string;
 		checksum: string;
 	}>;
@@ -132,7 +131,6 @@ async function generateMigrationSql(
 
 		// Filter out rolled back migrations
 		const validMigrations = versions.filter(
-			// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 			(v: { is_rolled_back: boolean }) => !v.is_rolled_back,
 		);
 
@@ -148,7 +146,6 @@ async function generateMigrationSql(
 			// Add migration info for response
 			migrationInfo.push({
 				checksum: migration.checksum,
-				// biome-ignore lint/style/useNamingConvention: DATABASE FIELD NAME
 				created_at: new Date(migration.created_at).toISOString(),
 				tag: migration.tag,
 				version: migration.version,

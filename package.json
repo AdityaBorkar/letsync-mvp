@@ -80,7 +80,7 @@
 	"private": false,
 	"scripts": {
 		"dev": "bun run build && bun link",
-		"build": "zshy",
+		"build": "zshy && cp -r src/cli/schemas dist/cli/schemas",
 		"check:code": "biome check --changed --diagnostic-level=error",
 		"check:types": "tsc --noEmit",
 		"check:unused": "knip",
