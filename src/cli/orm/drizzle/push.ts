@@ -1,8 +1,11 @@
 import { createHash } from "node:crypto";
-import { $ } from "bun";
+import { join } from "node:path";
+import { $, file } from "bun";
+
+import { Pool } from "pg";
 
 import type { Config } from "./types.js";
-import { generateConfig } from "./utils.js";
+import { generateConfig, getJournal } from "./utils.js";
 
 export async function drizzlePush(
 	config: Config,
@@ -10,108 +13,49 @@ export async function drizzlePush(
 ) {
 	// const { dryRun = false } = options;
 
-	await generateConfig(config, ["/client", "/server"]);
+	const configs = await generateConfig(config);
+	const clientConfig = configs.get("client");
+	const serverConfig = configs.get("server");
+	if (!(clientConfig && serverConfig)) {
+		throw new Error("No client or server config found!");
+	}
 
-	console.log("🔄 Pushing Schema for [SERVER]...");
+	console.log("🔄 Pushing Schema to [SERVER]...");
 	await $`bunx drizzle-kit push --config=${config.out}/config.ts`;
 
-	console.log("🔄 Pushing Schema for [CLIENT]...");
-	// TODO: PUSH TO DATABASE in `client_schemas` table. Later rename it to `__client_schemas`
-	const snapshot = {};
+	console.log("🔄 Verifying Schema for [CLIENT]...");
+	// TODO: Check if the database records match the local records.
 
-	// Generate checksum of the snapshot content
-	console.log("Generating schema checksum...");
-	const snapshotString = JSON.stringify(snapshot, null, 2);
-	const checksum = createHash("sha256").update(snapshotString).digest("hex");
-	console.log(`Generated checksum: ${checksum}`);
+	console.log("🔄 Pushing Schema to [CLIENT]...");
+	const journal = await getJournal(clientConfig.out);
+	const migrationCount = journal.migrations.length;
+	const latestMigration = journal.migrations[migrationCount - 1];
+	const latestTag = latestMigration.tag;
+	const latestSnapshot = String(migrationCount - 1).padStart(4, "0");
+
+	const SnapshotPath = join(clientConfig.out, `/meta/${latestSnapshot}.json`);
+	const SqlPath = join(clientConfig.out, latestTag, "sql");
+	const snapshot = await file(SnapshotPath).json();
+	const migrationSql = await file(SqlPath).text();
+	// const newSql = ""; // TODO: Get SQL for first use.
+	const checksum = createHash("sha256")
+		.update(JSON.stringify(snapshot))
+		.digest("hex");
+
+	// @ts-expect-error
+	const db = new Pool(config.dbCredentials);
+
+	// TODO: Use drizzle
+	await db
+		.query(
+			`UPDATE "letsync"."__client_schemas" SET checksum=${checksum}, createdAt=${new Date()}, isRolledBack=false, snapshot=${snapshot}, sql=${migrationSql}, tag=${latestTag}, version=${Number(latestTag)} WHERE version=${latestTag} LIMIT 1`,
+		)
+		.then((res) => res.rows[0]);
+	//   migrations: {
+	//     table: 'my-migrations-table', // `__drizzle_migrations` by default
+	//     schema: 'public', // used in PostgreSQL only, `drizzle` by default
+	//   },
 
 	console.log("✅ Schema push completed");
 	return;
 }
-
-// 		// Check if this version already exists
-// 		log.progress("Checking for existing schema version...");
-// 		const existingRecord = await db
-// 			.select()
-// 			.from(clientSchemas)
-// 			.where(eq(clientSchemas.version, version))
-// 			.limit(1);
-
-// 		if (existingRecord.length > 0) {
-// 			log.warning(
-// 				`Schema version ${colors.bright}${version}${colors.reset} already exists in database`,
-// 			);
-// 			console.log(
-// 				`   ${colors.dim}Existing checksum: ${existingRecord[0].checksum.substring(0, 8)}...${colors.reset}`,
-// 			);
-// 			console.log(
-// 				`   ${colors.dim}New checksum:      ${checksum.substring(0, 8)}...${colors.reset}`,
-// 			);
-
-// 			if (existingRecord[0].checksum === checksum) {
-// 				log.success("Schema is already up to date - no changes needed");
-// 				const endTime = Date.now();
-// 				log.info(
-// 					`Completed in ${colors.bright}${endTime - startTime}ms${colors.reset}`,
-// 				);
-// 				return;
-// 			}
-
-// 			log.progress("Updating existing record with new schema...");
-
-// 			// Update existing record
-// 			try {
-// 				await db
-// 					.update(clientSchemas)
-// 					.set({
-// 						checksum,
-// 						createdAt: new Date(),
-// 						isRolledBack: false,
-// 						snapshot: snapshotString,
-// 						sql: sqlContent,
-// 						tag,
-// 					})
-// 					.where(eq(clientSchemas.version, version));
-
-// 				log.success(
-// 					`Schema record updated successfully for version ${colors.bright}${version}${colors.reset}`,
-// 				);
-// 			} catch (error) {
-// 				throw new Error(`Failed to update schema record: ${error}`);
-// 			}
-// 		} else {
-// 			log.progress("Inserting new schema record...");
-
-// 			// Insert new record
-// 			try {
-// 				await db.insert(clientSchemas).values({
-// 					checksum,
-// 					createdAt: new Date(),
-// 					isRolledBack: false,
-// 					snapshot: snapshotString,
-// 					sql: sqlContent,
-// 					tag,
-// 					version: Number(version),
-// 				});
-
-// 				log.success(
-// 					`Schema record inserted successfully for version ${colors.bright}${version}${colors.reset}`,
-// 				);
-// 			} catch (error) {
-// 				throw new Error(`Failed to insert schema record: ${error}`);
-// 			}
-// 		}
-
-// 		const endTime = Date.now();
-// 		log.success(
-// 			`🎉 Schema push completed for version ${colors.bright}${version}${colors.reset}`,
-// 		);
-// 		log.info(
-// 			`Total execution time: ${colors.bright}${endTime - startTime}ms${colors.reset}`,
-// 		);
-// 		process.exit(0);
-// 	} catch (error) {
-// 		log.error("Schema push failed", error);
-// 		process.exit(1);
-// 	}
-// }

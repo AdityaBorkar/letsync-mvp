@@ -9,16 +9,21 @@ export async function drizzleGenerate(
 	config: Config,
 	_options: { dryRun: boolean },
 ) {
-	await generateConfig(config, ["/client", "/server"]);
+	const configs = await generateConfig(config);
+	const clientConfig = configs.get("client");
+	const serverConfig = configs.get("server");
+	if (!(clientConfig && serverConfig)) {
+		throw new Error("No client or server config found!");
+	}
 
 	console.log("🔄 Generating Schema for [CLIENT]...");
-	const client = await generateSchema(config, "/client");
+	const client = await generateSchema(clientConfig);
 	await $`bun drizzle-kit generate --config=${client.outPath}/config.ts`;
-
 	// const journal = await getJournal(client.outPath);
 	// const migrationCount = journal.migrations.length;
 	// const latestMigration = journal.migrations[migrationCount - 1];
 	// const latestTag = latestMigration.tag;
+	// console.log({ latestTag });
 	// const latestSnapshot = String(migrationCount - 1).padStart(4, "0");
 	// const sql = (
 	// 	await $`bunx drizzle-kit export --config=${client.outPath}/config.ts`
@@ -26,14 +31,14 @@ export async function drizzleGenerate(
 	// await writeFile(join(client.outPath, "/sql/"), sql);
 
 	console.log("🔄 Generating Schema for [SERVER]...");
-	const server = await generateSchema(config, "/server");
+	const server = await generateSchema(serverConfig);
 	await $`bun drizzle-kit generate --config=${server.outPath}/config.ts`;
 
 	console.log("✅ Schema generation completed");
 }
 
-async function generateSchema(config: Config, path: string) {
-	const outPath = join(process.cwd(), config.out, path);
+async function generateSchema(config: Config) {
+	const outPath = join(process.cwd(), config.out);
 	const schemaPath = join(outPath, "/schema");
 	if (!(await exists(schemaPath))) {
 		await mkdir(schemaPath, { recursive: true });

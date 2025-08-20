@@ -25,5 +25,3 @@ export async function push(options: PushOptions) {
 		);
 	}
 }
-
-// TODO: Upload the schema to the database (publish) - Generate SQL and Migrations
