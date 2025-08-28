@@ -1,5 +1,5 @@
 export type ApiHandlerAuth<R extends Request> = (
-	request: R,
+  request: R
 ) =>
-	| { userId: string; deviceId: string }
-	| { message: string; status: 401 | 403 | 404 | 500 };
+  | { userId: string; deviceId: string }
+  | { message: string; status: 401 | 403 | 404 | 500 }

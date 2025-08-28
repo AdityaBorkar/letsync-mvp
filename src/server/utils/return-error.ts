@@ -1,3 +1,3 @@
 export function ResponseError(error: string) {
-	return Response.json({ error }, { status: 400 });
+  return Response.json({ error }, { status: 400 })
 }

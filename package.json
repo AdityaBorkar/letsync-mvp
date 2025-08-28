@@ -1,116 +1,106 @@
 {
-	"bin": "./dist/cli/index.cjs",
-	"dependencies": {
-		"@aws-sdk/client-iot-data-plane": "^3.848.0",
-		"@paralleldrive/cuid2": "^2.2.2",
-		"arktype": "^2.1.20",
-		"commander": "^14.0.0",
-		"jsonwebtoken": "^9.0.2",
-		"lodash.merge": "^4.6.2",
-		"mqtt": "^5.13.3",
-		"ora": "^8.2.0",
-		"pg": "^8.16.3",
-		"postgres": "^3.4.7",
-		"react": "link:react",
-		"react-dom": "link:react-dom",
-		"sqlstring": "^2.3.3",
-		"ws": "^8.18.3"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.0.0-beta.6",
-		"@types/bun": "^1.2.18",
-		"@types/express": "^5.0.3",
-		"@types/jsonwebtoken": "^9.0.10",
-		"@types/lodash.merge": "^4.6.9",
-		"@types/node": "^24.0.14",
-		"@types/pg": "^8.15.4",
-		"@types/ws": "^8.18.1",
-		"knip": "^5.62.0",
-		"next": "^15.4.4",
-		"typescript": "^5.8.3",
-		"zshy": "^0.2.5"
-	},
-	"exports": {
-		".": {
-			"types": "./dist/index.d.cts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.cjs"
-		},
-		"./next": {
-			"types": "./dist/(framework)/next/index.d.cts",
-			"import": "./dist/(framework)/next/index.js",
-			"require": "./dist/(framework)/next/index.cjs"
-		},
-		"./react": {
-			"types": "./dist/(framework)/react/index.d.cts",
-			"import": "./dist/(framework)/react/index.js",
-			"require": "./dist/(framework)/react/index.cjs"
-		},
-		"./drizzle": {
-			"types": "./dist/(orm)/drizzle/index.d.cts",
-			"import": "./dist/(orm)/drizzle/index.js",
-			"require": "./dist/(orm)/drizzle/index.cjs"
-		},
-		"./mutations": {
-			"types": "./dist/mutations/index.d.cts",
-			"import": "./dist/mutations/index.js",
-			"require": "./dist/mutations/index.cjs"
-		},
-		"./ws": {
-			"types": "./dist/(pubsub)/websockets/index.d.cts",
-			"import": "./dist/(pubsub)/websockets/index.js",
-			"require": "./dist/(pubsub)/websockets/index.cjs"
-		}
-	},
-	"files": [
-		"dist",
-		"LICENSE.md",
-		"package.json",
-		"README.md"
-	],
-	"license": "MIT",
-	"main": "./dist/index.cjs",
-	"module": "./dist/index.js",
-	"name": "letsync",
-	"peerDependencies": {
-		"@electric-sql/pglite": "^0.3.5",
-		"drizzle-orm": "^0.44.3",
-		"express": ">=5"
-	},
-	"private": false,
-	"scripts": {
-		"dev": "bun run build && bun link",
-		"build": "zshy && cp -r src/cli/schemas dist/cli/schemas",
-		"check:code": "biome check --changed --diagnostic-level=error",
-		"check:types": "tsc --noEmit",
-		"check:unused": "knip",
-		"publish": "npm publish --access public"
-	},
-	"trustedDependencies": [
-		"oxc-resolver",
-		"sharp"
-	],
-	"type": "module",
-	"types": "./dist/index.d.cts",
-	"version": "0.0.2",
-	"zshy": {
-		"bin": "./src/cli/index.ts",
-		"exports": {
-			".": "./src/index.ts",
-			"./next": "./src/(framework)/next/index.ts",
-			"./react": "./src/(framework)/react/index.ts",
-			"./drizzle": "./src/(orm)/drizzle/index.ts",
-			"./mutations": "./src/mutations/index.ts",
-			"./ws": "./src/(pubsub)/websockets/index.ts"
-		}
-	},
-	"keywords": [
-		"letsync"
-	],
-	"description": "",
-	"author": "Aditya Borkar <hello@adityab.tech>",
-	"publishConfig": {
-		"provenance": true,
-		"registry": "https://registry.npmjs.org"
-	}
+  "author": "Aditya Borkar <hello@adityab.tech>",
+  "bin": "./dist/cli/index.cjs",
+  "dependencies": {
+    "@aws-sdk/client-iot-data-plane": "^3.876.0",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "arktype": "^2.1.20",
+    "commander": "^14.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash.merge": "^4.6.2",
+    "mqtt": "^5.14.0",
+    "ora": "^8.2.0",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "react": "link:react",
+    "react-dom": "link:react-dom",
+    "sqlstring": "^2.3.3",
+    "ws": "^8.18.3"
+  },
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.2",
+    "@types/bun": "^1.2.21",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash.merge": "^4.6.9",
+    "@types/node": "^24.3.0",
+    "@types/pg": "^8.15.5",
+    "@types/ws": "^8.18.1",
+    "knip": "^5.63.0",
+    "next": "^15.5.2",
+    "typescript": "^5.9.2",
+    "zshy": "^0.3.5"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.cts"
+    },
+    "./drizzle": {
+      "import": "./dist/(orm)/drizzle/index.js",
+      "require": "./dist/(orm)/drizzle/index.cjs",
+      "types": "./dist/(orm)/drizzle/index.d.cts"
+    },
+    "./mutations": {
+      "import": "./dist/mutations/index.js",
+      "require": "./dist/mutations/index.cjs",
+      "types": "./dist/mutations/index.d.cts"
+    },
+    "./next": {
+      "import": "./dist/(framework)/next/index.js",
+      "require": "./dist/(framework)/next/index.cjs",
+      "types": "./dist/(framework)/next/index.d.cts"
+    },
+    "./react": {
+      "import": "./dist/(framework)/react/index.js",
+      "require": "./dist/(framework)/react/index.cjs",
+      "types": "./dist/(framework)/react/index.d.cts"
+    },
+    "./ws": {
+      "import": "./dist/(pubsub)/websockets/index.js",
+      "require": "./dist/(pubsub)/websockets/index.cjs",
+      "types": "./dist/(pubsub)/websockets/index.d.cts"
+    }
+  },
+  "files": ["dist", "LICENSE.md", "package.json", "README.md"],
+  "keywords": ["letsync"],
+  "license": "MIT",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "name": "letsync",
+  "peerDependencies": {
+    "@electric-sql/pglite": "^0.3.7",
+    "drizzle-orm": "^0.44.5",
+    "express": "^5.1.0"
+  },
+  "private": false,
+  "publishConfig": {
+    "provenance": true,
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "zshy && cp -r src/cli/schemas dist/cli/schemas",
+    "check:code": "biome check --changed --diagnostic-level=error",
+    "check:types": "tsc --noEmit",
+    "check:unused": "knip",
+    "dev": "bun run build && bun link",
+    "publish": "npm publish --access public"
+  },
+  "trustedDependencies": ["oxc-resolver", "sharp"],
+  "type": "module",
+  "types": "./dist/index.d.cts",
+  "version": "0.0.2",
+  "zshy": {
+    "bin": "./src/cli/index.ts",
+    "exports": {
+      ".": "./src/index.ts",
+      "./drizzle": "./src/(orm)/drizzle/index.ts",
+      "./mutations": "./src/mutations/index.ts",
+      "./next": "./src/(framework)/next/index.ts",
+      "./react": "./src/(framework)/react/index.ts",
+      "./ws": "./src/(pubsub)/websockets/index.ts"
+    }
+  }
 }

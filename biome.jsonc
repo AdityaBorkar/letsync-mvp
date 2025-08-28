@@ -1,90 +1,112 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
-	"assist": {
-		"actions": {
-			"source": {
-				"organizeImports": {
-					"level": "on",
-					"options": {
-						"groups": [
-							["server-only", "use client", "use server", "client-only"],
-							":BLANK_LINE:",
-							":URL:",
-							":BLANK_LINE:",
-							[":NODE:", ":BUN:"],
-							":BLANK_LINE:",
-							[":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
-							":BLANK_LINE:",
-							[":ALIAS:"],
-							":BLANK_LINE:",
-							[":PATH:"]
-						]
-					}
-				},
-				"useSortedAttributes": "on",
-				"useSortedKeys": "on",
-				"useSortedProperties": "on"
-			}
-		}
-	},
-	"files": {
-		"includes": [
-			"**/*",
-			"!node_modules/**/*",
-			"!dist/**/*",
-			"!bun.lock",
-			// Exclude package.json to avoid sorting of exports.
-			"!package.json"
-		]
-	},
-	"linter": {
-		"domains": {
-			"next": "none",
-			"project": "all",
-			"react": "all",
-			"solid": "none",
-			"test": "all"
-			// "vue": "none"
-		},
-		"rules": {
-			"a11y": "on",
-			"complexity": "on",
-			"correctness": {
-				"noNodejsModules": "off",
-				"noUndeclaredVariables": "on",
-				"recommended": true
-			},
-			"nursery": {
-				"noUnresolvedImports": "off",
-				"recommended": true,
-				"useParseIntRadix": "off",
-				"useSortedClasses": {
-					"fix": "safe",
-					"level": "error",
-					"options": {
-						"attributes": ["classList"],
-						"functions": ["clsx", "cva", "tw", "tw.*"]
-					}
-				}
-			},
-			"performance": "on",
-			"security": "on",
-			"style": {
-				"recommended": true,
-				"useNamingConvention": "off"
-			},
-			"suspicious": {
-				"noConsole": "off",
-				"noExplicitAny": "off", // TODO: Turn "on"
-				"recommended": true,
-				"useAwait": "on"
-			}
-		}
-	},
-	"vcs": {
-		"clientKind": "git",
-		"defaultBranch": "main",
-		"enabled": true,
-		"useIgnoreFile": true
-	}
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ["server-only", "use client", "use server", "client-only"],
+              ":BLANK_LINE:",
+              ":URL:",
+              ":BLANK_LINE:",
+              [":NODE:", ":BUN:"],
+              ":BLANK_LINE:",
+              [":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+              ":BLANK_LINE:",
+              [":ALIAS:"],
+              ":BLANK_LINE:",
+              [":PATH:"]
+            ]
+          }
+        },
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    },
+    "enabled": null
+  },
+  "files": {
+    "includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
+  },
+  "formatter": {
+    "attributePosition": "auto",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "enabled": true,
+    "expand": "auto",
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80,
+    "useEditorconfig": true
+  },
+  "html": { "formatter": { "selfCloseVoidElements": "always" } },
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "attributePosition": "auto",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "quoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "none"
+    }
+  },
+  "linter": {
+    "domains": {
+      "next": "none",
+      "project": "all",
+      "react": "all",
+      "solid": "none",
+      "test": "all"
+    },
+    "rules": {
+      "a11y": "on",
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "recommended": true
+      },
+      "correctness": {
+        "noNodejsModules": "off",
+        "noUndeclaredVariables": "on",
+        "recommended": true
+      },
+      "nursery": {
+        "noUnresolvedImports": "off",
+        "recommended": true,
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cva", "tw", "tw.*"]
+          }
+        }
+      },
+      "performance": "on",
+      "security": "on",
+      "style": {
+        "recommended": true,
+        "useNamingConvention": "off"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noExplicitAny": "off",
+        "recommended": true,
+        "useAwait": "on"
+      }
+    }
+  },
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
 }

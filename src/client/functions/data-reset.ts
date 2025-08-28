@@ -1,6 +1,6 @@
-import type { Context } from "../config.js";
+import type { Context } from "../config.js"
 
 export function DataReset(_: undefined, context: Context) {
-	context;
-	// TODO - RESET
+  context
+  // TODO - RESET
 }

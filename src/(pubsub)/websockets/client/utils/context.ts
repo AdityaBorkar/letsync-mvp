@@ -1,5 +1,5 @@
-import { context } from "./generate-ref-id.js";
+import { context } from "./generate-ref-id.js"
 
 export function getContextByRefId(refId: string) {
-	return context.get(refId);
+  return context.get(refId)
 }

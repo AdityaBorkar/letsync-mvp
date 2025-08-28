@@ -1,7 +1,7 @@
 export function transformSchema<S extends Record<string, unknown>>(schema: S) {
-	console.log("Transforming schema...");
+  console.log("Transforming schema...")
 
-	// TODO: Transform schema
+  // TODO: Transform schema
 
-	return schema;
+  return schema
 }

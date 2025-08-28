@@ -1,7 +1,7 @@
-import type { Context } from "../config.js";
+import type { Context } from "../config.js"
 
 export function DataSize(_: undefined, context: Context) {
-	context;
+  context
 
-	// TODO - SIZE
+  // TODO - SIZE
 }

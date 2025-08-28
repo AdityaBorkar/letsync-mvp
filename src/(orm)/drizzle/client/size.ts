@@ -1,12 +1,12 @@
-import type { DrizzleClientDb } from "./types.js";
+import type { DrizzleClientDb } from "./types.js"
 
 export async function size(db: DrizzleClientDb) {
-	const data = await db.execute(
-		`SELECT pg_size_pretty(pg_database_size('public'))`,
-	);
-	console.log(data);
-	const size = data.rows[0]?.pg_size_pretty;
-	return Number(size);
+  const data = await db.execute(
+    `SELECT pg_size_pretty(pg_database_size('public'))`
+  )
+  console.log(data)
+  const size = data.rows[0]?.pg_size_pretty
+  return Number(size)
 }
 
 // // Get the total size of all tables in the database

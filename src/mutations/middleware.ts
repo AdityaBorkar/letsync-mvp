@@ -1,16 +1,16 @@
-import type { MutationContext, MutationMiddleware } from "./mutation.js";
+import type { MutationContext, MutationMiddleware } from "./mutation.js"
 
 export type MiddlewareComposer = <T extends MutationContext>(
-	...middlewares: MutationMiddleware<unknown, T>[]
-) => MutationMiddleware<unknown, T>;
+  ...middlewares: MutationMiddleware<unknown, T>[]
+) => MutationMiddleware<unknown, T>
 
 export const composeMiddleware: MiddlewareComposer = (...middlewares) => {
-	return async (data, context) => {
-		for (const middleware of middlewares) {
-			await middleware(data, context);
-		}
-	};
-};
+  return async (data, context) => {
+    for await (const middleware of middlewares) {
+      await middleware(data, context)
+    }
+  }
+}
 
 // export const createConditionalMiddleware = <T extends MutationContext>(
 // 	condition: (data: any, context: T) => boolean | Promise<boolean>,

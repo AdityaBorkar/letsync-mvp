@@ -1,10 +1,10 @@
-import { sql } from "drizzle-orm";
+import { sql } from "drizzle-orm"
 
-import type { DrizzleClientDb } from "./types.js";
+import type { DrizzleClientDb } from "./types.js"
 
 export async function flush(client: DrizzleClientDb) {
-	// Drop all tables in the current database
-	await client.execute(sql`
+  // Drop all tables in the current database
+  await client.execute(sql`
 		DO $$
 		DECLARE
 			r RECORD;
@@ -13,10 +13,10 @@ export async function flush(client: DrizzleClientDb) {
 				EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
 			END LOOP;
 		END $$;
-	`);
+	`)
 
-	// Drop all sequences
-	await client.execute(sql`
+  // Drop all sequences
+  await client.execute(sql`
 		DO $$
 		DECLARE
 			r RECORD;
@@ -25,9 +25,9 @@ export async function flush(client: DrizzleClientDb) {
 				EXECUTE 'DROP SEQUENCE IF EXISTS ' || quote_ident(r.sequence_name) || ' CASCADE';
 			END LOOP;
 		END $$;
-	`);
+	`)
 
-	return;
+  return
 }
 
 // import type { PGlite } from "@electric-sql/pglite";
