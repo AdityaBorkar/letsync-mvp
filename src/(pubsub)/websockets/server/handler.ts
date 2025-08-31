@@ -1,4 +1,4 @@
-import type { BunRequest, Server, ServerWebSocket } from "bun"
+import type { Server, ServerWebSocket } from "bun"
 
 import { ArkErrors } from "arktype"
 
@@ -17,7 +17,7 @@ export interface WebsocketData {
   userId: string
   connectionTime: number
 }
-export function getData_WS(request: BunRequest, _: unknown, server: Server) {
+export function getData_WS(request: Request, _: unknown, server: Server) {
   // Upgrade connection to WebSocket with authenticated user data
   const connectionTime = Date.now()
   const upgraded = server.upgrade(request, { data: { connectionTime } })

@@ -1,7 +1,6 @@
 import { ArkErrors } from "arktype"
 
-import { Logger } from "@/utils/logger.js"
-
+import { Logger } from "../../../utils/logger.js"
 import { dataCache } from "../server/messages/data-cache.js"
 import { dataOperations } from "../server/messages/data-operations.js"
 import { pong } from "../server/messages/pong.js"

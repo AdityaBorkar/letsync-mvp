@@ -1,6 +1,5 @@
-import type { GenericObject } from "@/types/client.js"
-import { tryCatch } from "@/utils/try-catch.js"
-
+import type { GenericObject } from "../../../types/client.js"
+import { tryCatch } from "../../../utils/try-catch.js"
 import { sql } from "./sql.js"
 import type { DrizzleClientDb } from "./types.js"
 

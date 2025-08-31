@@ -5,7 +5,7 @@ import { connect } from "./connect.js"
 import { schema } from "./schema.js"
 import type { DrizzleServerDb } from "./types.js"
 
-export function registerServerDb<T extends DrizzleServerDb>({
+export function ServerDB<T extends DrizzleServerDb>({
   name,
   client
 }: {

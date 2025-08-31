@@ -81,7 +81,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "zshy && cp -r src/cli/schemas dist/cli/schemas",
+    "build": "zshy && cp -r src/cli/schemas dist/cli/schemas && biome check --fix ./package.json",
     "check:code": "biome check --changed --diagnostic-level=error",
     "check:types": "tsc --noEmit",
     "check:unused": "knip",

@@ -7,7 +7,7 @@ import type {
 
 import { apiHandler } from "./api-handler.js"
 
-export type Server = ReturnType<typeof LetSyncServer>
+export type Server = ReturnType<typeof LetsyncServer>
 
 export type Context = {
   auth: ApiHandlerAuth<Request>
@@ -17,7 +17,7 @@ export type Context = {
   pubsub: Map<string, ServerPubSub.Adapter>
 }
 
-export type LetSyncConfig<R extends Request> = {
+export type LetsyncConfig<R extends Request> = {
   apiUrl: { path: string; domain: string; https: boolean }
   auth: ApiHandlerAuth<R>
   connections: (
@@ -27,7 +27,7 @@ export type LetSyncConfig<R extends Request> = {
   )[]
 }
 
-export function LetSyncServer<R extends Request>(config: LetSyncConfig<R>) {
+export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
   if (typeof window !== "undefined" || typeof process === "undefined") {
     throw new Error("LetSync can only be used in the server")
   }

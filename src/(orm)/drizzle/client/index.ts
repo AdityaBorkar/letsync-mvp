@@ -1,7 +1,7 @@
 import type { ClientDb, GenericObject } from "@/types/client.js"
 import type { SQL_Schemas } from "@/types/schemas.js"
-import { generateName } from "@/utils/generate-name.js"
 
+import { generateName } from "../../../utils/generate-name.js"
 import { close } from "./close.js"
 import { connect } from "./connect.js"
 import { dump } from "./dump.js"
@@ -11,7 +11,7 @@ import { schema as _schema } from "./schema.js"
 import { size } from "./size.js"
 import type { DrizzleClientDb_typed } from "./types.js"
 
-export function createClient<
+export function ClientDB<
   T extends DrizzleClientDb_typed<S>,
   S extends Record<string, unknown>
 >(props: { client: T; name?: string }) {

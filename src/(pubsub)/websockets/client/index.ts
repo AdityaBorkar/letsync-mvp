@@ -1,5 +1,6 @@
 import type { ClientPubSub } from "@/types/client.js"
-import { generateName } from "@/utils/generate-name.js"
+
+import { generateName } from "../../../utils/generate-name.js"
 
 export function PubSubClient({
   name = generateName()

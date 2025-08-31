@@ -1,5 +1,3 @@
-import type { BunRequest } from "bun"
-
 import { ArkErrors, type } from "arktype"
 
 import type { Context } from "../config.js"
@@ -13,7 +11,7 @@ const schema = type({
   version: "number | undefined"
 })
 
-export async function getSchema(request: BunRequest, context: Context) {
+export async function getSchema(request: Request, context: Context) {
   const { searchParams } = new URL(request.url)
   const data = schema({
     name: searchParams.get("name"),

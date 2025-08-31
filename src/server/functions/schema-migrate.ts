@@ -1,5 +1,3 @@
-import type { BunRequest } from "bun"
-
 import { ArkErrors, type } from "arktype"
 
 import type { ServerDb } from "@/types/index.js"
@@ -18,7 +16,7 @@ const schema = type({
   "to?": "number"
 })
 
-export async function getMigration(request: BunRequest, context: Context) {
+export async function getMigration(request: Request, context: Context) {
   try {
     // Request Validation
     const { searchParams } = new URL(request.url)

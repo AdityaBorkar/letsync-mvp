@@ -1,7 +1,7 @@
 import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.js"
 import type { ApiHandlerAuth } from "@/types/context.js"
-import { FetchClient } from "@/utils/fetch-client.js"
 
+import { FetchClient } from "../utils/fetch-client.js"
 import { Signal } from "../utils/signal.js"
 // import { DataExport } from "./functions/data-export.js";
 // import { DataFlush } from "./functions/data-flush.js";
@@ -21,7 +21,7 @@ import { SchemaVerify } from "./functions/schema-verify.js"
 import { SyncStart } from "./functions/sync-start.js"
 import { SyncTerminate } from "./functions/sync-terminate.js"
 
-export type Client = ReturnType<typeof LetSyncClient>
+export type Client = ReturnType<typeof Client>
 
 export type Context = {
   db: Map<string, ClientDb.Adapter<unknown>>
@@ -37,7 +37,7 @@ export type Context = {
   fetch: ReturnType<typeof FetchClient>
 }
 
-export type LetSyncConfig<R extends Request> = {
+export type Config<R extends Request> = {
   apiUrl: { path: string; domain: string; https: boolean }
   auth: ApiHandlerAuth<R>
   connections: (
@@ -47,7 +47,7 @@ export type LetSyncConfig<R extends Request> = {
   )[]
 }
 
-export function LetSyncClient(config: LetSyncConfig<Request>) {
+export function Client(config: Config<Request>) {
   if (typeof window === "undefined") {
     throw new Error("LetSync can only be used in the client")
   }
@@ -57,6 +57,9 @@ export function LetSyncClient(config: LetSyncConfig<Request>) {
   const fs = new Map<string, ClientFs.Adapter<unknown>>()
   const pubsub = new Map<string, ClientPubSub.Adapter>()
   for (const item of config.connections) {
+    if (item.__brand.startsWith("LETSYNC_SERVER")) {
+      throw new Error("Server Adapters are not allowed on client side.")
+    }
     if (item.__brand === "LETSYNC_CLIENT_DB") {
       db.set(item.name, item)
       continue
