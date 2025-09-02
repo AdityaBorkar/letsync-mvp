@@ -13,9 +13,11 @@ export function useQuery(query: QueryFn) {
 
   useEffect(() => {
     if (!isPending || !isReady) return
+    // @ts-expect-error temporary
     query(client.query)
       // @ts-expect-error
       .execute()
+      // @ts-expect-error temporary
       .then((data) => {
         console.log("QUERY")
         console.log({ data })
@@ -29,14 +31,15 @@ export function useQuery(query: QueryFn) {
 }
 
 export function useDatabase() {
+  const client = "TODO: USE DATABASE"
   return { client, isReady: true }
-  const [isPending, setIsPending] = useState(false)
-  // useEffect(() => {
-  // 	startTransition(async () => {
-  // 		const db = await initPGlite();
-  // 		dbClient = drizzle(db, { schema });
-  // 		db.waitReady();
-  // 	});
-  // }, []);
-  return { db: client, isPending }
+  // const [isPending, setIsPending] = useState(false)
+  // // useEffect(() => {
+  // // 	startTransition(async () => {
+  // // 		const db = await initPGlite();
+  // // 		dbClient = drizzle(db, { schema });
+  // // 		db.waitReady();
+  // // 	});
+  // // }, []);
+  // return { db: client, isPending }
 }

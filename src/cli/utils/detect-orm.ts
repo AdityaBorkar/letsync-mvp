@@ -13,6 +13,7 @@ export async function detectOrm() {
       const path = join(cwd, `${fileName}${extension}`)
       if (existsSync(path)) {
         const { default: config } = await import(path)
+        console.log({ config })
         return { config, name, path }
       }
     }

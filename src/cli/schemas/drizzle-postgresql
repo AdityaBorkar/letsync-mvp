@@ -1,65 +1,66 @@
-import { createId } from "@paralleldrive/cuid2";
+import { createId } from "@paralleldrive/cuid2"
 import {
-	boolean,
-	jsonb,
-	pgEnum,
-	pgTable,
-	serial,
-	text,
-	timestamp,
-	uuid,
-} from "drizzle-orm/pg-core";
+  boolean,
+  jsonb,
+  pgSchema,
+  serial,
+  text,
+  timestamp,
+  uuid
+} from "drizzle-orm/pg-core"
 
-export const clientSchemas = pgTable("client_schemas", {
-	checksum: text().notNull(),
-	createdAt: timestamp().defaultNow().notNull(),
-	id: serial().primaryKey(),
-	isRolledBack: boolean().default(false).notNull(),
-	snapshot: text().notNull(),
-	sql: text().notNull(),
-	tag: text(),
-	version: text().notNull(),
-});
+export const letsync = pgSchema("letsync")
 
-export const clientMetadata = pgTable("client_metadata", {
-	key: text().primaryKey(),
-	value: text().notNull(),
-});
+export const clientSchemas = letsync.table("client_schemas", {
+  checksum: text().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  id: serial().primaryKey(),
+  isRolledBack: boolean().default(false).notNull(),
+  snapshot: text().notNull(),
+  sql: text().notNull(),
+  tag: text(),
+  version: text().notNull()
+})
 
-export const mutationStatus = pgEnum("mutation_status", [
-	"pending",
-	"processing",
-	"completed",
-	"failed",
-]);
+export const clientMetadata = letsync.table("client_metadata", {
+  key: text().primaryKey(),
+  value: text().notNull()
+})
 
-export const clientMutations = pgTable("client_mutations", {
-	createdAt: timestamp().defaultNow().notNull(),
-	mutationName: text().notNull(),
-	requestId: uuid().notNull(),
-	status: mutationStatus().notNull(),
-});
+export const mutationStatus = letsync.enum("mutation_status", [
+  "pending",
+  "processing",
+  "completed",
+  "failed"
+])
 
-export const cdc = pgTable("cdc", {
-	action: text().notNull(), // 'archived' | 'marked as completed' | 'execution started' | 'execution cancelled' | Custom Text
-	data: jsonb().notNull(), // Transformations only
-	id: text().$defaultFn(() => createId()),
-	itemId: text().notNull(), // tableName_rowId (non-indexed)
-	operation: text({ enum: ["create", "update", "delete"] }).notNull(),
-	tenantId: uuid(),
-	timestamp: timestamp().notNull(), // Cursor
-	userId: uuid().notNull(),
-});
+export const clientMutations = letsync.table("client_mutations", {
+  createdAt: timestamp().defaultNow().notNull(),
+  mutationName: text().notNull(),
+  requestId: uuid().notNull(),
+  status: mutationStatus().notNull()
+})
 
-export const cdcCache = pgTable("cdc_cache", {
-	_clientAppliedAt: timestamp(),
-	end: text().notNull(),
-	id: text().$defaultFn(() => createId()),
-	start: text().notNull(),
-	storageUrl: text().notNull(),
-	tenantId: uuid(),
-	timestamp: timestamp().notNull(),
-});
+export const cdc = letsync.table("cdc", {
+  action: text().notNull(), // 'archived' | 'marked as completed' | 'execution started' | 'execution cancelled' | Custom Text
+  data: jsonb().notNull(), // Transformations only
+  id: text().$defaultFn(() => createId()),
+  itemId: text().notNull(), // tableName_rowId (non-indexed)
+  operation: text({ enum: ["create", "update", "delete"] }).notNull(),
+  tenantId: uuid(),
+  timestamp: timestamp().notNull(), // Cursor
+  userId: uuid().notNull()
+})
+
+export const cdcCache = letsync.table("cdc_cache", {
+  _clientAppliedAt: timestamp(),
+  end: text().notNull(),
+  id: text().$defaultFn(() => createId()),
+  start: text().notNull(),
+  storageUrl: text().notNull(),
+  tenantId: uuid(),
+  timestamp: timestamp().notNull()
+})
 
 // TODO: Mutations and executing them in the client-server spaces. Experiment in /test endpoint.
 // Go to #letsync/client/ws/messages/data-operations.ts and construct SQL Queries with transactions

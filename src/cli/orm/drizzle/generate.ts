@@ -1,77 +1,71 @@
-import { cp, exists, mkdir, readdir, stat, writeFile } from "node:fs/promises"
-import { join, resolve } from "node:path"
+import { cp, exists, mkdir } from "node:fs/promises"
+import { join } from "node:path"
 import { $, file } from "bun"
 
+import { recursiveCopy } from "@/utils/recursive-copy.js"
+
 import type { Config } from "./types.js"
-import { generateConfig } from "./utils.js"
+import { generateConfigs } from "./utils.js"
 
 export async function drizzleGenerate(
   config: Config,
   _options: { dryRun: boolean }
 ) {
-  const configs = await generateConfig(config)
-  const clientConfig = configs.get("client")
-  const serverConfig = configs.get("server")
-  if (!(clientConfig && serverConfig)) {
-    throw new Error("No client or server config found!")
+  const outPath = join(process.cwd(), config.out)
+  const schemaPath = join(outPath, "schema")
+
+  console.log("🔄 Generating Configs...")
+  const configs = await generateConfigs(config)
+  const client = configs.get("client")
+  const server = configs.get("server")
+  if (!(client && server)) {
+    throw new Error("Could not generate configs!")
   }
 
   console.log("🔄 Generating Schema for [CLIENT]...")
-  const client = await generateSchema(clientConfig)
-  await $`bun drizzle-kit generate --config=${client.outPath}/config.ts`
-  // const journal = await getJournal(client.outPath);
-  // const migrationCount = journal.migrations.length;
-  // const latestMigration = journal.migrations[migrationCount - 1];
-  // const latestTag = latestMigration.tag;
-  // console.log({ latestTag });
-  // const latestSnapshot = String(migrationCount - 1).padStart(4, "0");
-  // const sql = (
-  // 	await $`bunx drizzle-kit export --config=${client.outPath}/config.ts`
-  // ).stdout;
-  // await writeFile(join(client.outPath, "/sql/"), sql);
+  await generateSchema(client, schemaPath)
 
-  console.log("🔄 Generating Schema for [SERVER]...")
-  const server = await generateSchema(serverConfig)
-  await $`bun drizzle-kit generate --config=${server.outPath}/config.ts`
+  // console.log("🔄 Generating Schema for [SERVER]...")
+  // await generateSchema(server, config.schema)
 
   console.log("✅ Schema generation completed")
 }
 
-async function generateSchema(config: Config) {
-  const outPath = join(process.cwd(), config.out)
-  const schemaPath = join(outPath, "/schema")
+async function generateSchema(config: Config, srcSchemaPath: string) {
+  const PREFIX = "./drizzle/client"
+  const outPath = join(process.cwd(), PREFIX, config.out)
+  const schemaPath = join(outPath, config.schema)
+  console.log({ outPath, schemaPath })
+
   if (!(await exists(schemaPath))) {
     await mkdir(schemaPath, { recursive: true })
   }
 
-  const _schemaPath = join(resolve(config.schema), "../") // ! TEMPORARY FIX
-  await recursiveCopy(_schemaPath, schemaPath)
+  await recursiveCopy(srcSchemaPath, schemaPath)
 
   const type = `drizzle-${config.dialect}`
-  const letsyncSchema = join(import.meta.dir, "../../schemas", type)
-  if (!(await exists(letsyncSchema))) {
-    throw new Error(`Schema type ${type} is not yet supported!`)
-  }
+  const letsyncSchema = await getLetsyncSchemaFilePath(type)
   await cp(letsyncSchema, join(schemaPath, "letsync.generated.ts"))
 
   const schemaFile = file(join(schemaPath, "index.ts"))
-  const schemaText = `${await schemaFile.text()}\n\nexport * from "./letsync.generated";`
-  await schemaFile.write(schemaText)
+  const content = (await schemaFile.exists()) ? await schemaFile.text() : ""
+  const lastLine = content.split("\n").pop()
+  const LAST_LINE = 'export * from "./letsync.generated.ts";'
+  if (lastLine !== LAST_LINE) {
+    await schemaFile.write(`${content}\n\n${LAST_LINE}`)
+    console.log("Letsync Schema added to index.ts")
+  }
+
+  await $`bun drizzle-kit generate --config=${join(PREFIX, "config.ts")}`
+  // await $`bun drizzle-kit generate --config=${join("./drizzle/server", "config.ts")}`
 
   return { outPath, schemaPath }
 }
 
-async function recursiveCopy(src: string, dest: string) {
-  const files = await readdir(src)
-  for await (const name of files) {
-    const srcPath = join(src, name)
-    const destPath = join(dest, name)
-    if ((await stat(srcPath)).isDirectory()) {
-      await recursiveCopy(srcPath, destPath)
-    } else {
-      const content = await file(srcPath).text()
-      // TODO: TRANSFORM `content`
-      await writeFile(destPath, content)
-    }
+async function getLetsyncSchemaFilePath(type: string) {
+  const letsyncSchema = join(import.meta.dir, "../../schemas", type)
+  if (!(await exists(letsyncSchema))) {
+    throw new Error(`Schema type ${type} is not yet supported!`)
   }
+  return letsyncSchema
 }

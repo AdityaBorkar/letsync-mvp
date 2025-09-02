@@ -3,17 +3,18 @@ import { file, write } from "bun"
 
 import type { Config } from "./types.js"
 
-export async function generateConfig(config: Config) {
+export async function generateConfigs(config: Config) {
   const paths = ["client", "server"] as const
   const configs = new Map<"client" | "server", Config>()
   for await (const path of paths) {
     const $config = { ...config }
-    $config.out = join(config.out, `/${path}`)
-    $config.schema = join($config.out, config.schema)
+    $config.schema = `schema/index.ts`
+    $config.out = ""
 
     const content = `import { defineConfig } from "drizzle-kit";\n\nexport default defineConfig(${JSON.stringify($config, null, 2)});`
-    const configPath = join(process.cwd(), $config.out, "config.ts")
+    const configPath = join(process.cwd(), "drizzle", path, "config.ts")
     await write(configPath, content)
+
     configs.set(path, $config)
   }
   return configs

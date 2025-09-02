@@ -5,7 +5,10 @@ import { $, file } from "bun"
 import { Pool } from "pg"
 
 import type { Config } from "./types.js"
-import { generateConfig, getJournal } from "./utils.js"
+import { generateConfigs, getJournal } from "./utils.js"
+
+// import { drizzle } from "drizzle-orm/node-postgres"
+// import { migrate } from "drizzle-orm/node-postgres/migrator"
 
 export async function drizzlePush(
   config: Config,
@@ -13,7 +16,7 @@ export async function drizzlePush(
 ) {
   // const { dryRun = false } = options;
 
-  const configs = await generateConfig(config)
+  const configs = await generateConfigs(config)
   const clientConfig = configs.get("client")
   const serverConfig = configs.get("server")
   if (!(clientConfig && serverConfig)) {
@@ -21,34 +24,52 @@ export async function drizzlePush(
   }
 
   console.log("🔄 Pushing Schema to [SERVER]...")
-  await $`bunx drizzle-kit push --config=${config.out}/config.ts`
+  await $`bunx drizzle-kit push --config=${serverConfig.out}/config.ts`
+
+  console.log("🔄 Pushing Schema to [CLIENT]...")
+  await $`bunx drizzle-kit push --config=${clientConfig.out}/config.ts`
 
   console.log("🔄 Verifying Schema for [CLIENT]...")
   // TODO: Check if the database records match the local records.
-
-  console.log("🔄 Pushing Schema to [CLIENT]...")
   const journal = await getJournal(clientConfig.out)
-  const migrationCount = journal.migrations.length
-  const latestMigration = journal.migrations[migrationCount - 1]
-  const latestTag = latestMigration.tag
-  const latestSnapshot = String(migrationCount - 1).padStart(4, "0")
+  if (journal.version !== "7") {
+    throw new Error("Journal version 7 is only supported version.")
+  }
+  const entryCount = journal.entries.length
+  const latestEntry = journal.entries[entryCount - 1]
+  const latestTag = latestEntry.tag
+  const latestSnapshot = String(entryCount - 1).padStart(4, "0")
 
-  const SnapshotPath = join(clientConfig.out, `/meta/${latestSnapshot}.json`)
-  const SqlPath = join(clientConfig.out, latestTag, "sql")
-  const snapshot = await file(SnapshotPath).json()
+  const SnapshotPath = join(
+    clientConfig.out,
+    `/meta/${latestSnapshot}_snapshot.json`
+  )
+  const SqlPath = join(clientConfig.out, `${latestTag}.sql`)
+  const snapshot = await file(SnapshotPath).text()
+
   const migrationSql = await file(SqlPath).text()
   // const newSql = ""; // TODO: Get SQL for first use.
-  const checksum = createHash("sha256")
-    .update(JSON.stringify(snapshot))
-    .digest("hex")
+  const checksum = createHash("sha256").update(snapshot).digest("hex")
 
-  // @ts-expect-error
-  const db = new Pool(config.dbCredentials)
+  // TODO: Agnostic way to get Database Client
+  const db = new Pool({
+    // @ts-expect-error
+    connectionString: clientConfig.dbCredentials.url
+  })
 
-  // TODO: Use drizzle
+  // Build a safe, parameterized UPDATE (removes invalid LIMIT and avoids injections)
   await db
     .query(
-      `UPDATE "letsync"."__client_schemas" SET checksum=${checksum}, createdAt=${new Date()}, isRolledBack=false, snapshot=${snapshot}, sql=${migrationSql}, tag=${latestTag}, version=${Number(latestTag)} WHERE version=${latestTag} LIMIT 1`
+      `UPDATE "letsync"."client_schemas" SET "checksum" = $1, "createdAt" = $2, "isRolledBack" = $3, "snapshot" = $4, "sql" = $5, "tag" = $6, "version" = $7 WHERE "tag" = $6 RETURNING *;`,
+      [
+        checksum,
+        new Date(),
+        false,
+        snapshot,
+        migrationSql,
+        latestTag,
+        entryCount
+      ]
     )
     .then((res) => res.rows[0])
   //   migrations: {

@@ -73,7 +73,5 @@ export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
   // @ts-expect-error
   const context: Context = { apiUrl, auth, db, fs, pubsub }
 
-  return {
-    apiHandler: (request: Request) => apiHandler(request, context)
-  }
+  return { apiHandler: (request: Request) => apiHandler(request, context) }
 }
