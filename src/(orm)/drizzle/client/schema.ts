@@ -20,7 +20,7 @@ async function insert(db: DrizzleClientDb, records: SQL_Schemas.Schema[]) {
   for await (const record of records) {
     await sql(
       db,
-      `INSERT INTO client_schemas (checksum, created_at, id, is_rolled_back, snapshot, sql, tag, version) VALUES (${record.checksum}, ${record.created_at}, ${record.id}, ${record.is_rolled_back}, ${record.snapshot}, ${record.sql}, ${record.tag}, ${record.version})`
+      `INSERT INTO "letsync"."client_schemas" ("checksum", "createdAt", "id", "isRolledBack", "snapshot", "sql", "tag", "version") VALUES (${record.checksum}, ${record.created_at}, ${record.id}, ${record.is_rolled_back}, ${record.snapshot}, ${record.sql}, ${record.tag}, ${record.version})`
     )
   }
 }
@@ -32,7 +32,7 @@ async function list(
 ) {
   const schemas = await sql(
     db,
-    "SELECT * FROM client_schemas" +
+    'SELECT * FROM "letsync"."client_schemas"' +
       (aboveVersion ? ` WHERE version > ${aboveVersion}` : "") +
       (belowVersion ? ` AND version <= ${belowVersion}` : "") +
       " ORDER BY version ASC"
@@ -44,7 +44,7 @@ async function list(
 async function apply(db: DrizzleClientDb, record: SQL_Schemas.Schema) {
   await sql(
     db,
-    `INSERT INTO client_schemas (checksum, created_at, id, is_rolled_back, snapshot, sql, tag, version) VALUES (${record.checksum}, ${record.created_at}, ${record.id}, ${record.is_rolled_back}, ${record.snapshot}, ${record.sql}, ${record.tag}, ${record.version}) ON DUPLICATE KEY UPDATE version = ${record.version}`
+    `INSERT INTO "letsync"."client_schemas" ("checksum", "createdAt", "id", "isRolledBack", "snapshot", "sql", "tag", "version") VALUES (${record.checksum}, ${record.created_at}, ${record.id}, ${record.is_rolled_back}, ${record.snapshot}, ${record.sql}, ${record.tag}, ${record.version}) ON DUPLICATE KEY UPDATE version = ${record.version}`
   )
 
   // const applied_at = new Date().toISOString();

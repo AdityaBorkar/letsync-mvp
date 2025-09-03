@@ -5,16 +5,21 @@ import type { Config } from "./types.js"
 
 export async function generateConfigs(config: Config) {
   const paths = ["client", "server"] as const
-  const configs = new Map<"client" | "server", Config>()
+  const configs = new Map<"client" | "server", Omit<Config, "schema">>()
   for await (const path of paths) {
-    const $config = { ...config }
-    $config.schema = `schema/index.ts`
-    $config.out = ""
+    const $config = {
+      ...config,
+      out: `drizzle/${path}`,
+      schema: `drizzle/${path}/schema/index.ts`
+    }
 
     const content = `import { defineConfig } from "drizzle-kit";\n\nexport default defineConfig(${JSON.stringify($config, null, 2)});`
     const configPath = join(process.cwd(), "drizzle", path, "config.ts")
     await write(configPath, content)
 
+    // @ts-expect-error
+    // biome-ignore lint/performance/noDelete: TODO
+    delete $config.schema
     configs.set(path, $config)
   }
   return configs

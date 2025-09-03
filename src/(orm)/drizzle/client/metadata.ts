@@ -7,7 +7,10 @@ export const metadata = {
   async get(db: DrizzleClientDb, key: string) {
     const data = await tryCatch(
       // @ts-expect-error
-      sql(db, `SELECT * FROM client_metadata WHERE key=${key} LIMIT 1`)
+      sql(
+        db,
+        `SELECT * FROM "letsync"."client_metadata" WHERE key=${key} LIMIT 1`
+      )
     )
     console.log(data)
     // TODO: Complete This
@@ -17,7 +20,7 @@ export const metadata = {
     return ""
   },
   async remove(db: DrizzleClientDb, key: string) {
-    await sql(db, `DELETE FROM client_metadata WHERE key = ${key}`)
+    await sql(db, `DELETE FROM "letsync"."client_metadata" WHERE key = ${key}`)
   },
   async set(
     db: DrizzleClientDb,
@@ -31,7 +34,7 @@ export const metadata = {
     const data = type === "object" ? JSON.stringify(value) : value
     await sql(
       db,
-      `INSERT INTO client_metadata (key, type, value) VALUES (${key}, ${type}, ${data}) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`
+      `INSERT INTO "letsync"."client_metadata" ("key", "type", "value") VALUES (${key}, ${type}, ${data}) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`
     )
   }
 }

@@ -66,7 +66,7 @@ export async function handler(
     limit: number
   }): Promise<void> => {
     const dataOps = await serverDb.client.sql`
-		SELECT * FROM cdc
+		SELECT * FROM "letsync"."cdc"
 		WHERE tenantId = ${userId}
 		ORDER BY id ASC
 		LIMIT ${limit};
