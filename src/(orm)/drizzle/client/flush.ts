@@ -1,77 +1,44 @@
-import { sql } from "drizzle-orm"
-
+import { close } from "./close.js"
+import { connect } from "./connect.js"
 import type { DrizzleClientDb } from "./types.js"
 
-export async function flush(client: DrizzleClientDb) {
-  // Drop all tables in the current database
-  await client.execute(sql`
-		DO $$
-		DECLARE
-			r RECORD;
-		BEGIN
-			FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
-				EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
-			END LOOP;
-		END $$;
-	`)
+export async function flush(db: DrizzleClientDb) {
+  //   TODO: THIS APPROACH IS VERY SPECIFIC TO PGLITE-INDEXEDDB. WE NEED TO FIND A BETTER APPROACH.
 
-  // Drop all sequences
-  await client.execute(sql`
-		DO $$
-		DECLARE
-			r RECORD;
-		BEGIN
-			FOR r IN (SELECT sequence_name FROM information_schema.sequences WHERE sequence_schema = 'public') LOOP
-				EXECUTE 'DROP SEQUENCE IF EXISTS ' || quote_ident(r.sequence_name) || ' CASCADE';
-			END LOOP;
-		END $$;
-	`)
+  const dataDir = db.$client.dataDir
+  if (!dataDir?.startsWith("idb://")) {
+    throw new Error("Data directory is currently not supported for flushing")
+  }
+  const name = `/pglite/${dataDir.split("idb://")[1]}`
 
-  return
+  await close(db)
+  await new Promise<boolean>((resolve) => {
+    const idb = indexedDB.open(name)
+    idb.onsuccess = () => {
+      idb.result.close()
+      resolve(true)
+    }
+  })
+
+  const error = await new Promise<true | string>((resolve, reject) => {
+    console.log("Flushing database", name)
+    const request = indexedDB.deleteDatabase(name)
+    request.onsuccess = () => resolve(true)
+    request.onerror = (event) => {
+      const error = (event.target as unknown as { errorCode: string })
+        ?.errorCode
+      console.error(`Error deleting database: ${error}`)
+      reject(error)
+    }
+    request.onblocked = () => {
+      reject(new Error("Database deletion blocked"))
+    }
+  })
+  if (!error) {
+    await connect(db)
+  }
+  return error
 }
-
-// import type { PGlite } from "@electric-sql/pglite";
-
-// export class Letsync {
-// 	public IS_SYNCING: boolean;
-// 	public IS_CONNECTED: boolean;
-
-// 	private database: PGlite;
-// 	private db: any;
-// 	private ws: WebSocket | undefined;
-
-// 	private debug: boolean;
-// 	private logger = {
-// 		// biome-ignore lint/suspicious/noExplicitAny: console.log()
-// 		error: (...message: any[]) => {
-// 			console.error("[LETSYNC]", ...message);
-// 			// TODO: REPORT
-// 		},
-// 		// biome-ignore lint/suspicious/noExplicitAny: console.log()
-// 		log: (...message: any[]) =>
-// 			this.debug && console.log("[LETSYNC]", ...message),
-// 	};
-
-// 	constructor({
-// 		client,
-// 		orm,
-// 		debug,
-// 		// webWorker,
-// 	}: {
-// 		client: PGlite;
-// 		orm: any;
-// 		debug?: boolean;
-// 		// webWorker?: boolean;
-// 	}) {
-// 		this.database = client;
-// 		this.db = orm(client);
-// 		this.ws = undefined;
-// 		this.debug = debug ?? false;
-// 		this.IS_SYNCING = false;
-// 		this.IS_CONNECTED = false;
-
-// 		this.client = new WebSocketClient(client);
-// 	}
 
 // 	async connect() {
 // 		const connectionId = await this

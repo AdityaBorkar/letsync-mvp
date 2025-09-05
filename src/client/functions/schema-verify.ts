@@ -1,4 +1,5 @@
 import type { Context } from "../config.js"
+import { SCHEMA_VERSION_KEY } from "../constants.js"
 
 export async function SchemaVerify(
   props: { dbName: string },
@@ -11,7 +12,7 @@ export async function SchemaVerify(
     throw new Error("Database not found")
   }
 
-  const version = await db.metadata.get(`${db.name}:schema_version`)
+  const version = await db.metadata.get(SCHEMA_VERSION_KEY)
   const schema = await db.schema.introspect()
 
   const body = { schema, version }

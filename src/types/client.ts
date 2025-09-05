@@ -18,7 +18,7 @@ export namespace ClientDb {
       ) => Promise<void>
       remove: (key: string) => Promise<void>
     }
-    flush: () => Promise<void>
+    flush: () => Promise<true | string>
     schema: {
       introspect: () => Promise<unknown> // TODO: Define the type
       initialize: (schema: SQL_Schemas.Schema) => Promise<void>
@@ -29,7 +29,7 @@ export namespace ClientDb {
       }) => Promise<SQL_Schemas.Schema[]>
     }
     size: () => Promise<number>
-    dump: (options: {
+    dumpData: (options: {
       compression: "none" | "gzip" | "auto"
     }) => Promise<File | Blob>
   }

@@ -1,7 +1,8 @@
 import type { SQL_Schemas } from "@/types/schemas.js"
 
+import { tryCatch } from "../../utils/try-catch.js"
 import type { Context } from "../config.js"
-import { DataSync } from "./data-sync.js"
+import { SCHEMA_VERSION_KEY } from "../constants.js"
 import { SchemaCheckForUpdates } from "./schema-check-for-updates.js"
 import { SchemaUpgrade } from "./schema-upgrade.js"
 
@@ -14,19 +15,18 @@ export async function SyncStart(
   for await (const [, db] of context.db.entries()) {
     await db.connect()
 
-    const version = await db.metadata
-      .get(`${db.name}:schema_version`)
-      .catch((error) => {
-        if (
-          error.cause
-            ?.toString()
-            .endsWith('relation "client_metadata" does not exist')
-        ) {
-          return null
-        }
-        console.error("Error fetching schema version", error)
-        throw error.cause
-      })
+    const { data: version, error } = await tryCatch(
+      db.metadata.get(SCHEMA_VERSION_KEY)
+    )
+    if (
+      error?.cause &&
+      !error?.cause
+        ?.toString()
+        .endsWith('relation "client_metadata" does not exist')
+    ) {
+      console.error("Error fetching schema version", error.cause)
+      throw error.cause
+    }
 
     if (!version) {
       const response = await context.fetch("GET", "/schema", {
@@ -36,12 +36,9 @@ export async function SyncStart(
         console.error(response.error)
         continue
       }
-      const schema = response.data as SQL_Schemas.Schema
-      await db.schema.initialize(schema)
-      // await db.schema.insert([_schema])
-      const idx = schema.idx
-      await db.schema.migrate({ idx })
-      await db.metadata.set(`__LETSYNC:schema.idx__`, String(idx))
+      const schemas = response.data as SQL_Schemas.Schema[]
+      console.log("Initializing database", schemas)
+      await db.schema.initialize(schemas[0])
       continue
     }
 
@@ -59,5 +56,6 @@ export async function SyncStart(
 
   context.status.isDbRunning.set(true)
 
-  await DataSync(undefined, context)
+  // TODO: REENABLE DATA SYNC
+  // await DataSync(undefined, context)
 }

@@ -4,7 +4,7 @@ import type { SQL_Schemas } from "@/types/schemas.js"
 import { generateName } from "../../../utils/generate-name.js"
 import { close } from "./close.js"
 import { connect } from "./connect.js"
-import { dump } from "./dump.js"
+import { dumpData } from "./dumpData.js"
 import { flush } from "./flush.js"
 import { metadata } from "./metadata.js"
 import { schema } from "./schema.js"
@@ -22,7 +22,7 @@ export function ClientDB<
     client,
     close: () => close(client),
     connect: () => connect(client),
-    dump: (_: Parameters<typeof dump>[1]) => dump(client, _),
+    dumpData: (_: Parameters<typeof dumpData>[1]) => dumpData(client, _),
     flush: () => flush(client),
     metadata: {
       get: (key: string) => metadata.get(client, key),

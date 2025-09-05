@@ -1,6 +1,6 @@
 import type { DrizzleClientDb } from "./types.js"
 
-export function dump(
+export function dumpData(
   client: DrizzleClientDb,
   { compression }: { compression: "auto" | "gzip" | "none" }
 ): Promise<File | Blob> {

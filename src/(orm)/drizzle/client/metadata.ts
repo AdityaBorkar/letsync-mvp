@@ -1,15 +1,19 @@
 import type { SQL_Schemas } from "@/types/schemas.js"
 
 import type { GenericObject } from "../../../types/client.js"
+import { tryCatch } from "../../../utils/try-catch.js"
 import type { DrizzleClientDb } from "./types.js"
 
 export const metadata = { get, remove, set }
 
 async function get(db: DrizzleClientDb, key: string) {
-  const data = await db.$client.query<SQL_Schemas.Metadata>(
-    `SELECT * FROM "letsync"."client_metadata" WHERE key=$1 LIMIT 1;`,
-    [key]
+  const { data } = await tryCatch(
+    db.$client.query<SQL_Schemas.Metadata>(
+      `SELECT * FROM "letsync"."client_metadata" WHERE key=$1 LIMIT 1;`,
+      [key]
+    )
   )
+  if (!data) return null
   const record = data.rows[0]
   if (!record) return null
 

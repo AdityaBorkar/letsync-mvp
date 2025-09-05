@@ -1,6 +1,7 @@
 import type { SQL_Schemas } from "@/types/schemas.js"
 
 import type { Context } from "../config.js"
+import { SCHEMA_VERSION_KEY } from "../constants.js"
 
 export async function SchemaCheckForUpdates(
   props: { dbName: string },
@@ -12,7 +13,7 @@ export async function SchemaCheckForUpdates(
     throw new Error("Database not found")
   }
 
-  const CurrentVersion = await db.metadata.get(`${db.name}:schema_version`)
+  const CurrentVersion = await db.metadata.get(SCHEMA_VERSION_KEY)
   if (!CurrentVersion) {
     throw new Error("No version found")
   }

@@ -1,17 +1,16 @@
-import { createId } from "@paralleldrive/cuid2"
-import {
-  jsonb,
-  pgSchema,
-  serial,
-  text,
-  timestamp,
-  uuid
-} from "drizzle-orm/pg-core"
+import { pgSchema, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
 
 export const letsync = pgSchema("letsync")
 
+export const clientMetadataType = letsync.enum("client_metadata_type", [
+  "string",
+  "boolean",
+  "object"
+])
+
 export const clientMetadata = letsync.table("client_metadata", {
   key: text().primaryKey(),
+  type: clientMetadataType().notNull(),
   value: text().notNull()
 })
 
