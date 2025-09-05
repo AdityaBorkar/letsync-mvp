@@ -24,5 +24,5 @@ export async function SchemaCheckForUpdates(
     throw new Error(schemas.error.toString())
   }
   const _schemas = schemas.data as SQL_Schemas.Schema[]
-  await db.schema.insert(_schemas)
+  await db.schema.initialize(_schemas[0])
 }

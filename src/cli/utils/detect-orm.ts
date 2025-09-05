@@ -1,21 +1,37 @@
 import { existsSync } from "node:fs"
 import { join } from "node:path"
 
-const FILE_EXTENSIONS = [".ts", ".js", ".cjs", ".mjs"]
-const POSSIBLE_CONFIG_NAMES = [
-  { fileName: "./drizzle.config", name: "drizzle" }
-]
+import { ArkErrors } from "arktype"
+
+import { drizzle } from "../orm/drizzle/index.js"
+import type { OrmConfig } from "../orm/types.js"
+
+const FILE_EXTENSIONS = [".ts", ".js", ".cjs", ".mjs"] as const
+
+const ORM_CONFIGS: Record<string, OrmConfig> = { drizzle }
 
 export async function detectOrm() {
+  console.log("Detecting ORM...")
   const cwd = process.cwd()
-  for await (const { name, fileName } of POSSIBLE_CONFIG_NAMES) {
-    for await (const extension of FILE_EXTENSIONS) {
-      const path = join(cwd, `${fileName}${extension}`)
+
+  for (const [name, orm] of Object.entries(ORM_CONFIGS)) {
+    for (const extension of FILE_EXTENSIONS) {
+      const path = join(cwd, `${orm.config.fileName}${extension}`)
+
       if (existsSync(path)) {
-        const { default: config } = await import(path)
-        return { config, name, path }
+        console.log(`✓ Detected ORM: ${name} (${path})`)
+        const { default: unvalidatedConfig } = await import(path)
+        const config = orm.config.schema(unvalidatedConfig)
+        if (config instanceof ArkErrors) {
+          throw new Error(`Invalid config for ${name}: ${config.join("\n")}`)
+        }
+        return { config, methods: orm.methods, name, path }
       }
     }
   }
-  return null
+
+  throw new Error(
+    "No supported ORM configuration found. Supported ORMs: " +
+      Object.keys(ORM_CONFIGS).join(", ")
+  )
 }

@@ -12,7 +12,7 @@ export async function SchemaVerify(
   }
 
   const version = await db.metadata.get(`${db.name}:schema_version`)
-  const schema = await db.schema.pull()
+  const schema = await db.schema.introspect()
 
   const body = { schema, version }
   const response = await context.fetch("POST", "/schema/verify", { body })

@@ -1,6 +1,6 @@
 import type { EndpointContext } from "../api-endpoints.js"
 
-export async function verifySchema(request: Request, context: EndpointContext) {
+export async function schemaVerify(request: Request, context: EndpointContext) {
   const body = await request.json()
   const { schema, version } = body
 

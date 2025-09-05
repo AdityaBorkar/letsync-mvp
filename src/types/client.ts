@@ -20,13 +20,13 @@ export namespace ClientDb {
     }
     flush: () => Promise<void>
     schema: {
-      pull: () => Promise<unknown> // TODO: Define the type
-      insert: (records: SQL_Schemas.Schema[]) => Promise<void>
-      list: (
-        aboveVersion?: string,
+      introspect: () => Promise<unknown> // TODO: Define the type
+      initialize: (schema: SQL_Schemas.Schema) => Promise<void>
+      migrate: (props: { idx: string }) => Promise<void>
+      list: (props?: {
+        aboveVersion: string
         belowVersion?: string
-      ) => Promise<SQL_Schemas.Schema[]>
-      apply: (record: SQL_Schemas.Schema) => Promise<void>
+      }) => Promise<SQL_Schemas.Schema[]>
     }
     size: () => Promise<number>
     dump: (options: {

@@ -11,7 +11,7 @@ const schema = type({
   version: "number | undefined"
 })
 
-export async function getSchema(request: Request, context: Context) {
+export async function schemaList(request: Request, context: Context) {
   const { searchParams } = new URL(request.url)
   const data = schema({
     name: searchParams.get("name"),
@@ -27,7 +27,8 @@ export async function getSchema(request: Request, context: Context) {
     return ResponseError(`Database '${name}' not found`)
   }
 
-  const records = await db.schema.list(version?.toString())
+  const params = version ? { aboveVersion: version?.toString() } : undefined
+  const records = await db.schema.list(params)
   if (records.length === 0) {
     return ResponseError(`Schema version '${version}' not found`)
   }

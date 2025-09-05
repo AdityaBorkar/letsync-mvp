@@ -9,10 +9,10 @@ export namespace ServerDb {
     close: () => Promise<void>
     connect: () => Promise<void>
     schema: {
-      list: (
-        aboveVersion?: string,
+      list: (params?: {
+        aboveVersion: string
         belowVersion?: string
-      ) => Promise<SQL_Schemas.Schema[]>
+      }) => Promise<SQL_Schemas.Schema[]>
     }
   }
 }

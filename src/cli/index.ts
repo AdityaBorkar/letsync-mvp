@@ -2,9 +2,8 @@
 
 import { Command } from "commander"
 
-import { generate } from "./generate.js"
-import { push } from "./push.js"
 import { detectEnv } from "./utils/detect-env.js"
+import { detectOrm } from "./utils/detect-orm.js"
 
 const program = new Command()
 
@@ -24,19 +23,28 @@ program
   .description("Generate a schema for use in a client")
   .option("--dry-run", "Show what would be generated without creating files")
   // .option("--config <config>", "The config file to use")
-  .action(generate)
+  .action(async ({ dryRun = false }) => {
+    const { config, methods } = await detectOrm()
+    await methods.generate(config, { dryRun })
+  })
 
 program
-  .command("push")
-  .description("Push a schema to the database")
+  .command("migrate")
+  .description("Migrate schema changes to the database")
   .option("--dry-run", "Show what would be generated without creating files")
-  .action(push)
+  .action(async ({ dryRun = false }) => {
+    const { config, methods } = await detectOrm()
+    await methods.migrate(config, { dryRun })
+  })
 
 // program
-// 	.command("migrate")
-// 	.description("Migrate schema changes to the database")
-// 	.option("--dry-run", "Show what would be generated without creating files")
-// 	.action(migrate);
+//   .command("push")
+//   .description("Push a schema to the database")
+//   .option("--dry-run", "Show what would be generated without creating files")
+//   .action(async ({ dryRun = false }) => {
+//     const { config, methods } = await detectOrm()
+//     await methods.push(config, { dryRun })
+//   })
 
 program.on("command:*", () => {
   console.error(

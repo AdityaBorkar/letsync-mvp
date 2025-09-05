@@ -2,9 +2,9 @@
 
 import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.js"
 
-import { getSchema } from "./functions/schema-list.js"
-import { getMigration } from "./functions/schema-migrate.js"
-import { verifySchema } from "./functions/schema-verify.js"
+import { schemaList } from "./functions/schema-list.js"
+import { schemaMigrate } from "./functions/schema-migrate.js"
+import { schemaVerify } from "./functions/schema-verify.js"
 
 export type EndpointContext = {
   db: ServerDb.Adapter<unknown>[]
@@ -40,12 +40,12 @@ export const ApiEndpoints = {
   // 	POST: deviceRegister,
   // },
   "/schema": {
-    GET: getSchema
+    GET: schemaList
   },
   "/schema/migrate": {
-    GET: getMigration
+    GET: schemaMigrate
   },
   "/schema/verify": {
-    POST: verifySchema
+    POST: schemaVerify
   }
 } as const

@@ -23,8 +23,9 @@ export async function SchemaList(
     return { data: undefined, error: "No version found." }
   }
 
-  const aboveVersion = filterByUpgrade ? String(CurrentVersion) : undefined
-  const list = await db.schema.list(aboveVersion)
+  const list = filterByUpgrade
+    ? await db.schema.list({ aboveVersion: String(CurrentVersion) })
+    : await db.schema.list()
   data.push(...list)
 
   return { data, error: undefined }

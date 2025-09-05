@@ -12,15 +12,15 @@ export function ServerDB<T extends DrizzleServerDb>({
   name: string
   client: T
 }) {
-  return {
+  const entity: ServerDb.Adapter<T> = {
     __brand: "LETSYNC_SERVER_DB",
     client,
     close: () => close(client),
     connect: () => connect(client),
     name,
     schema: {
-      list: (aboveVersion?: string, belowVersion?: string) =>
-        schema.list(client, aboveVersion, belowVersion)
+      list: (params) => schema.list(client, params)
     }
-  } satisfies ServerDb.Adapter<T>
+  }
+  return entity
 }

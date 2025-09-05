@@ -11,14 +11,17 @@ export async function SchemaUpgrade(
   }
 
   const currentVersion = await db.metadata.get(`${db.name}:schema_version`)
-  const schemas = await db.schema.list(String(currentVersion), String(version))
+  const schemas = await db.schema.list({
+    aboveVersion: String(currentVersion),
+    belowVersion: String(version)
+  })
   if (schemas.length === 0) {
     console.log("No updates found")
     return
   }
 
   for await (const schema of schemas) {
-    await db.schema.apply(schema)
+    await db.schema.migrate({ idx: schema.idx })
   }
 
   return

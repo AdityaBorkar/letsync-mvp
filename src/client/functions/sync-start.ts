@@ -36,12 +36,12 @@ export async function SyncStart(
         console.error(response.error)
         continue
       }
-      const _schema = response.data as SQL_Schemas.Schema
-      await db.schema.apply(_schema)
-      await db.metadata.set(
-        `${db.name}:schema_version`,
-        String(_schema.version)
-      )
+      const schema = response.data as SQL_Schemas.Schema
+      await db.schema.initialize(schema)
+      // await db.schema.insert([_schema])
+      const idx = schema.idx
+      await db.schema.migrate({ idx })
+      await db.metadata.set(`__LETSYNC:schema.idx__`, String(idx))
       continue
     }
 

@@ -1,78 +1,140 @@
-import { cp, exists, mkdir } from "node:fs/promises"
+import { cp, exists, mkdir, readFile, rename } from "node:fs/promises"
 import { join } from "node:path"
-import { $, file } from "bun"
+import { $, file, write } from "bun"
 
 import { recursiveCopy } from "@/utils/recursive-copy.js"
 
-import type { Config } from "./types.js"
-import { generateConfigs } from "./utils.js"
+import type { Config } from "./index.js"
+import { generateConfigs } from "./utils/generate-configs.js"
+import { getJournal } from "./utils/get-journal.js"
 
-export async function drizzleGenerate(
+/**
+ * Generates Drizzle ORM schemas and configurations for both client and server environments
+ */
+export async function generate(
   config: Config,
-  _options: { dryRun: boolean }
-) {
-  const outPath = join(process.cwd(), config.out)
-  const srcSchemaPath = join(process.cwd(), config.schema)
+  options: { dryRun: boolean } = { dryRun: false }
+): Promise<void> {
+  const sourceSchemaPath = join(process.cwd(), config.schema)
 
-  console.log("🔄 Generating Configs...")
-  const configs = await generateConfigs(config)
-  const client = configs.get("client")
-  const server = configs.get("server")
-  if (!(client && server)) {
-    throw new Error("Could not generate configs!")
+  if (options.dryRun) {
+    console.log("🔄 Dry run mode is currently WIP. Early Return.")
+    return
   }
 
-  console.log("🔄 Generating Schema for [CLIENT]...")
-  await generateSchema({
-    dialect: client.dialect,
-    outPath: join(outPath, "client"),
-    schemaPath: srcSchemaPath
-  })
+  console.log("🔄 Generating Drizzle configurations...")
+  const configs = await generateConfigs(config)
 
-  console.log("🔄 Generating Schema for [SERVER]...")
-  await generateSchema({
-    dialect: server.dialect,
-    outPath: join(outPath, "server"),
-    schemaPath: srcSchemaPath
-  })
+  // Generate schemas in parallel for better performance
+  await Promise.all([
+    generateSchemaForTarget({
+      config: configs.server,
+      sourceSchemaPath,
+      target: "SERVER"
+    }),
+    generateSchemaForTarget({
+      config: configs.client,
+      sourceSchemaPath,
+      target: "CLIENT"
+    }),
+    generateSchemaForClientInit({
+      config: configs.client
+    })
+  ])
 
-  console.log("✅ Schema generation completed")
+  // Rename the temporary init file to the latest tag
+  const journal = await getJournal(configs.client.out)
+  const latestTag = journal.entries.pop()?.tag
+  if (!latestTag) {
+    throw new Error("No latest tag found")
+  }
+  await rename(
+    join(configs.client.out, "init", `INIT_TEMPORARY.sql`),
+    join(configs.client.out, "init", `${latestTag}.sql`)
+  )
+
+  console.log("✅ Schema generation completed successfully")
 }
 
-async function generateSchema(params: {
-  dialect: string
-  schemaPath: string
-  outPath: string
-}) {
-  const { outPath, dialect } = params
-  const schemaPath = join(outPath, "./schema")
+async function generateSchemaForClientInit({ config }: { config: Config }) {
+  console.log("🔄 Generating client-init schema...")
+  const exportedSQL =
+    await $`bunx drizzle-kit export --config=${join(config.out, "config.ts")}`.text()
+  await write(join(config.out, "init", `INIT_TEMPORARY.sql`), exportedSQL)
+}
 
-  if (!(await exists(schemaPath))) {
-    await mkdir(schemaPath, { recursive: true })
+/**
+ * Generates schema for a specific target environment
+ */
+async function generateSchemaForTarget({
+  target,
+  config,
+  sourceSchemaPath
+  // dryRun
+}: {
+  target: string
+  config: Config
+  sourceSchemaPath: string
+  // dryRun: boolean
+}): Promise<void> {
+  console.log(`🔄 Generating schema for [${target}]...`)
+
+  const schemaDir = join(config.schema, "../")
+  console.log({ schemaDir })
+  await mkdir(schemaDir, { recursive: true })
+  await recursiveCopy(sourceSchemaPath, schemaDir)
+
+  // Copy letsync schema template
+  const schemaType = `drizzle-${config.dialect}`
+  const letsyncSchemaTemplate = join(
+    import.meta.dir,
+    "../../schemas",
+    schemaType
+  )
+
+  const letsyncSchemaExists = await exists(letsyncSchemaTemplate)
+  if (!letsyncSchemaExists) {
+    throw new Error(`Schema type '${schemaType}' is not supported`)
   }
-  await recursiveCopy(params.schemaPath, schemaPath)
 
-  const type = `drizzle-${dialect}`
-  const letsyncSchema = join(import.meta.dir, "../../schemas", type)
-  if (!(await exists(letsyncSchema))) {
-    throw new Error(`Schema type ${type} is not yet supported!`)
+  await cp(letsyncSchemaTemplate, join(schemaDir, "letsync.generated.ts"))
+
+  // Update index.ts to export letsync schema
+  const indexFilePath = join(schemaDir, "index.ts")
+  const exportStatement = 'export * from "./letsync.generated.ts";'
+
+  try {
+    const indexFile = file(indexFilePath)
+    let content = ""
+
+    if (await indexFile.exists()) {
+      content = await readFile(indexFilePath, "utf-8")
+    }
+
+    // Check if export already exists (more efficiently than splitting)
+    if (content.includes(exportStatement)) {
+      return
+    }
+
+    // Append export statement with proper formatting
+    const updatedContent = content.trim()
+      ? `${content}\n\n${exportStatement}\n`
+      : `${exportStatement}\n`
+
+    await indexFile.write(updatedContent)
+    console.log("✅ Letsync schema export added to index.ts")
+  } catch (error) {
+    console.warn("⚠️  Could not update index.ts:", error)
   }
-  await cp(letsyncSchema, join(schemaPath, "letsync.generated.ts"))
 
-  const schemaFile = file(join(schemaPath, "index.ts"))
-  const content = (await schemaFile.exists()) ? await schemaFile.text() : ""
-  const lastLine = content.split("\n").pop()
-  const LAST_LINE = 'export * from "./letsync.generated.ts";'
-  if (lastLine !== LAST_LINE) {
-    await schemaFile.write(`${content}\n\n${LAST_LINE}`)
-    console.log("Letsync Schema added to index.ts")
+  console.log(`✅ Schema generation completed for ${config.dialect}`)
+
+  const configPath = join(config.out, "config.ts")
+  try {
+    await $`bun drizzle-kit generate --config=${configPath}`
+    console.log("✅ Drizzle migration files generated")
+  } catch (error) {
+    console.error("❌ Failed to generate drizzle migrations:", error)
+    throw error
   }
-
-  // TODO: Solve the below line:
-  await $`bun drizzle-kit generate --config=${join(outPath, "config.ts")}`
-  // const command = spawn(["bun", "drizzle-kit generate --config=config.ts"], {
-  //   cwd: outPath
-  // })
-  // await command.exited
-  // const output = await command.stdout.text()
 }
