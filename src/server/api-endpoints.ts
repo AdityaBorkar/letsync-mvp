@@ -3,7 +3,6 @@
 import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.js"
 
 import { schemaList } from "./functions/schema-list.js"
-import { schemaMigrate } from "./functions/schema-migrate.js"
 import { schemaVerify } from "./functions/schema-verify.js"
 
 export type EndpointContext = {
@@ -41,9 +40,6 @@ export const ApiEndpoints = {
   // },
   "/schema": {
     GET: schemaList
-  },
-  "/schema/migrate": {
-    GET: schemaMigrate
   },
   "/schema/verify": {
     POST: schemaVerify

@@ -3,14 +3,6 @@ import type { ApiHandlerAuth } from "@/types/context.js"
 
 import { FetchClient } from "../utils/fetch-client.js"
 import { Signal } from "../utils/signal.js"
-// import { DataExport } from "./functions/data-export.js";
-// import { DataFlush } from "./functions/data-flush.js";
-// import { DataPull } from "./functions/data-pull.js";
-// import { DataPush } from "./functions/data-push.js";
-// import { DataReset } from "./functions/data-reset.js";
-// import { DataSize } from "./functions/data-size.js";
-// import { DataSync } from "./functions/data-sync.js";
-// import { DataVerify } from "./functions/data-verify.js";
 // import { DeviceDeregister } from "./functions/device-deregister.js";
 // import { DeviceRegister } from "./functions/device-register.js";
 import { EventManager } from "./functions/event-manager.js"
@@ -18,12 +10,13 @@ import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.js"
 import { SchemaList } from "./functions/schema-list.js"
 import { SchemaUpgrade } from "./functions/schema-upgrade.js"
 import { SchemaVerify } from "./functions/schema-verify.js"
-import { SyncStart } from "./functions/sync-start.js"
-import { SyncTerminate } from "./functions/sync-terminate.js"
+import { SyncStart } from "./functions/sync-connect.js"
+import { SyncTerminate } from "./functions/sync-disconnect.js"
 
 export type Client = ReturnType<typeof Client>
 
 export type Context = {
+  apiUrl: { path: string; domain: string; https: boolean }
   db: Map<string, ClientDb.Adapter<unknown>>
   fs: Map<string, ClientFs.Adapter<unknown>>
   pubsub: Map<string, ClientPubSub.Adapter>
@@ -92,13 +85,25 @@ export function Client(config: Config<Request>) {
   const fetch = FetchClient(config.apiUrl)
 
   // * Event Manager
-  const { subscribe, unsubscribe } = EventManager()
-  // * Status
+  const { subscribe, unsubscribe, emit } = EventManager()
 
+  // * Status
   const isOnline = new Signal(false)
   const isSyncing = new Signal(false)
   const isDbRunning = new Signal(false)
   const isFsRunning = new Signal(false)
+  isOnline.onChange((value) => {
+    emit("status:network", value)
+  })
+  isSyncing.onChange((value) => {
+    emit("status:sync", value)
+  })
+  isDbRunning.onChange((value) => {
+    emit("status:db", value)
+  })
+  isFsRunning.onChange((value) => {
+    emit("status:fs", value)
+  })
   const getStatus = () => ({
     isDbRunning: isDbRunning.get(),
     isFsRunning: isFsRunning.get(),
@@ -118,19 +123,10 @@ export function Client(config: Config<Request>) {
 
   // * Context
   const status = { isDbRunning, isFsRunning, isOnline, isSyncing }
-  const context: Context = { controller, db, fetch, fs, pubsub, status }
+  const apiUrl = config.apiUrl
+  const context: Context = { apiUrl, controller, db, fetch, fs, pubsub, status }
 
   // * Primitive Functions
-  const data = {
-    // sync: (_: Parameters<typeof DataSync>[0]) => DataSync(_, context),
-    // export: (_: Parameters<typeof DataExport>[0]) => DataExport(_, context),
-    // flush: (_: Parameters<typeof DataFlush>[0]) => DataFlush(_, context),
-    // pull: (_: Parameters<typeof DataPull>[0]) => DataPull(_, context),
-    // push: (_: Parameters<typeof DataPush>[0]) => DataPush(_, context),
-    // reset: (_: Parameters<typeof DataReset>[0]) => DataReset(_, context),
-    // verify: (_: Parameters<typeof DataVerify>[0]) => DataVerify(_, context),
-    // size: (_: Parameters<typeof DataSize>[0]) => DataSize(_, context),
-  }
   const schema = {
     checkForUpdates: (_: Parameters<typeof SchemaCheckForUpdates>[0]) =>
       SchemaCheckForUpdates(_, context),
@@ -152,7 +148,6 @@ export function Client(config: Config<Request>) {
   }
 
   return {
-    data,
     db,
     fs,
     getStatus,

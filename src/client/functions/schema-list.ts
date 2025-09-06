@@ -1,7 +1,7 @@
 import type { SQL_Schemas } from "@/types/schemas.js"
 
 import type { Context } from "../config.js"
-import { SCHEMA_VERSION_KEY } from "../constants.js"
+import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaList(
   props: {
@@ -19,7 +19,7 @@ export async function SchemaList(
     return { data: undefined, error: "No database found." }
   }
 
-  const CurrentVersion = await db.metadata.get(SCHEMA_VERSION_KEY)
+  const CurrentVersion = await db.metadata.get(VERSION_KEY)
   if (!CurrentVersion) {
     return { data: undefined, error: "No version found." }
   }

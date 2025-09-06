@@ -22,7 +22,7 @@ export function ClientDB<
     client,
     close: () => close(client),
     connect: () => connect(client),
-    dumpData: (_: Parameters<typeof dumpData>[1]) => dumpData(client, _),
+    export: (_: Parameters<typeof dumpData>[1]) => dumpData(client, _),
     flush: () => flush(client),
     metadata: {
       get: (key: string) => metadata.get(client, key),

@@ -1,5 +1,5 @@
 import type { Context } from "../config.js"
-import { SCHEMA_VERSION_KEY } from "../constants.js"
+import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaUpgrade(
   props: { dbName: string; version: number | { latest: true } },
@@ -11,10 +11,10 @@ export async function SchemaUpgrade(
     throw new Error("Database not found")
   }
 
-  const currentVersion = await db.metadata.get(SCHEMA_VERSION_KEY)
+  const currentVersion = await db.metadata.get(VERSION_KEY)
   const schemas = await db.schema.list({
     aboveVersion: String(currentVersion),
-    belowVersion: String(version)
+    belowVersion: typeof version === "number" ? String(version) : undefined
   })
   if (schemas.length === 0) {
     console.log("No updates found")

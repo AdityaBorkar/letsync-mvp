@@ -25,11 +25,11 @@ export namespace ClientDb {
       migrate: (props: { idx: string }) => Promise<void>
       list: (props?: {
         aboveVersion: string
-        belowVersion?: string
+        belowVersion?: string | undefined
       }) => Promise<SQL_Schemas.Schema[]>
     }
     size: () => Promise<number>
-    dumpData: (options: {
+    export: (options: {
       compression: "none" | "gzip" | "auto"
     }) => Promise<File | Blob>
   }
@@ -39,8 +39,17 @@ export namespace ClientPubSub {
   export type Adapter = {
     __brand: "LETSYNC_CLIENT_PUBSUB"
     name: string
-    // syncData: (context: any) => Promise<void>;
-    close: () => Promise<void>
+    connect: (props: {
+      db: ClientDb.Adapter<unknown>[]
+      fs: ClientFs.Adapter<unknown>[]
+      apiUrl: { path: string; domain: string; https: boolean }
+      signal: AbortSignal
+    }) => Promise<void> | void
+    disconnect: () => Promise<void> | void
+    syncItems: {
+      db: string[]
+      fs: string[]
+    }
   }
 }
 

@@ -48,6 +48,7 @@ async function set(
     `INSERT INTO "letsync"."client_metadata" ("key", "type", "value") VALUES ($1, $2, $3) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
     [key, type, data]
   )
+  return
 }
 
 // @ts-expect-error - TODO: Fix this

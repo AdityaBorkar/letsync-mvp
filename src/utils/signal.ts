@@ -1,8 +1,10 @@
 export class Signal<T> {
   private value: T
+  private callbacks: ((value: T) => void)[]
 
   constructor(value: T) {
     this.value = value
+    this.callbacks = []
   }
 
   get() {
@@ -11,5 +13,12 @@ export class Signal<T> {
 
   set(value: T) {
     this.value = value
+    for (const callback of this.callbacks) {
+      callback(value)
+    }
+  }
+
+  onChange(callback: (value: T) => void) {
+    this.callbacks.push(callback)
   }
 }
