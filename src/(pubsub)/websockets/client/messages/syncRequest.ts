@@ -2,7 +2,8 @@ import type { ServerWebSocket } from "bun"
 
 import { type } from "arktype"
 
-import type { WebsocketData } from "../../server/handler.js"
+import type { Context } from "../../../../server/config.js"
+import type { WebsocketData } from "../../types.js"
 
 const message = type({
   "cursor?": "Date",
@@ -15,7 +16,7 @@ const message = type({
 export async function handler(
   ws: ServerWebSocket<WebsocketData>,
   msg: typeof message.infer,
-  context: any
+  context: Context
 ) {
   const userId = ws.data.userId
   const { cursor, name, refId } = msg
@@ -65,11 +66,12 @@ export async function handler(
     cursor: Date | undefined
     limit: number
   }): Promise<void> => {
-    const dataOps = await serverDb.client.sql`
-		SELECT * FROM "letsync"."cdc"
-		WHERE tenantId = ${userId}
-		ORDER BY id ASC
-		LIMIT ${limit};
+    const db = serverDb.client as any
+    const dataOps = await db.$client.sql`
+      SELECT * FROM "letsync"."cdc"
+      WHERE tenantId = ${userId}
+      ORDER BY id ASC
+      LIMIT ${limit};
 		`
 
     const data = { data_ops: dataOps, name, refId, type: "data_operations" }

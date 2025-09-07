@@ -2,8 +2,8 @@ import type { ServerWebSocket } from "bun"
 
 import { type } from "arktype"
 
-import type { WebsocketData } from "../../server/handler.js"
-import type { PongMessage } from "../../server/messages/types.js"
+import type { WebsocketData } from "../../types.js"
+import type { PongMessage } from "../../ws-server/messages/types.js"
 
 const message = type({
   refId: "string",

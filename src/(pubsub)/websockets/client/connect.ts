@@ -3,9 +3,9 @@ import { ArkErrors } from "arktype"
 import type { ClientDb, ClientFs } from "@/types/client.js"
 
 import { Logger } from "../../../utils/logger.js"
-import { dataCache } from "../server/messages/data-cache.js"
-import { dataOperations } from "../server/messages/data-operations.js"
-import { pong } from "../server/messages/pong.js"
+import { dataCache } from "../ws-server/messages/data-cache.js"
+import { dataOperations } from "../ws-server/messages/data-operations.js"
+import { pong } from "../ws-server/messages/pong.js"
 import type { ClientState } from "./index.js"
 import { generateRefId } from "./utils/generate-ref-id.js"
 
@@ -23,18 +23,21 @@ export function connect(
   context: {
     client: ClientState
     method: string
+    wsUrl: string | undefined
   }
 ) {
   const logger = new Logger("SYNC:WS")
 
   const { apiUrl, db, fs, signal } = props
-  const { client, method } = context
+  const { client, method, wsUrl } = context
   if (method !== "ws") {
     throw new Error("Methods other than `ws` are not supported yet!")
   }
 
+  console.log("Connecting websocket")
   const ws = new window.WebSocket(
-    `${apiUrl.https ? "wss" : "ws"}://${apiUrl.domain}/${apiUrl.path}/ws`
+    wsUrl ||
+      `${apiUrl.https ? "wss" : "ws"}://${apiUrl.domain}/${apiUrl.path}/ws`
   )
 
   signal.addEventListener("abort", () => ws.close())
