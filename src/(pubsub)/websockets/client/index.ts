@@ -1,8 +1,8 @@
 import type { ClientPubSub } from "@/types/client.js"
 
 import { generateName } from "../../../utils/generate-name.js"
-import { connect } from "./connect.js"
-import { disconnect } from "./disconnect.js"
+import { connect } from "./methods/connect.js"
+import { disconnect } from "./methods/disconnect.js"
 
 export type ClientState = {
   client: WebSocket | null
@@ -38,7 +38,7 @@ export function PubSubClient({
   }
   return {
     __brand: "LETSYNC_CLIENT_PUBSUB",
-    connect: (props) => connect(props, { client, method, wsUrl }),
+    connect: (context) => connect({ client, context, method, wsUrl }),
     disconnect: () => disconnect({ client }),
     name,
     syncItems

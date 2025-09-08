@@ -1,4 +1,4 @@
-import type { ClientState } from "./index.js"
+import type { ClientState } from "../index.js"
 
 export function disconnect({ client }: { client: ClientState }) {
   console.log("Disconnect websocket")

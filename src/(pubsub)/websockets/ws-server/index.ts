@@ -2,23 +2,44 @@ import type { Server, ServerWebSocket } from "bun"
 
 import { ArkErrors } from "arktype"
 
-import { type LetsyncConfig, LetsyncServer } from "../../../server/config.js"
-import { mutation } from "../client/messages/mutation.js"
-import { ping } from "../client/messages/ping.js"
-import { syncRequest } from "../client/messages/syncRequest.js"
+import {
+  type Context,
+  type LetsyncConfig,
+  LetsyncServer
+} from "../../../server/config.js"
+import type {
+  ClientRpcMessage,
+  ClientRpcMessageData
+} from "../client/schemas.js"
 import type { WebsocketData } from "../types.js"
+import { generateRefId } from "../utils/generate-ref-id.js"
+import { ping } from "./messages/ping.js"
+import { syncRequest } from "./messages/sync-request.js"
+import { ServerRpcSchema } from "./schemas.js"
 
-const MessageType = syncRequest.message.or(mutation.message).or(ping.message)
+export type Websocket = ServerWebSocket<WebsocketData>
+export type WebsocketContext = Context & {
+  end: () => void
+  rpc<T extends ClientRpcMessage["type"]>(
+    type: T,
+    data?: ClientRpcMessageData<T>["data"]
+  ): void
+}
 
 export function WebsocketServer(config: LetsyncConfig<Request>) {
-  // TODO: Run LetsyncServer() here
-
   const { context } = LetsyncServer(config)
 
   const apiHandler = (request: Request, server: Server) => {
-    // TODO: Upgrade connection to WebSocket with authenticated user data
+    const result = context.auth(request)
+    if ("status" in result) {
+      return Response.json(result, { status: result.status })
+    }
+
+    const { userId, deviceId } = result
     const connectionTime = Date.now()
-    const upgraded = server.upgrade(request, { data: { connectionTime } })
+    const upgraded = server.upgrade(request, {
+      data: { connectionTime, deviceId, userId }
+    })
     if (!upgraded) {
       return Response.json(
         { error: "Failed to upgrade to WebSocket" },
@@ -29,29 +50,53 @@ export function WebsocketServer(config: LetsyncConfig<Request>) {
   }
 
   const wsHandler = {
-    close(ws: ServerWebSocket<WebsocketData>) {
+    close(ws: Websocket) {
       const { userId } = ws.data
       console.log(`WebSocket closed for user: ${userId}`)
     },
-    async message(ws: ServerWebSocket<WebsocketData>, message: string) {
-      const data = MessageType(JSON.parse(message))
-      if (data instanceof ArkErrors) {
-        console.log({ data, message })
+    message(ws: Websocket, msg: string) {
+      const waitForRequestAck = (refId: string) => {
+        return new Promise((resolve) => {
+          // ws.onmessage = (event) => {
+          //   const data = JSON.parse(event.data)
+          //   if (data.refId === refId) {
+          //     resolve(data)
+          //   }
+          // }
+          console.log("Waiting for request ack", refId)
+          resolve(null)
+        })
+      }
+      const wsContext: WebsocketContext = {
+        ...context,
+        end: () => {
+          const refId = generateRefId()
+          ws.send(JSON.stringify({ refId, type: "-- END --" }))
+        },
+        async rpc(type, data) {
+          const refId = generateRefId()
+          ws.send(JSON.stringify({ data, refId, type }))
+          const response = await waitForRequestAck(refId)
+          return response
+        }
+      }
+
+      const message = ServerRpcSchema(JSON.parse(msg))
+      if (message instanceof ArkErrors) {
+        console.log({ message, msg })
         throw new Error("Invalid message format")
       }
 
-      // TODO: Use AsyncLocalStorage for `ws` and `data`
-      if (data.type === "ping") {
-        await ping.handler(ws, data)
-      }
-      if (data.type === "mutation") {
-        await mutation.handler(ws, data)
-      }
-      if (data.type === "sync_request") {
-        await syncRequest.handler(ws, data, context)
+      // TODO: Call Request Store and inform of arrival
+
+      const { type, data } = message
+      if (type === "ping") {
+        ping.handler(data, wsContext)
+      } else if (type === "sync-request") {
+        syncRequest.handler(data, wsContext)
       }
     },
-    open(ws: ServerWebSocket<WebsocketData>) {
+    open(ws: Websocket) {
       const { userId } = ws.data
       console.log(`WebSocket opened for user: ${userId}`)
     }

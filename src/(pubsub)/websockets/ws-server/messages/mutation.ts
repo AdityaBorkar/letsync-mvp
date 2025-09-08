@@ -5,7 +5,9 @@ import { type } from "arktype"
 import type { WebsocketData } from "../../types.js"
 
 const message = type({
-  database: [{ cursor: "string", name: "string" }, "[]"],
+  data: {
+    // database: [{ cursor: "string", name: "string" }, "[]"]
+  },
   refId: "string",
   type: '"mutation"'
 })
@@ -28,3 +30,7 @@ export function handler(
 }
 
 export const mutation = { handler, message }
+// export const MutationMessage = type({
+//   refId: "string",
+//   type: '"mutation"'
+// })

@@ -1,4 +1,6 @@
 // biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
+import type { Context } from "@/client/config.js"
+
 import type { SQL_Schemas } from "./schemas.js"
 
 export type GenericObject = { [key: string]: string | boolean | GenericObject }
@@ -39,12 +41,9 @@ export namespace ClientPubSub {
   export type Adapter = {
     __brand: "LETSYNC_CLIENT_PUBSUB"
     name: string
-    connect: (props: {
-      db: ClientDb.Adapter<unknown>[]
-      fs: ClientFs.Adapter<unknown>[]
-      apiUrl: { path: string; domain: string; https: boolean }
-      signal: AbortSignal
-    }) => Promise<void> | void
+    connect: (
+      context: Omit<Context, "status" | "fetch">
+    ) => Promise<void> | void
     disconnect: () => Promise<void> | void
     syncItems: {
       db: string[]

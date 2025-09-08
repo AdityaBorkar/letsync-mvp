@@ -7,5 +7,6 @@ export type SyncMethod =
 
 export interface WebsocketData {
   userId: string
+  deviceId: string
   connectionTime: number
 }
