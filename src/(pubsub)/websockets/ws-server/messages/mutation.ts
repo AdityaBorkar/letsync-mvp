@@ -1,36 +1,28 @@
-import type { ServerWebSocket } from "bun"
-
 import { type } from "arktype"
 
-import type { WebsocketData } from "../../types.js"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../index.js"
 
-const message = type({
-  data: {
-    // database: [{ cursor: "string", name: "string" }, "[]"]
-  },
-  refId: "string",
-  type: '"mutation"'
+type MsgData = typeof msgData.infer
+const msgData = type({
+  database: {
+    cursor: "string",
+    name: "string"
+  }
 })
 
-export function handler(
-  ws: ServerWebSocket<WebsocketData>,
-  msg: typeof message.infer
-) {
-  const {
-    userId
-    // tenantId
-  } = ws.data
+export function handler(msg: MsgData, context: WsContext) {
+  // const {
+  //   userId
+  //   // tenantId
+  // } = context.data
 
   // TODO: Validate mutation message
   // TODO: RPC execute mutation method
-  console.log("Mutation from user", userId, msg)
+  console.log({ context, msg })
 
   // TODO: [ack] mutation result
   // TODO: [publish] mutation result
 }
 
-export const mutation = { handler, message }
-// export const MutationMessage = type({
-//   refId: "string",
-//   type: '"mutation"'
-// })
+export const mutation = { handler, message: MessageType("'mutation'", msgData) }

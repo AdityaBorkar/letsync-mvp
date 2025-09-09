@@ -7,27 +7,26 @@ import {
   type LetsyncConfig,
   LetsyncServer
 } from "../../../server/config.js"
-import type {
-  ClientRpcMessage,
-  ClientRpcMessageData
-} from "../client/schemas.js"
+import { Logger } from "../../../utils/logger.js"
+import type { ClientRpcMessage } from "../client/schemas.js"
 import type { WebsocketData } from "../types.js"
-import { generateRefId } from "../utils/generate-ref-id.js"
+import { createWsContext } from "../utils/create-ws-context.js"
+import { RequestStore } from "../utils/request-store.js"
 import { ping } from "./messages/ping.js"
 import { syncRequest } from "./messages/sync-request.js"
-import { ServerRpcSchema } from "./schemas.js"
+import { type ServerRpcMessage, ServerRpcSchema } from "./schemas.js"
 
 export type Websocket = ServerWebSocket<WebsocketData>
-export type WebsocketContext = Context & {
-  end: () => void
-  rpc<T extends ClientRpcMessage["type"]>(
-    type: T,
-    data?: ClientRpcMessageData<T>["data"]
-  ): void
-}
+
+type ContextType = Omit<Context, "status" | "fetch">
+
+export type WsContext = ReturnType<
+  typeof createWsContext<WebSocket, ContextType, ClientRpcMessage>
+>
 
 export function WebsocketServer(config: LetsyncConfig<Request>) {
   const { context } = LetsyncServer(config)
+  const logger = new Logger(`[${"INSERT-NAME-HERE"}]`)
 
   const apiHandler = (request: Request, server: Server) => {
     const result = context.auth(request)
@@ -49,48 +48,38 @@ export function WebsocketServer(config: LetsyncConfig<Request>) {
     return
   }
 
+  const RequestManager = RequestStore()
+
   const wsHandler = {
     close(ws: Websocket) {
       const { userId } = ws.data
-      console.log(`WebSocket closed for user: ${userId}`)
+      logger.log(`Connection closed for user: ${userId}`)
     },
     message(ws: Websocket, msg: string) {
-      const waitForRequestAck = (refId: string) => {
-        return new Promise((resolve) => {
-          // ws.onmessage = (event) => {
-          //   const data = JSON.parse(event.data)
-          //   if (data.refId === refId) {
-          //     resolve(data)
-          //   }
-          // }
-          console.log("Waiting for request ack", refId)
-          resolve(null)
-        })
-      }
-      const wsContext: WebsocketContext = {
-        ...context,
-        end: () => {
-          const refId = generateRefId()
-          ws.send(JSON.stringify({ refId, type: "-- END --" }))
-        },
-        async rpc(type, data) {
-          const refId = generateRefId()
-          ws.send(JSON.stringify({ data, refId, type }))
-          const response = await waitForRequestAck(refId)
-          return response
-        }
-      }
-
       const message = ServerRpcSchema(JSON.parse(msg))
       if (message instanceof ArkErrors) {
         console.log({ message, msg })
         throw new Error("Invalid message format")
       }
+      const { type, data, requestId, chunkId } = message
+      const wsContext = createWsContext<
+        Websocket,
+        ContextType,
+        ServerRpcMessage
+      >({
+        context,
+        RequestManager,
+        requestId,
+        ws
+      })
 
-      // TODO: Call Request Store and inform of arrival
-
-      const { type, data } = message
-      if (type === "ping") {
+      if (chunkId) {
+        const request = RequestManager.get(requestId)
+        if (!request) {
+          logger.error("Request not found", requestId)
+        }
+        request?.callback(message)
+      } else if (type === "ping") {
         ping.handler(data, wsContext)
       } else if (type === "sync-request") {
         syncRequest.handler(data, wsContext)

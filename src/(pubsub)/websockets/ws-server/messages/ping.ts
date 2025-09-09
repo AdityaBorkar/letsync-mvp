@@ -1,20 +1,14 @@
 import { type } from "arktype"
 
-import type { WebsocketContext } from "../index.js"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../index.js"
 
-const message = type({
-  data: {},
-  refId: "string",
-  type: '"ping"'
-})
+type MsgData = typeof msgData.infer
+const msgData = type("undefined")
 
-export function handler(
-  _msg: (typeof message.infer)["data"],
-  context: WebsocketContext
-) {
+export function handler(_msg: MsgData, context: WsContext) {
   const timestamp = Date.now()
-  context.rpc("pong", { timestamp })
-  context.end()
+  context.end({ timestamp })
 }
 
-export const ping = { handler, message }
+export const ping = { handler, message: MessageType("'ping'", msgData) }

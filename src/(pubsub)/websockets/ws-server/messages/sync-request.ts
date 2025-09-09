@@ -1,20 +1,15 @@
 import { type } from "arktype"
 
-import type { WebsocketContext } from "../index.js"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../index.js"
 
-export const message = type({
-  data: {
-    cursor: "string | null",
-    name: "string"
-  },
-  refId: "string",
-  type: '"sync-request"'
+type MsgData = typeof msgData.infer
+const msgData = type({
+  cursor: "string | null",
+  name: "string"
 })
 
-export const handler = (
-  msg: (typeof message.infer)["data"],
-  context: WebsocketContext
-) => {
+export const handler = (msg: MsgData, context: WsContext) => {
   const { cursor, name } = msg
   const data: { name: string; data_ops: any[]; cursor?: string } = {
     data_ops: [],
@@ -34,7 +29,10 @@ export const handler = (
   context.end()
 }
 
-export const syncRequest = { handler, message }
+export const syncRequest = {
+  handler,
+  message: MessageType("'sync-request'", msgData)
+}
 
 // import type { ServerWebSocket } from "bun"
 

@@ -1,21 +1,19 @@
 import { type } from "arktype"
 
-import type { WebsocketContext } from "../methods/connect.js"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../methods/connect.js"
 
-const message = type({
-  data: {
-    cache: "object"
-    //   database: [{ cursor: "string", name: "string" }, "[]"],
-  },
-  refId: "string",
-  type: '"cdc-cache"'
+type MsgData = typeof msgData.infer
+const msgData = type({
+  cache: "string"
+  //   database: [{ cursor: "string", name: "string" }, "[]"],
 })
 
-function handler(
-  _msg: (typeof message.infer)["data"],
-  _context: WebsocketContext
-) {
+function handler(_msg: MsgData, _context: WsContext) {
   // TODO: Handle cdc cache
 }
 
-export const cdcCache = { handler, message }
+export const cdcCache = {
+  handler,
+  message: MessageType("'cdc-cache'", msgData)
+}

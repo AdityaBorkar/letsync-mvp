@@ -1,22 +1,25 @@
 // import type { SQL_Schemas } from "@/types/schemas.js"
 
+import type { ClientDb } from "@/types/client.js"
+
 import type { Context } from "../config.js"
 import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaCheckForUpdates(
-  props: { dbName: string },
+  props: { name: string } | { db: ClientDb.Adapter<unknown> },
   context: Context
 ) {
-  const { dbName } = props
-  const db = context.db.get(dbName)
+  const db = "name" in props ? context.db.get(props.name) : props.db
   if (!db) {
     throw new Error("Database not found")
   }
 
-  const CurrentVersion = await db.metadata.get(VERSION_KEY)
-  if (CurrentVersion === null) {
+  const version = await db.metadata.get(VERSION_KEY)
+  if (version === null) {
     throw new Error("No version found")
   }
+
+  // TODO: WRITE LOGIC
 
   // const schemas = await context.fetch("GET", "/schema", {
   //   searchParams: { from: String(CurrentVersion), name: db.name }

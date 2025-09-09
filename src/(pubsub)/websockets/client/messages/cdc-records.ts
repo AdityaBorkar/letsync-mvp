@@ -1,30 +1,25 @@
 import { type } from "arktype"
 
-import type { WebsocketContext } from "../methods/connect.js"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../methods/connect.js"
 
-const message = type({
-  data: {
-    name: "string",
-    records: type(
-      {
-        createdAt: "string",
-        id: "number",
-        operation: "string",
-        tenantId: "number",
-        updatedAt: "string"
-      },
-      "[]"
-    )
-    //   database: [{ cursor: "string", name: "string" }, "[]"],
-  },
-  refId: "string",
-  type: '"cdc-records"'
+type MsgData = typeof msgData.infer
+const msgData = type({
+  name: "string",
+  records: type(
+    {
+      createdAt: "string",
+      id: "number",
+      operation: "string",
+      tenantId: "number",
+      updatedAt: "string"
+    },
+    "[]"
+  )
+  //   database: [{ cursor: "string", name: "string" }, "[]"],
 })
 
-function handler(
-  msg: (typeof message.infer)["data"],
-  _context: WebsocketContext
-) {
+function handler(msg: MsgData, _context: WsContext) {
   const { records: data_ops } = msg
 
   const dataOpsMap = new Map<number, (typeof data_ops)[number]>()
@@ -34,4 +29,7 @@ function handler(
   }
 }
 
-export const cdcRecords = { handler, message }
+export const cdcRecords = {
+  handler,
+  message: MessageType("'cdc-records'", msgData)
+}

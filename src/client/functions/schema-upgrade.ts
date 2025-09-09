@@ -1,16 +1,20 @@
+import type { ClientDb } from "@/types/client.js"
+
 import type { Context } from "../config.js"
 import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaUpgrade(
-  props: { dbName: string; version: number | { latest: true } },
+  props: ({ name: string } | { db: ClientDb.Adapter<unknown> }) & {
+    version: number | { latest: true }
+  },
   context: Context
 ) {
-  const { dbName, version } = props
-  const db = context.db.get(dbName)
+  const db = "name" in props ? context.db.get(props.name) : props.db
   if (!db) {
     throw new Error("Database not found")
   }
 
+  const { version } = props
   const currentVersion = await db.metadata.get(VERSION_KEY)
   const schemas = await db.schema.list({
     aboveVersion: String(currentVersion),

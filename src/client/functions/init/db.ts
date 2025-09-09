@@ -2,6 +2,7 @@ import type { Context } from "@/client/config.js"
 import type { ClientDb } from "@/types/client.js"
 import type { SQL_Schemas } from "@/types/schemas.js"
 
+import { Logger } from "../../../utils/logger.js"
 import { tryCatch } from "../../../utils/try-catch.js"
 import { VERSION_KEY } from "../../constants.js"
 import { SchemaCheckForUpdates } from "../schema-check-for-updates.js"
@@ -14,8 +15,12 @@ export async function initDb(props: {
   autoUpgrade: boolean
 }) {
   const { context, db, checkForUpdates, autoUpgrade } = props
+  const logger = new Logger(db.name)
+
+  logger.log("Establishing connection")
   await db.connect()
 
+  logger.log("Schema Version: Reading from metadata")
   const { data: version, error } = await tryCatch(db.metadata.get(VERSION_KEY))
 
   if (
@@ -24,33 +29,34 @@ export async function initDb(props: {
       ?.toString()
       .endsWith('relation "client_metadata" does not exist')
   ) {
-    console.error("Error fetching schema version", error.cause)
+    logger.error("Schema Version: Error reading from metadata", error.cause)
     throw error.cause
   }
 
-  console.log(`Schema Version for ${db.name}:`, version)
+  logger.log(`Schema Version: ${version}`)
 
   if (version === null) {
+    logger.log("Schema: Fetching from server")
     const response = await context.fetch("GET", "/schema", {
       searchParams: { name: db.name }
     })
     if (response.error) {
-      console.error(`Schema fetch error for ${db.name}:`, response.error)
+      logger.error(`Schema: Error fetching from server`, response.error)
       return
     }
     const schemas = response.data as SQL_Schemas.Schema[]
-    console.log(`Initializing database ${db.name}`, schemas)
+    logger.log(`Schema: Initializing`, schemas)
     await db.schema.initialize(schemas[0])
-    console.log("Database Initialized", db.name)
+    logger.log("Schema: Initialized")
     return
   }
 
   // Run schema operations sequentially per database
   if (checkForUpdates) {
-    await SchemaCheckForUpdates({ dbName: db.name }, context)
+    await SchemaCheckForUpdates({ db }, context)
   }
 
   if (autoUpgrade) {
-    await SchemaUpgrade({ dbName: db.name, version: { latest: true } }, context)
+    await SchemaUpgrade({ db, version: { latest: true } }, context)
   }
 }
