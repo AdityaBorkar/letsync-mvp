@@ -12,6 +12,30 @@ export namespace SQL_Schemas {
     sql_init: string
     sql_migration: string
     tag: string
-    version: number
+  }
+
+  export type Mutation = {
+    created_at: string
+    mutation_name: string
+    request_id: string
+    status: string
+  }
+
+  export type CdcRecord = {
+    action: string
+    id: string
+    // tenant_id: string
+    timestamp: string
+    transformations: string
+    user_id: string
+  }
+
+  export type CdcCache = {
+    created_at: string
+    cursor_end: string
+    cursor_start: string
+    id: string
+    updated_at: string
+    url: string
   }
 }

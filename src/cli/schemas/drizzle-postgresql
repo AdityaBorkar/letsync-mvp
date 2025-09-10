@@ -1,4 +1,12 @@
-import { pgSchema, serial, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import {
+  json,
+  pgSchema,
+  serial,
+  text,
+  timestamp,
+  uuid
+} from "drizzle-orm/pg-core"
+import { v7 as uuidv7 } from "uuid"
 
 export const letsync = pgSchema("letsync")
 
@@ -14,7 +22,7 @@ export const clientMetadata = letsync.table("client_metadata", {
   value: text().notNull()
 })
 
-export const clientSchemas = letsync.table("client_schemas", {
+export const clientSchemas = letsync.table("client_schema", {
   created_at: timestamp().defaultNow().notNull(),
   idx: serial().primaryKey(),
   // is_rolled_back: boolean().default(false).notNull(),
@@ -30,42 +38,33 @@ export const mutationStatus = letsync.enum("mutation_status", [
   "failed"
 ])
 
-export const clientMutations = letsync.table("client_mutations", {
+export const mutations = letsync.table("mutation", {
   created_at: timestamp().defaultNow().notNull(),
   mutation_name: text().notNull(),
-  request_id: uuid().notNull(),
+  request_id: uuid().primaryKey(),
   status: mutationStatus().notNull()
 })
 
-// export const cdc = letsync.table("cdc", {
-//   action: text().notNull(), // 'archived' | 'marked as completed' | 'execution started' | 'execution cancelled' | Custom Text
-//   data: jsonb().notNull(), // Transformations only
-//   id: text().$defaultFn(() => createId()),
-//   item_id: text().notNull(), // tableName_rowId (non-indexed)
-//   operation: text({ enum: ["create", "update", "delete"] }).notNull(),
-//   tenant_id: uuid(),
-//   timestamp: timestamp().notNull(), // Cursor
-//   user_id: uuid().notNull()
-// })
+export const cdcRecords = letsync.table("cdc_record", {
+  action: text({ enum: ["create", "update", "delete"] }).notNull(),
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  // tenant_id: uuid(),
+  timestamp: timestamp().notNull().defaultNow(),
+  transformations: json().notNull(),
+  user_id: uuid().notNull()
+})
 
-// export const cdcCache = letsync.table("cdc_cache", {
-//   _client_applied_at: timestamp(),
-//   end: text().notNull(),
-//   id: text().$defaultFn(() => createId()),
-//   start: text().notNull(),
-//   storage_url: text().notNull(),
-//   tenant_id: uuid(),
-//   timestamp: timestamp().notNull()
-// })
-
-// TODO: Mutations and executing them in the client-server spaces. Experiment in /test endpoint.
-// Go to #letsync/client/ws/messages/data-operations.ts and construct SQL Queries with transactions
-// Also sync CDC Records to the client.
-// Basic Conflice Resolution - Last Write Wins.
-// insert into tenants (id, name) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'my first customer');
-// select * from tenants;
-
-// insert into todos (tenant_id, title, estimate, embedding, complete) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'feed my cat', '1h', '[1,2,3]', false);
-
-// SELECT tenants.name, title, embedding, estimate, complete
-// FROM todos join tenants on tenants.id = todos.tenant_id;
+export const cdcCache = letsync.table("cdc_cache", {
+  created_at: timestamp().notNull().defaultNow(),
+  cursor_end: text().notNull(),
+  cursor_start: text().notNull(),
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  updated_at: timestamp()
+    .notNull()
+    .$onUpdate(() => new Date()),
+  url: text().notNull()
+})

@@ -3,6 +3,7 @@ import type { ServerDb } from "@/types/server.js"
 import { close } from "./close.js"
 import { connect } from "./connect.js"
 import { schema } from "./schema.js"
+import { syncInitialize } from "./sync-initialize.js"
 import type { DrizzleServerDb } from "./types.js"
 
 export function ServerDB<T extends DrizzleServerDb>({
@@ -20,7 +21,8 @@ export function ServerDB<T extends DrizzleServerDb>({
     name,
     schema: {
       list: (params) => schema.list(client, params)
-    }
+    },
+    syncInitialize: (params) => syncInitialize(client, params)
   }
   return entity
 }

@@ -41,7 +41,7 @@ async function initialize(
 async function migrate(db: DrizzleClientDb, props: { idx: string }) {
   const { idx } = props
   const result = await db.$client.query<SQL_Schemas.Schema>(
-    `SELECT * FROM "letsync"."client_schemas" WHERE idx=$1;`,
+    `SELECT * FROM "letsync"."client_schema" WHERE idx=$1;`,
     [idx]
   )
   const schema = result.rows[0]
@@ -59,7 +59,7 @@ async function list(
 ) {
   const { aboveVersion, belowVersion } = props ?? {}
   const query = `
-    SELECT * FROM "letsync"."client_schemas"
+    SELECT * FROM "letsync"."client_schema"
     ${aboveVersion ? ` WHERE idx > ${aboveVersion}` : ""}
     ${belowVersion ? ` AND idx <= ${belowVersion}` : ""}
     ORDER BY idx ASC;

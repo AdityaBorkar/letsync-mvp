@@ -2,6 +2,7 @@ import { ArkErrors } from "arktype"
 
 import type { Context } from "@/client/config.js"
 
+import { CURSOR_KEY } from "../../../../client/constants.js"
 import { Logger } from "../../../../utils/logger.js"
 import { createWsContext } from "../../utils/create-ws-context.js"
 import { RequestStore } from "../../utils/request-store.js"
@@ -50,17 +51,17 @@ export function connect(props: {
   ws.onopen = async () => {
     console.log("Websockets: Connected")
 
+    const ping = await wsContext.rpc("ping")
     // @ts-expect-error
-    const { timestamp } = await wsContext.rpc("ping")
-    const latency = Date.now() - Number(timestamp)
+    const latency = Date.now() - Number(ping.timestamp)
     console.log(`Latency: ${latency}ms`)
 
-    // for await (const [_, database] of db.entries()) {
-    //   const name = database.name
-    //   const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
-    //   const cursor = timestamp ? new Date(timestamp).toString() : null
-    //   wsContext.rpc("sync-request", { cursor, name })
-    // }
+    for await (const [_, database] of context.db.entries()) {
+      const name = database.name
+      const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
+      const cursor = timestamp ? new Date(timestamp).toString() : null
+      wsContext.rpc("sync-request", { cursor, name })
+    }
 
     // for await (const [_, filesystem] of fs.entries()) {
     //   const name = filesystem.name
@@ -69,8 +70,6 @@ export function connect(props: {
   }
 
   ws.onmessage = ({ data: msg }) => {
-    console.log({ msg })
-
     const message = ClientRpcSchema(JSON.parse(msg))
     if (message instanceof ArkErrors) {
       console.log({ message, msg })

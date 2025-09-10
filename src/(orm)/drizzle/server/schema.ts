@@ -14,7 +14,7 @@ async function list(
 ) {
   const { aboveVersion, belowVersion } = params ?? {}
   const query = `
-      SELECT * FROM "letsync"."client_schemas"
+      SELECT * FROM "letsync"."client_schema"
       ${aboveVersion ? `WHERE version > ${aboveVersion}` : ""}
       ${belowVersion ? `AND version < ${belowVersion}` : ""}
       ORDER BY created_at ${aboveVersion ? "ASC" : "DESC"};

@@ -4,7 +4,7 @@ import { MessageType } from "../../utils/schema.js"
 import type { WsContext } from "../index.js"
 
 type MsgData = typeof msgData.infer
-const msgData = type("undefined")
+const msgData = type("null")
 
 export function handler(_msg: MsgData, context: WsContext) {
   const timestamp = Date.now()

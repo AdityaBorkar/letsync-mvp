@@ -14,6 +14,7 @@ export namespace ServerDb {
         belowVersion?: string
       }) => Promise<SQL_Schemas.Schema[]>
     }
+    syncInitialize: (strategy: "wal") => Promise<Record<string, unknown>>
   }
 }
 

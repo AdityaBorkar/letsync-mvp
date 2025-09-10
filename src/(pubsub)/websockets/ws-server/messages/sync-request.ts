@@ -7,25 +7,45 @@ type MsgData = typeof msgData.infer
 const msgData = type({
   cursor: "string | null",
   name: "string"
+  // strategy: '"ahead-of-time" | "on-demand"',
 })
 
 export const handler = (msg: MsgData, context: WsContext) => {
-  const { cursor, name } = msg
-  const data: { name: string; data_ops: any[]; cursor?: string } = {
-    data_ops: [],
-    name
-  }
-  if (cursor) {
-    data.cursor = cursor
-  }
   // TODO: Implement data synchronization logic
-  // - SUBSCRIBE TO DB UPDATES
-  // - Fetch data from CDN/DB
-  // - Set up websocket subscriptions
-  // - Implement cursor verification
+  // - SUBSCRIBE TO DB UPDATES / Set up websocket subscriptions
 
-  // context.rpc("cdc-records", data)
-  // context.rpc("cdc-cache", data)
+  // - Fetch data from CDN/DB
+  // - Implement cursor verification
+  // 1. Use PubSub in Postgres OR use the WAL
+  // 2. Store all transactions in CDC from WAL or MANUAL or PubSub.
+  // 3. Cron Job - Every 24 hours - merge records into the cache file IF records are greater than 50.
+  // 4. DO NOT USE THE FILESYSTEM API TO STORE CACHE FOR NOW. Use a hardcoded solution in WS itself with the names - fs-client / fs-server
+
+  const { cursor, name } = msg
+  const db = (context.db.get(name)?.client as any)?.$client
+  if (!db) {
+    throw new Error("Database not found")
+  }
+
+  console.log({ cursor })
+  // const RECORDS_LIMIT = 50
+  // let $cursor = cursor
+  // for (; ; true) {
+  //   // TODO: GET ALL CACHE FROM
+  //   const cdc = await db.sql<SQL_Schemas.CdcRecord>`
+  //         SELECT * FROM "letsync"."cdc"
+  //         WHERE tenantId = ${context.user.id}
+  //         ORDER BY id ASC
+  //         LIMIT ${RECORDS_LIMIT};
+  //       `
+  //   // context.rpc("cdc-records", data)
+  //   // context.rpc("cdc-cache", data)
+  //   $cursor = cdc.rows.at(-1).id
+  //   if (cdc.rows.length < RECORDS_LIMIT) break
+  // }
+
+  // TODO: Get Cursor and Integrity & VERIFY
+
   context.end()
 }
 
@@ -34,28 +54,21 @@ export const syncRequest = {
   message: MessageType("'sync-request'", msgData)
 }
 
-// import type { ServerWebSocket } from "bun"
+// Basic Conflice Resolution - Last Write Wins.
 
-// import { type } from "arktype"
+// insert into tenants (id, name) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'my first customer');
+// select * from tenants;
 
-// import type { Context } from "../../../../server/config.js"
-// import type { WebsocketData } from "../../types.js"
+// insert into todos (tenant_id, title, estimate, embedding, complete) values ('d24419bf-6122-4879-afa5-1d9c1b051d72', 'feed my cat', '1h', '[1,2,3]', false);
 
-// const message = type({
-//   "cursor?": "Date",
-//   name: "string",
-//   refId: "string",
-//   type: '"sync_request"'
-//   // strategy: '"ahead-of-time" | "on-demand"',
-// })
+// SELECT tenants.name, title, embedding, estimate, complete
+// FROM todos join tenants on tenants.id = todos.tenant_id;
 
 // export async function handler(
 //   ws: ServerWebSocket<WebsocketData>,
 //   msg: typeof message.infer,
 //   context: Context
 // ) {
-//   const userId = ws.data.userId
-//   const { cursor, name, refId } = msg
 
 //   // TODO: First sync all the `cdc_cache` records and let the client fetch what it needs.
 //   // const data_cache = await db.query.cdcCache.findMany({
@@ -90,36 +103,3 @@ export const syncRequest = {
 //   // };
 
 //   // await getDataCaches({ cursor, limit: 50 });
-
-//   const serverDb = context.db.get("postgres") // ! REPLACE HARDCODED DB NAME
-//   if (!serverDb) {
-//     throw new Error("Server database not found")
-//   }
-
-//   const getDataOps = async ({
-//     limit
-//   }: {
-//     cursor: Date | undefined
-//     limit: number
-//   }): Promise<void> => {
-//     const db = serverDb.client as any
-//     const dataOps = await db.$client.sql`
-//       SELECT * FROM "letsync"."cdc"
-//       WHERE tenantId = ${userId}
-//       ORDER BY id ASC
-//       LIMIT ${limit};
-// 		`
-
-//     const data = { data_ops: dataOps, name, refId, type: "data_operations" }
-//     ws.send(JSON.stringify(data))
-
-//     if (dataOps.length > 0 && dataOps.length !== limit) {
-//       const cursor = dataOps.at(-1).timestamp
-//       await getDataOps({ cursor, limit })
-//     }
-//   }
-
-//   await getDataOps({ cursor, limit: 50 })
-// }
-
-// export const syncRequest = { handler, message }

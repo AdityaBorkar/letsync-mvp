@@ -66,7 +66,7 @@ async function migrateClientSchema(config: Config) {
   const client = await db.connect()
 
   const query = `
-      INSERT INTO "letsync"."client_schemas"
+      INSERT INTO "letsync"."client_schema"
       ("created_at", "idx", "sql_init", "sql_migration", "tag")
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *;

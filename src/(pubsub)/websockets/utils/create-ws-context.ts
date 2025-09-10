@@ -39,7 +39,7 @@ export function createWsContext<
       // @ts-expect-error
       ws.send(JSON.stringify(message))
     },
-    rpc: (type, data) =>
+    rpc: (type, data = null) =>
       new Promise((resolve) => {
         const response: unknown[] = []
         const callback: Callback = (props) => {
@@ -47,13 +47,13 @@ export function createWsContext<
           response.push(data)
           if (type === "-- END --") {
             RequestManager.markAsResolved(requestId)
-            resolve(response)
+            const data = response.length === 1 ? response[0] : response
+            resolve(data)
           }
         }
         const requestId = RequestManager.add({ callback })
 
-        const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { chunkId, data, requestId, type }
+        const message = { chunkId: null, data, requestId, type }
         // @ts-expect-error
         ws.send(JSON.stringify(message))
       }),
