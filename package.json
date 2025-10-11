@@ -10,6 +10,7 @@
     "mqtt": "^5.14.1",
     "ora": "^8.2.0",
     "pg": "^8.16.3",
+    "pg-logical-replication": "^2.2.1",
     "postgres": "^3.4.7",
     "react": "link:react",
     "react-dom": "link:react-dom",

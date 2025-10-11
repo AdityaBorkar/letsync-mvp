@@ -1,137 +1,108 @@
-import { join } from "node:path"
-import { write } from "bun"
+import {
+  LogicalReplicationService,
+  type Wal2Json,
+  Wal2JsonPlugin
+} from "pg-logical-replication"
+import { v7 as uuidv7 } from "uuid"
+import type { WebSocket } from "ws"
 
+import type { SQL_Schemas } from "@/types/schemas.js"
+
+import { connect } from "./connect.js"
 import type { DrizzleServerDb } from "./types.js"
 
 export async function syncInitialize(client: DrizzleServerDb, params: "wal") {
   const { $client } = client
+  await connect(client)
 
   if (params !== "wal") {
     throw new Error("Only WAL is supported for now!")
   }
 
-  // Enable logical replication
-  await $client.query(`
-    ALTER SYSTEM SET wal_level = logical;
-    ALTER SYSTEM SET max_replication_slots = 10;
-    ALTER SYSTEM SET max_wal_senders = 10;
-  `)
-  await $client.query("SELECT pg_reload_conf()")
+  const wal = await $client.query(`SHOW wal_level;`)
+  if (wal.rows[0].wal_level !== "logical") {
+    console.log({ wal: wal.rows[0].wal_level })
+    await $client.query(`ALTER SYSTEM SET wal_level = logical;`)
+    await $client.query(`ALTER SYSTEM SET wal_log_hints = on;`)
+    await $client.query(`ALTER SYSTEM SET max_wal_senders = 10;`)
+    await $client.query(`ALTER SYSTEM SET max_replication_slots = 10;`)
+    await $client.query(`ALTER SYSTEM SET log_min_messages = debug1;`)
+    await $client.query(`ALTER SYSTEM SET log_replication_commands = on;`)
+    await $client.query(`ALTER SYSTEM SET wal_sender_timeout = 600000;`)
+    await $client.query("SELECT pg_reload_conf();")
+  }
 
-  // Create publication for all tables
-  await $client.query("CREATE PUBLICATION sync_pub FOR ALL TABLES")
-
-  // Create replication slot with wal2json
-  await $client.query(`
-    SELECT pg_create_logical_replication_slot('letsync_slot', 'wal2json')
-  `)
-
-  // Start logical replication stream
-  await $client.query("START_REPLICATION SLOT letsync_slot LOGICAL 0/0")
-
-  // @ts-expect-error - copyData is not typed
-  $client.on("copyData", (chunk: any) => {
-    const message = chunk.toString("utf8")
-    const changes = JSON.parse(message)
-    const timestamp = new Date()
-    console.log({ changes })
-    write(
-      join(process.cwd(), `changes-${timestamp.valueOf()}.json`),
-      JSON.stringify({ changes, timestamp: timestamp.toISOString() }, null, 2)
+  const SLOT_NAME = "letsync"
+  const slots = await $client.query(
+    `SELECT * FROM pg_replication_slots WHERE slot_name = '${SLOT_NAME}';`
+  )
+  if (slots.rows.length === 0) {
+    await $client.query(
+      `SELECT pg_create_logical_replication_slot('${SLOT_NAME}', 'wal2json')`
     )
+  }
 
-    for (const change of changes.change || []) {
-      console.log({ change })
-      //   const { kind, schema, table, columnnames, columnvalues, oldkeys } = change
+  const subscribers = new Map<string, (record: SQL_Schemas.CdcRecord) => void>()
 
-      //   // Skip letsync schema changes to avoid recursion
-      //   if (schema === "letsync") return
+  const plugin = new Wal2JsonPlugin()
+  const service = new LogicalReplicationService(client.$client.options, {
+    acknowledge: { auto: true, timeoutSeconds: 10 }
+  })
+  service.on("start", () => {
+    console.log("CDC Capture Service Started")
+  })
+  service.on("data", (_lsn: string, log: Wal2Json.Output) => {
+    for (const change of log.change) {
+      const { kind, schema, table, columnnames, columnvalues } = change
+      if (kind === "message" || kind === "truncate") {
+        continue
+      }
+      if (schema === "letsync") {
+        if (table === "cdc_record" || table === "cdc_cache") continue
+      }
 
-      //   const cdcRecord = {
-      //     action: kind, // 'insert', 'update', 'delete'
-      //     transformations: {
-      //       columnnames,
-      //       columnvalues,
-      //       oldkeys,
-      //       schema,
-      //       table
-      //     },
-      //     user_id: this.extractUserId(change) // Extract from row data
-      //   }
+      const id = uuidv7()
+      const user_id = "Unknown"
+      const timestamp = new Date().toISOString()
+      $client.query(
+        `INSERT INTO "letsync"."cdc_record"
+            ("id", "kind", "target_schema", "target_table", "target_columns", "target_values", "user_id", "timestamp")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [id, kind, schema, table, columnnames, columnvalues, user_id, timestamp]
+      )
 
-      //   // Store in CDC table
-      //   await this.storeCDCRecord(cdcRecord)
-
-      //   // Publish to relevant websocket connections
-      //   await this.publishToClients(cdcRecord)
+      const notify = subscribers.get(user_id)
+      notify?.({
+        id,
+        kind,
+        target_columns: columnnames,
+        target_schema: schema,
+        target_table: table,
+        target_values: columnvalues,
+        timestamp,
+        user_id
+      })
     }
   })
 
-  return {}
+  const subscribeFn = () => {
+    service
+      .subscribe(plugin, SLOT_NAME)
+      .catch((e) => {
+        console.error(e)
+      })
+      .then(() => {
+        setTimeout(subscribeFn, 100)
+      })
+  }
+  subscribeFn()
+
+  const subscribeForUser = (userId: string, ws: WebSocket) => {
+    subscribers.set(userId, (record) => {
+      // ...
+      ws.send(JSON.stringify({ data: record, type: "cdc-record" }))
+    })
+  }
+
+  return () => {}
 }
-
-// import type { Client } from "pg"
-// import type { WsContext } from "../index.js"
-
-// export class WALProcessor {
-//   private pg: Client
-//   private wsConnections = new Map<string, WsContext>()
-//   private isRunning = false
-
-//   constructor(pg: Client) {
-//     this.pg = pg
-//   }
-
-//   addConnection(userId: string, wsContext: WsContext) {
-//     this.wsConnections.set(userId, wsContext)
-//   }
-
-//   removeConnection(userId: string) {
-//     this.wsConnections.delete(userId)
-//   }
-
-//   private async storeCDCRecord(record: any) {
-//     await this.pg.query(
-//       `
-//       INSERT INTO letsync.cdc_record (id, action, timestamp, user_id, transformations)
-//       VALUES ($1, $2, $3, $4, $5)
-//     `,
-//       [
-//         record.id,
-//         record.action,
-//         record.timestamp,
-//         record.user_id,
-//         JSON.stringify(record.transformations)
-//       ]
-//     )
-//   }
-
-//   private async publishToClients(record: any) {
-//     const userId = record.user_id
-//     const wsContext = this.wsConnections.get(userId)
-
-//     if (wsContext) {
-//       wsContext.stream({
-//         type: "cdc-records",
-//         data: {
-//           name: "default", // or extract from schema/table
-//           records: [
-//             {
-//               id: record.id,
-//               operation: record.action,
-//               tenantId: userId,
-//               createdAt: record.timestamp.toISOString(),
-//               updatedAt: record.timestamp.toISOString()
-//             }
-//           ]
-//         }
-//       })
-//     }
-//   }
-
-//   private extractUserId(change: any): string {
-//     // Extract user_id from the changed row data
-//     const userIdIndex = change.columnnames?.indexOf("user_id")
-//     return userIdIndex >= 0 ? change.columnvalues[userIdIndex] : "unknown"
-//   }
-// }

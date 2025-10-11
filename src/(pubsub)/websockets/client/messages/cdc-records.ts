@@ -5,27 +5,53 @@ import type { WsContext } from "../methods/connect.js"
 
 type MsgData = typeof msgData.infer
 const msgData = type({
-  name: "string",
-  records: type(
-    {
-      createdAt: "string",
-      id: "number",
-      operation: "string",
-      tenantId: "number",
-      updatedAt: "string"
-    },
-    "[]"
-  )
-  //   database: [{ cursor: "string", name: "string" }, "[]"],
+  id: "string",
+  kind: "string",
+  lsn: "string",
+  target_columns: "string[]",
+  target_schema: "string",
+  target_table: "string",
+  target_values: "string[]",
+  timestamp: "string",
+  user_id: "string"
 })
 
-function handler(msg: MsgData, _context: WsContext) {
-  const { records: data_ops } = msg
+async function handler(record: MsgData, context: WsContext) {
+  console.log({ record })
 
-  const dataOpsMap = new Map<number, (typeof data_ops)[number]>()
+  const database = context.db.get("postgres")
+  if (!database) {
+    throw new Error("Database not found")
+  }
+  // @ts-expect-error
+  const db = database.client.$client as any
 
-  for (const dataOp of data_ops) {
-    dataOpsMap.set(dataOp.id, dataOp)
+  // TODO: Check if entry is applied.
+
+  await db.query(
+    `INSERT INTO "letsync"."cdc_record"
+      ("id", "kind", "lsn", "target_columns", "target_schema", "target_table", "target_values", "timestamp", "user_id")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
+      record.id,
+      record.kind,
+      record.lsn,
+      record.target_columns,
+      record.target_schema,
+      record.target_table,
+      record.target_values,
+      record.timestamp,
+      record.user_id
+    ]
+  )
+  applyCdcRecord(record)
+
+  function applyCdcRecord(record: MsgData) {
+    console.log({ record })
+    if (record.kind === "insert") {
+      // ...
+    }
+    // appliedAt
   }
 }
 

@@ -46,13 +46,17 @@ export const mutations = letsync.table("mutation", {
 })
 
 export const cdcRecords = letsync.table("cdc_record", {
-  action: text({ enum: ["create", "update", "delete"] }).notNull(),
   id: text()
     .primaryKey()
     .$defaultFn(() => uuidv7()),
+  kind: text({ enum: ["insert", "update", "delete"] }).notNull(),
+  lsn: text().notNull(),
+  target_columns: json().notNull(),
+  target_schema: text().notNull(),
+  target_table: text().notNull(),
+  target_values: json().notNull(),
   // tenant_id: uuid(),
   timestamp: timestamp().notNull().defaultNow(),
-  transformations: json().notNull(),
   user_id: uuid().notNull()
 })
 

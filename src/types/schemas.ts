@@ -22,12 +22,15 @@ export namespace SQL_Schemas {
   }
 
   export type CdcRecord = {
-    action: string
     id: string
-    // tenant_id: string
+    kind: "insert" | "update" | "delete"
+    target_columns: string[]
+    target_schema: string
+    target_table: string
+    target_values: string[]
     timestamp: string
-    transformations: string
     user_id: string
+    // tenant_id: string
   }
 
   export type CdcCache = {
