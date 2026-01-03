@@ -3,9 +3,9 @@ import type {
   ServerDb,
   ServerFs,
   ServerPubSub
-} from "@/types/index.js"
+} from "@/types/index.ts"
 
-import { apiHandler } from "./api-handler.js"
+import { apiHandler } from "./api-handler.ts"
 
 export type Server = ReturnType<typeof LetsyncServer>
 

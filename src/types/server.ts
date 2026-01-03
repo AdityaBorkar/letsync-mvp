@@ -1,5 +1,5 @@
 // biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
-import type { SQL_Schemas } from "./schemas.js"
+import type { SQL_Schemas } from "./schemas.ts"
 
 export namespace ServerDb {
   export type Adapter<T> = {

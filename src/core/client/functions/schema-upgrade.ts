@@ -1,7 +1,7 @@
-import type { ClientDb } from "@/types/client.js"
+import type { ClientDb } from "@/types/client.ts"
 
-import type { Context } from "../config.js"
-import { VERSION_KEY } from "../constants.js"
+import type { Context } from "../config.ts"
+import { VERSION_KEY } from "../constants.ts"
 
 export async function SchemaUpgrade(
   props: ({ name: string } | { db: ClientDb.Adapter<unknown> }) & {

@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config.ts"
 
 export async function cacheUpsert(request: Request, _: Context) {
   const input = await request.json()

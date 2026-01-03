@@ -1,6 +1,6 @@
 import { useContext } from "react"
 
-import { SyncContext } from "../client/context.js"
+import { SyncContext } from "../client/context.ts"
 
 export function useDatabase<T>({ name }: { name?: string } = {}) {
   const client = useContext(SyncContext)

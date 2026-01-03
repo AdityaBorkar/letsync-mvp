@@ -2,11 +2,11 @@ import { cp, exists, mkdir, readFile, rename } from "node:fs/promises"
 import { join } from "node:path"
 import { $, file, write } from "bun"
 
-import { recursiveCopy } from "@/utils/recursive-copy.js"
+import { recursiveCopy } from "@/utils/recursive-copy.ts"
 
-import type { Config } from "./index.js"
-import { generateConfigs } from "./utils/generate-configs.js"
-import { getJournal } from "./utils/get-journal.js"
+import type { Config } from "./index.ts"
+import { generateConfigs } from "./utils/generate-configs.ts"
+import { getJournal } from "./utils/get-journal.ts"
 
 /**
  * Generates Drizzle ORM schemas and configurations for both client and server environments

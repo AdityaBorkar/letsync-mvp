@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config.ts"
 
 export function DataVerify(_: undefined, context: Context) {
   // TODO - RECONCILIATION ENGINE. CHECKS IF THE LOCAL STATE MATCHES WITH THE REMOTE STATE.

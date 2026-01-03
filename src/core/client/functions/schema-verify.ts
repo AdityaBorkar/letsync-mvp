@@ -1,5 +1,5 @@
-import type { Context } from "../config.js"
-import { VERSION_KEY } from "../constants.js"
+import type { Context } from "../config.ts"
+import { VERSION_KEY } from "../constants.ts"
 
 export async function SchemaVerify(
   props: { dbName: string },

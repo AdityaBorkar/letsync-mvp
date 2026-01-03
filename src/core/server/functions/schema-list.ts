@@ -1,7 +1,7 @@
 import { ArkErrors, type } from "arktype"
 
-import type { Context } from "../config.js"
-import { ResponseError } from "../utils/return-error.js"
+import type { Context } from "../config.ts"
+import { ResponseError } from "../utils/return-error.ts"
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
 // TODO: Cache Requests for 24 hrs, if returns 404 (ISR)

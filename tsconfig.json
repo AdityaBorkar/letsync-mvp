@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "alwaysStrict": true,
     "baseUrl": ".",
     "downlevelIteration": true,
@@ -13,6 +14,7 @@
     "lib": ["es6", "dom"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitOverride": true,

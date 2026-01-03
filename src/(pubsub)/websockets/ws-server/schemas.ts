@@ -1,7 +1,7 @@
-import { endMessage, streamMessage } from "../utils/schema.js"
-import { mutation } from "./messages/mutation.js"
-import { ping } from "./messages/ping.js"
-import { syncRequest } from "./messages/sync-request.js"
+import { endMessage, streamMessage } from "../utils/schema.ts"
+import { mutation } from "./messages/mutation.ts"
+import { ping } from "./messages/ping.ts"
+import { syncRequest } from "./messages/sync-request.ts"
 
 export const ServerRpcSchema = ping.message
   .or(syncRequest.message)

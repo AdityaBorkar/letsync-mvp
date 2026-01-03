@@ -1,7 +1,7 @@
 import { useContext, useRef, useSyncExternalStore } from "react"
 
-import type { Events } from "../../../core/client/functions/event-manager.js"
-import { SyncContext } from "../client/context.js"
+import type { Events } from "../../../core/client/functions/event-manager.ts"
+import { SyncContext } from "../client/context.ts"
 
 const EVENTS = [
   "status:network",

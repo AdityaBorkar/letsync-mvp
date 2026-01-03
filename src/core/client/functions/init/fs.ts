@@ -1,5 +1,5 @@
-import type { Context } from "@/core/client/config.js"
-import type { ClientFs } from "@/types/client.js"
+import type { Context } from "@/core/client/config.ts"
+import type { ClientFs } from "@/types/client.ts"
 
 export async function initFs(props: {
   context: Context

@@ -6,9 +6,9 @@ import {
 import { v7 as uuidv7 } from "uuid"
 import type { WebSocket } from "ws"
 
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { SQL_Schemas } from "@/types/schemas.ts"
 
-import { connect } from "./connect.js"
+import { connect } from "./connect.ts"
 import type { DrizzleServerDb } from "./types.js"
 
 export async function syncInitialize(client: DrizzleServerDb, params: "wal") {

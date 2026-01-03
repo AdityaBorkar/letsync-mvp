@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config.ts"
 
 export async function SyncTerminate(_: undefined, context: Context) {
   context.status.isSyncing.set(false)

@@ -1,9 +1,9 @@
 import { type } from "arktype"
 
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { SQL_Schemas } from "@/types/schemas.ts"
 
-import { MessageType } from "../../utils/schema.js"
-import type { WsContext } from "../index.js"
+import { MessageType } from "../../utils/schema.ts"
+import type { WsContext } from "../index.ts"
 
 type MsgData = typeof msgData.infer
 const msgData = type({

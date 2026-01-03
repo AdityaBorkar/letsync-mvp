@@ -1,18 +1,12 @@
-# dependencies (bun install)
-node_modules
+.DS_Store
 
-# logs
+node_modules
+dist
+.env*
+
 logs
 _.log
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
-
-# environment variables
-.env*
-
-# caches
 .eslintcache
 .cache
 *.tsbuildinfo
-
-# Finder (MacOS) folder config
-.DS_Store

@@ -1,5 +1,5 @@
-import type { ServerPubSub } from "../../../types/server.js"
-import { generateName } from "../../../utils/generate-name.js"
+import type { ServerPubSub } from "../../../types/server.ts"
+import { generateName } from "../../../utils/generate-name.ts"
 
 export function PubSubServer({ name = generateName() }: { name?: string }) {
   return {

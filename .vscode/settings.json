@@ -1,0 +1,12 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^(node:)?os$"],
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

@@ -1,9 +1,9 @@
 // import type { SQL_Schemas } from "@/types/schemas.js"
 
-import type { ClientDb } from "@/types/client.js"
+import type { ClientDb } from "@/types/client.ts"
 
-import type { Context } from "../config.js"
-import { VERSION_KEY } from "../constants.js"
+import type { Context } from "../config.ts"
+import { VERSION_KEY } from "../constants.ts"
 
 export async function SchemaCheckForUpdates(
   props: { name: string } | { db: ClientDb.Adapter<unknown> },

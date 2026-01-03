@@ -1,7 +1,7 @@
 import { type } from "arktype"
 
-import { MessageType } from "../../utils/schema.js"
-import type { WsContext } from "../methods/connect.js"
+import { MessageType } from "../../utils/schema.ts"
+import type { WsContext } from "../methods/connect.ts"
 
 type MsgData = typeof msgData.infer
 const msgData = type({

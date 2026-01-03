@@ -1,7 +1,7 @@
-import type { Context } from "../config.js"
-import { initDb } from "./init/db.js"
-import { initFs } from "./init/fs.js"
-import { initPubsub } from "./init/pubsub.js"
+import type { Context } from "../config.ts"
+import { initDb } from "./init/db.ts"
+import { initFs } from "./init/fs.ts"
+import { initPubsub } from "./init/pubsub.ts"
 
 export async function SyncStart(
   props: { autoUpgrade: boolean; checkForUpdates: boolean },

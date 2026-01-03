@@ -1,7 +1,7 @@
 import { join } from "node:path"
 import { write } from "bun"
 
-import type { Config } from "../index.js"
+import type { Config } from "../index.ts"
 
 type ConfigRecord = Record<"client" | "server", Config>
 

@@ -1,6 +1,6 @@
 import { createContext } from "react"
 
-import type { Client as ClientType } from "../../../core/client/config.js"
+import type { Client as ClientType } from "../../../core/client/config.ts"
 
 type Client = ReturnType<typeof ClientType>
 

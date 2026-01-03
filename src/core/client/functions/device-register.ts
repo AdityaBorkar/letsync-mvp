@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config.ts"
 
 // biome-ignore lint/suspicious/noEmptyInterface: TEMPORARY
 interface RegisterProps {

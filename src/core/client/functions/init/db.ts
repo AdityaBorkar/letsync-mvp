@@ -1,12 +1,12 @@
-import type { Context } from "@/core/client/config.js"
-import type { ClientDb } from "@/types/client.js"
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { Context } from "@/core/client/config.ts"
+import type { ClientDb } from "@/types/client.ts"
+import type { SQL_Schemas } from "@/types/schemas.ts"
 
-import { Logger } from "../../../../utils/logger.js"
-import { tryCatch } from "../../../../utils/try-catch.js"
-import { VERSION_KEY } from "../../constants.js"
-import { SchemaCheckForUpdates } from "../schema-check-for-updates.js"
-import { SchemaUpgrade } from "../schema-upgrade.js"
+import { Logger } from "../../../../utils/logger.ts"
+import { tryCatch } from "../../../../utils/try-catch.ts"
+import { VERSION_KEY } from "../../constants.ts"
+import { SchemaCheckForUpdates } from "../schema-check-for-updates.ts"
+import { SchemaUpgrade } from "../schema-upgrade.ts"
 
 export async function initDb(props: {
   context: Context

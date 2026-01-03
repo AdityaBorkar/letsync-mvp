@@ -3,7 +3,7 @@ import { join } from "node:path"
 
 import { ArkErrors } from "arktype"
 
-import { drizzle } from "../orm/drizzle/index.js"
+import { drizzle } from "../orm/drizzle/index.ts"
 import type { OrmConfig } from "../orm/types.js"
 
 const FILE_EXTENSIONS = [".ts", ".js", ".cjs", ".mjs"] as const

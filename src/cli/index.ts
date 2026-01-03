@@ -2,8 +2,8 @@
 
 import { Command } from "commander"
 
-import { detectEnv } from "./utils/detect-env.js"
-import { detectOrm } from "./utils/detect-orm.js"
+import { detectEnv } from "./utils/detect-env.ts"
+import { detectOrm } from "./utils/detect-orm.ts"
 
 const program = new Command()
 

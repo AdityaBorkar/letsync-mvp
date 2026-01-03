@@ -1,6 +1,6 @@
 {
   "author": "Aditya Borkar <hello@adityab.tech>",
-  "bin": "./dist/cli/index.cjs",
+  "bin": "./src/cli/index.ts",
   "dependencies": {
     "@aws-sdk/client-iot-data-plane": "^3.962.0",
     "arktype": "^2.1.29",
@@ -34,37 +34,14 @@
     "zshy": "^0.7.0"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.cts"
-    },
-    "./drizzle": {
-      "import": "./dist/(orm)/drizzle/index.js",
-      "require": "./dist/(orm)/drizzle/index.cjs",
-      "types": "./dist/(orm)/drizzle/index.d.cts"
-    },
-    "./mutations": {
-      "import": "./dist/mutations/index.js",
-      "require": "./dist/mutations/index.cjs",
-      "types": "./dist/mutations/index.d.cts"
-    },
-    "./next": {
-      "import": "./dist/(framework)/next/index.js",
-      "require": "./dist/(framework)/next/index.cjs",
-      "types": "./dist/(framework)/next/index.d.cts"
-    },
-    "./react": {
-      "import": "./dist/(framework)/react/index.js",
-      "require": "./dist/(framework)/react/index.cjs",
-      "types": "./dist/(framework)/react/index.d.cts"
-    },
-    "./ws": {
-      "import": "./dist/(pubsub)/websockets/index.js",
-      "require": "./dist/(pubsub)/websockets/index.cjs",
-      "types": "./dist/(pubsub)/websockets/index.d.cts"
-    }
+    ".": "./src/index.ts",
+    "./drizzle": "./src/(orm)/drizzle/index.ts",
+    "./mutations": "./src/mutations/index.ts",
+    "./next": "./src/(framework)/next/index.ts",
+    "./react": "./src/(framework)/react/index.ts",
+    "./ws": "./src/(pubsub)/websockets/index.ts"
   },
+
   "files": ["dist", "LICENSE.md", "package.json", "README.md"],
   "keywords": ["letsync"],
   "license": "MIT",
@@ -83,10 +60,11 @@
   },
   "scripts": {
     "build": "zshy && cp -r src/cli/schemas dist/cli/schemas && biome check --fix ./package.json",
-    "check:code": "biome check --changed --diagnostic-level=error",
+    "check:code": "biome check . --fix --diagnostic-level=error",
     "check:types": "tsc --noEmit",
     "check:unused": "knip",
     "dev": "bun run build && bun link",
+    "format": "biome check . --fix --diagnostic-level=error",
     "publish": "npm publish --access public"
   },
   "trustedDependencies": ["oxc-resolver", "sharp"],
