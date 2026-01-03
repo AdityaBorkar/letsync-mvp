@@ -1,8 +1,8 @@
-import type { ClientPubSub } from "@/types/client.ts"
+import type { ClientPubSub } from "@/types/client.js"
 
-import { generateName } from "../../../utils/generate-name.ts"
-import { connect } from "./methods/connect.ts"
-import { disconnect } from "./methods/disconnect.ts"
+import { generateName } from "../../../utils/generate-name.js"
+import { connect } from "./methods/connect.js"
+import { disconnect } from "./methods/disconnect.js"
 
 export type ClientState = {
   client: WebSocket | null

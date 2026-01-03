@@ -1,4 +1,4 @@
-import type { QueryFn } from "./useQuery.ts"
+import type { QueryFn } from "./useQuery.js"
 
 export function useLiveQuery(query: QueryFn) {
   console.log(query)

@@ -1,4 +1,4 @@
-import type { MutationBuilder } from "./mutation.ts"
+import type { MutationBuilder } from "./mutation.js"
 
 type MutationMap = Record<string, MutationBuilder<any, any>>
 

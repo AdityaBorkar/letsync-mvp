@@ -1,4 +1,4 @@
-import type { Context } from "../config.ts"
+import type { Context } from "../config.js"
 
 export async function cacheRetrieve(request: Request, _: Context) {
   const input = await request.json()

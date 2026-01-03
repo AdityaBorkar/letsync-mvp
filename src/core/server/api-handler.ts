@@ -1,5 +1,5 @@
-import { ApiEndpoints } from "./api-endpoints.ts"
-import type { Context } from "./config.ts"
+import { ApiEndpoints } from "./api-endpoints.js"
+import type { Context } from "./config.js"
 
 export function apiHandler<R extends Request>(request: R, ctx: Context) {
   const url = new URL(request.url)

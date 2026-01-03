@@ -2,24 +2,15 @@
   "exports": {
     ".": "./src/index.ts",
     "./drizzle": "./src/(orm)/drizzle/index.ts",
-    "./mutations": "./src/mutations/index.ts",
+    "./mutations": "./src/core/mutations/index.ts",
     "./next": "./src/(framework)/next/index.ts",
     "./react": "./src/(framework)/react/index.ts",
     "./ws": "./src/(pubsub)/websockets/index.ts"
   },
   "name": "letsync",
   "publish": {
-    "exclude": [
-      "**/tests/**",
-      "dist"
-    ],
-    "include": [
-      "src",
-      "LICENSE",
-      "package.json",
-      "README.md",
-      "cli"
-    ]
+    "exclude": ["**/tests/**", "dist"],
+    "include": ["src", "LICENSE", "package.json", "README.md", "cli"]
   },
   "version": "0.0.2"
 }

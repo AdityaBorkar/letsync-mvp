@@ -2,7 +2,7 @@
 export {
   composeMiddleware,
   type MiddlewareComposer
-} from "./middleware.ts"
+} from "./middleware.js"
 export {
   type BaseMutationContext,
   MutationBuilder,
@@ -10,5 +10,5 @@ export {
   type MutationContext,
   type MutationHandlerFn,
   type MutationMiddleware
-} from "./mutation.ts"
-export { MutationList } from "./mutation-list.ts"
+} from "./mutation.js"
+export { MutationList } from "./mutation-list.js"

@@ -1,4 +1,4 @@
-import type { Callback, RequestStore } from "./request-store.ts"
+import type { Callback, RequestStore } from "./request-store.js"
 
 type BaseRpcMessage = {
   type: string

@@ -1,4 +1,4 @@
-import type { EndpointContext } from "../api-endpoints.ts"
+import type { EndpointContext } from "../api-endpoints.js"
 
 export async function schemaVerify(request: Request, context: EndpointContext) {
   const body = await request.json()

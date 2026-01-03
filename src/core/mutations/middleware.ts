@@ -1,4 +1,4 @@
-import type { MutationContext, MutationMiddleware } from "./mutation.ts"
+import type { MutationContext, MutationMiddleware } from "./mutation.js"
 
 export type MiddlewareComposer = <T extends MutationContext>(
   ...middlewares: MutationMiddleware<unknown, T>[]

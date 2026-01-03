@@ -1,12 +1,12 @@
-export type { Config } from "../core/client/config.ts"
+export type { Config } from "../core/client/config.js"
 export type {
   ClientDb,
   ClientFs,
   ClientPubSub
-} from "./client.ts"
-export type { ApiHandlerAuth } from "./context.ts"
+} from "./client.js"
+export type { ApiHandlerAuth } from "./context.js"
 export type {
   ServerDb,
   ServerFs,
   ServerPubSub
-} from "./server.ts"
+} from "./server.js"

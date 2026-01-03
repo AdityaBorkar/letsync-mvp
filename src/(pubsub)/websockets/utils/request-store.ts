@@ -1,4 +1,4 @@
-import { Logger } from "../../../utils/logger.ts"
+import { Logger } from "../../../utils/logger.js"
 
 export type Callback = ({
   type,

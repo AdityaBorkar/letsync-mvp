@@ -1,7 +1,7 @@
 import { type } from "arktype"
 
-import { MessageType } from "../../utils/schema.ts"
-import type { WsContext } from "../index.ts"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../index.js"
 
 type MsgData = typeof msgData.infer
 const msgData = type("null")

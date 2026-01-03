@@ -1,9 +1,9 @@
-import type { SQL_Schemas } from "@/types/schemas.ts"
+import type { SQL_Schemas } from "@/types/schemas.js"
 
-import { VERSION_KEY } from "../../../core/client/constants.ts"
-import { tryCatch } from "../../../utils/try-catch.ts"
-import { flush } from "./flush.ts"
-import { metadata } from "./metadata.ts"
+import { VERSION_KEY } from "../../../core/client/constants.js"
+import { tryCatch } from "../../../utils/try-catch.js"
+import { flush } from "./flush.js"
+import { metadata } from "./metadata.js"
 import type { DrizzleClientDb } from "./types.js"
 
 export const schema = { initialize, introspect, list, migrate }

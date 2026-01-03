@@ -4,11 +4,10 @@ import {
   Wal2JsonPlugin
 } from "pg-logical-replication"
 import { v7 as uuidv7 } from "uuid"
-import type { WebSocket } from "ws"
 
-import type { SQL_Schemas } from "@/types/schemas.ts"
+import type { SQL_Schemas } from "@/types/schemas.js"
 
-import { connect } from "./connect.ts"
+import { connect } from "./connect.js"
 import type { DrizzleServerDb } from "./types.js"
 
 export async function syncInitialize(client: DrizzleServerDb, params: "wal") {
@@ -97,12 +96,12 @@ export async function syncInitialize(client: DrizzleServerDb, params: "wal") {
   }
   subscribeFn()
 
-  const subscribeForUser = (userId: string, ws: WebSocket) => {
-    subscribers.set(userId, (record) => {
-      // ...
-      ws.send(JSON.stringify({ data: record, type: "cdc-record" }))
-    })
-  }
+  // const subscribeForUser = (userId: string, ws: WebSocket) => {
+  //   subscribers.set(userId, (record) => {
+  //     // ...
+  //     ws.send(JSON.stringify({ data: record, type: "cdc-record" }))
+  //   })
+  // }
 
-  return () => {}
+  return {}
 }

@@ -1,17 +1,17 @@
-import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.ts"
-import type { ApiHandlerAuth } from "@/types/context.ts"
+import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.js"
+import type { ApiHandlerAuth } from "@/types/context.js"
 
-import { FetchClient } from "../../utils/fetch-client.ts"
-import { Signal } from "../../utils/signal.ts"
+import { FetchClient } from "../../utils/fetch-client.js"
+import { Signal } from "../../utils/signal.js"
 // import { DeviceDeregister } from "./functions/device-deregister.js";
 // import { DeviceRegister } from "./functions/device-register.js";
-import { EventManager } from "./functions/event-manager.ts"
-import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.ts"
-import { SchemaList } from "./functions/schema-list.ts"
-import { SchemaUpgrade } from "./functions/schema-upgrade.ts"
-import { SchemaVerify } from "./functions/schema-verify.ts"
-import { SyncStart } from "./functions/sync-connect.ts"
-import { SyncTerminate } from "./functions/sync-disconnect.ts"
+import { EventManager } from "./functions/event-manager.js"
+import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.js"
+import { SchemaList } from "./functions/schema-list.js"
+import { SchemaUpgrade } from "./functions/schema-upgrade.js"
+import { SchemaVerify } from "./functions/schema-verify.js"
+import { SyncStart } from "./functions/sync-connect.js"
+import { SyncTerminate } from "./functions/sync-disconnect.js"
 
 export type Client = ReturnType<typeof Client>
 

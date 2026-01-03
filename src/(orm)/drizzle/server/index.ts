@@ -1,9 +1,9 @@
-import type { ServerDb } from "@/types/index.ts"
+import type { ServerDb } from "@/types/index.js"
 
-import { close } from "./close.ts"
-import { connect } from "./connect.ts"
-import { schema } from "./schema.ts"
-import { syncInitialize } from "./sync-initialize.ts"
+import { close } from "./close.js"
+import { connect } from "./connect.js"
+import { schema } from "./schema.js"
+import { syncInitialize } from "./sync-initialize.js"
 import type { DrizzleServerDb } from "./types.js"
 
 export function ServerDB<T extends DrizzleServerDb>({

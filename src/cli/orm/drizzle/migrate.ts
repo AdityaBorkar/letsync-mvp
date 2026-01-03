@@ -3,9 +3,9 @@ import { $, file } from "bun"
 
 import { Pool } from "pg"
 
-import type { Config } from "./index.ts"
-import { generateConfigs } from "./utils/generate-configs.ts"
-import { getJournal, SUPPORTED_JOURNAL_VERSION } from "./utils/get-journal.ts"
+import type { Config } from "./index.js"
+import { generateConfigs } from "./utils/generate-configs.js"
+import { getJournal, SUPPORTED_JOURNAL_VERSION } from "./utils/get-journal.js"
 
 interface MigrationOptions {
   dryRun: boolean

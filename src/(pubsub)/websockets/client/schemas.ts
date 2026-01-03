@@ -1,6 +1,6 @@
-import { endMessage, streamMessage } from "../utils/schema.ts"
-import { cdcCache } from "./messages/cdc-cache.ts"
-import { cdcRecords } from "./messages/cdc-records.ts"
+import { endMessage, streamMessage } from "../utils/schema.js"
+import { cdcCache } from "./messages/cdc-cache.js"
+import { cdcRecords } from "./messages/cdc-records.js"
 
 export const ClientRpcSchema = cdcRecords.message
   .or(cdcCache.message)

@@ -1,6 +1,6 @@
 import { useContext, useRef, useSyncExternalStore } from "react"
 
-import type { Events } from "../../../core/client/functions/event-manager.ts"
+import type { Events } from "../../../core/client/functions/event-manager.js"
 import { Context } from "../client/context.js"
 
 const EVENTS = [

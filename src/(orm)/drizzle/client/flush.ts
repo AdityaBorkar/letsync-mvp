@@ -1,5 +1,5 @@
-import { close } from "./close.ts"
-import { connect } from "./connect.ts"
+import { close } from "./close.js"
+import { connect } from "./connect.js"
 import type { DrizzleClientDb } from "./types.js"
 
 export async function flush(db: DrizzleClientDb) {

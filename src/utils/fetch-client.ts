@@ -1,4 +1,4 @@
-import type { ApiEndpoints } from "../core/server/api-endpoints.ts"
+import type { ApiEndpoints } from "../core/server/api-endpoints.js"
 
 type ApiPaths = keyof typeof ApiEndpoints
 type ApiMethods<T extends ApiPaths> = keyof (typeof ApiEndpoints)[T]

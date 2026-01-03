@@ -2,8 +2,8 @@ import { type } from "arktype"
 
 import type { OrmConfig } from "@/cli/orm/types.js"
 
-import { generate } from "./generate.ts"
-import { migrate } from "./migrate.ts"
+import { generate } from "./generate.js"
+import { migrate } from "./migrate.js"
 
 const configSchema = type({
   dialect: "string",

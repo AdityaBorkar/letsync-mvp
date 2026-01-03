@@ -1,5 +1,5 @@
-import type { Context } from "@/core/client/config.ts"
-import type { ClientPubSub } from "@/types/client.ts"
+import type { Context } from "@/core/client/config.js"
+import type { ClientPubSub } from "@/types/client.js"
 
 export async function initPubsub(props: {
   context: Context

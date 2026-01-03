@@ -75,7 +75,8 @@
       "correctness": {
         "noNodejsModules": "off",
         "noUndeclaredVariables": "on",
-        "recommended": true
+        "recommended": true,
+        "useImportExtensions": "off"
       },
       "nursery": {
         "noUnresolvedImports": "off",

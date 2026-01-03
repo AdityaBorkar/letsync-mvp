@@ -1,9 +1,9 @@
 // biome-ignore-all lint/style/useNamingConvention: API Methods must be in uppercase
 
-import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.ts"
+import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.js"
 
-import { schemaList } from "./functions/schema-list.ts"
-import { schemaVerify } from "./functions/schema-verify.ts"
+import { schemaList } from "./functions/schema-list.js"
+import { schemaVerify } from "./functions/schema-verify.js"
 
 export type EndpointContext = {
   db: ServerDb.Adapter<unknown>[]

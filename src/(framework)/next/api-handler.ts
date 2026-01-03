@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server.js"
 
-import { LetsyncServer } from "../../index.ts"
+import { LetsyncServer } from "../../index.js"
 
 export function apiHandler(config: Parameters<typeof LetsyncServer>[0]) {
   const { apiHandler } = LetsyncServer(config)

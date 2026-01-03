@@ -1,4 +1,4 @@
-import type { SQL_Schemas } from "@/types/schemas.ts"
+import type { SQL_Schemas } from "@/types/schemas.js"
 
 // import { sql } from "./sql.js"
 import type { DrizzleServerDb } from "./types.js"

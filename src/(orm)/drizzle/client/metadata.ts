@@ -1,7 +1,7 @@
-import type { SQL_Schemas } from "@/types/schemas.ts"
+import type { SQL_Schemas } from "@/types/schemas.js"
 
-import type { GenericObject } from "../../../types/client.ts"
-import { tryCatch } from "../../../utils/try-catch.ts"
+import type { GenericObject } from "../../../types/client.js"
+import { tryCatch } from "../../../utils/try-catch.js"
 import type { DrizzleClientDb } from "./types.js"
 
 export const metadata = { get, remove, set }

@@ -1,16 +1,16 @@
 import { ArkErrors } from "arktype"
 
-import type { Context } from "@/core/client/config.ts"
+import type { Context } from "@/core/client/config.js"
 
-import { CURSOR_KEY } from "../../../../core/client/constants.ts"
-import { Logger } from "../../../../utils/logger.ts"
-import { createWsContext } from "../../utils/create-ws-context.ts"
-import { RequestStore } from "../../utils/request-store.ts"
-import type { ServerRpcMessage } from "../../ws-server/schemas.ts"
-import type { ClientState } from "../index.ts"
-import { cdcCache } from "../messages/cdc-cache.ts"
-import { cdcRecords } from "../messages/cdc-records.ts"
-import { ClientRpcSchema } from "../schemas.ts"
+import { CURSOR_KEY } from "../../../../core/client/constants.js"
+import { Logger } from "../../../../utils/logger.js"
+import { createWsContext } from "../../utils/create-ws-context.js"
+import { RequestStore } from "../../utils/request-store.js"
+import type { ServerRpcMessage } from "../../ws-server/schemas.js"
+import type { ClientState } from "../index.js"
+import { cdcCache } from "../messages/cdc-cache.js"
+import { cdcRecords } from "../messages/cdc-records.js"
+import { ClientRpcSchema } from "../schemas.js"
 
 type ContextType = Omit<Context, "status" | "fetch">
 

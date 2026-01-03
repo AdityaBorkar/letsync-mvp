@@ -1,9 +1,9 @@
 import { type } from "arktype"
 
-import type { SQL_Schemas } from "@/types/schemas.ts"
+import type { SQL_Schemas } from "@/types/schemas.js"
 
-import { MessageType } from "../../utils/schema.ts"
-import type { WsContext } from "../index.ts"
+import { MessageType } from "../../utils/schema.js"
+import type { WsContext } from "../index.js"
 
 type MsgData = typeof msgData.infer
 const msgData = type({
@@ -31,7 +31,7 @@ export const handler = async (props: HandlerProps, context: WsContext) => {
 
   subscribeChanges({
     callback(record) {
-      context.rpc("cdc-records", record)
+      context.rpc("cdc-records", { ...record, lsn: "" })
       // context.rpc("cdc-cache", record)
       // TODO: Collect these records in a LIST
     },
@@ -55,6 +55,7 @@ export const handler = async (props: HandlerProps, context: WsContext) => {
     $cursor = cdc.rows.at(-1).id
     if (cdc.rows.length < RECORDS_LIMIT) break
   }
+  console.log({ $cursor })
 
   // TODO: Disable LOCK
 

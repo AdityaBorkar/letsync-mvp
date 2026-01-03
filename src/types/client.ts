@@ -1,7 +1,7 @@
 // biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
-import type { Context } from "@/core/client/config.ts"
+import type { Context } from "@/core/client/config.js"
 
-import type { SQL_Schemas } from "./schemas.ts"
+import type { SQL_Schemas } from "./schemas.js"
 
 export type GenericObject = { [key: string]: string | boolean | GenericObject }
 
