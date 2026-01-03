@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useImportType: REACT
 import React from "react"
 
-import { Client, type Config } from "../../../client/config.js"
+import { Client, type Config } from "../../../core/client/config.js"
 import { SyncContext } from "./context.js"
 
 export function LetsyncClient(config: Config<Request>) {

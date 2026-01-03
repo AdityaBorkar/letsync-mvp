@@ -1,8 +1,8 @@
 import { ArkErrors } from "arktype"
 
-import type { Context } from "@/client/config.js"
+import type { Context } from "@/core/client/config.js"
 
-import { CURSOR_KEY } from "../../../../client/constants.js"
+import { CURSOR_KEY } from "../../../../core/client/constants.js"
 import { Logger } from "../../../../utils/logger.js"
 import { createWsContext } from "../../utils/create-ws-context.js"
 import { RequestStore } from "../../utils/request-store.js"

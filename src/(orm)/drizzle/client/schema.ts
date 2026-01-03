@@ -1,6 +1,6 @@
 import type { SQL_Schemas } from "@/types/schemas.js"
 
-import { VERSION_KEY } from "../../../client/constants.js"
+import { VERSION_KEY } from "../../../core/client/constants.js"
 import { tryCatch } from "../../../utils/try-catch.js"
 import { flush } from "./flush.js"
 import { metadata } from "./metadata.js"

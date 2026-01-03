@@ -8,7 +8,7 @@ import {
   type Context,
   type LetsyncConfig,
   LetsyncServer
-} from "../../../server/config.js"
+} from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
 import type { ClientRpcMessage } from "../client/schemas.js"
 import type { WebsocketData } from "../types.js"

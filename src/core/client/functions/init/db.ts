@@ -1,9 +1,9 @@
-import type { Context } from "@/client/config.js"
+import type { Context } from "@/core/client/config.js"
 import type { ClientDb } from "@/types/client.js"
 import type { SQL_Schemas } from "@/types/schemas.js"
 
-import { Logger } from "../../../utils/logger.js"
-import { tryCatch } from "../../../utils/try-catch.js"
+import { Logger } from "../../../../utils/logger.js"
+import { tryCatch } from "../../../../utils/try-catch.js"
 import { VERSION_KEY } from "../../constants.js"
 import { SchemaCheckForUpdates } from "../schema-check-for-updates.js"
 import { SchemaUpgrade } from "../schema-upgrade.js"
