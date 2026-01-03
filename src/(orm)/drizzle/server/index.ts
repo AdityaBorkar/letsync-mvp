@@ -1,4 +1,4 @@
-import type { ServerDb } from "@/types/server.ts"
+import type { ServerDb } from "@/types/index.ts"
 
 import { close } from "./close.ts"
 import { connect } from "./connect.ts"

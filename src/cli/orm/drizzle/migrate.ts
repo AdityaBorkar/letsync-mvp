@@ -29,7 +29,7 @@ export async function migrate(
 
   // Push schema to server
   console.log(`🔄 Pushing schema to server...`)
-  await $`bunx drizzle-kit migrate --config=${join(process.cwd(), configs.server.out, "config.ts")}`
+  await $`bunx drizzle-kit migrate --config=${join(process.cwd(), configs.server.out, "config.js")}`
 
   // Process client schema
   await migrateClientSchema(configs.client)

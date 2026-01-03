@@ -13,6 +13,7 @@ const msgData = type({
 })
 
 type HandlerProps = MsgData & {
+  userId: string
   subscribeChanges: (props: {
     callback: (record: SQL_Schemas.CdcRecord) => void
     userId: string

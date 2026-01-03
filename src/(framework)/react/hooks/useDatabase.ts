@@ -1,9 +1,9 @@
 import { useContext } from "react"
 
-import { SyncContext } from "../client/context.ts"
+import { Context } from "../client/context.js"
 
 export function useDatabase<T>({ name }: { name?: string } = {}) {
-  const client = useContext(SyncContext)
+  const client = useContext(Context)
 
   if (!name && client.db.size !== 1) {
     throw new Error(

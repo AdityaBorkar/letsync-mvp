@@ -6,7 +6,7 @@ import { ArkErrors } from "arktype"
 import { drizzle } from "../orm/drizzle/index.ts"
 import type { OrmConfig } from "../orm/types.js"
 
-const FILE_EXTENSIONS = [".ts", ".js", ".cjs", ".mjs"] as const
+const FILE_EXTENSIONS = [".js", ".js", ".cjs", ".mjs"] as const
 
 const ORM_CONFIGS: Record<string, OrmConfig> = { drizzle }
 

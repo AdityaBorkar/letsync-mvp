@@ -59,7 +59,7 @@ export async function generate(
 async function generateSchemaForClientInit({ config }: { config: Config }) {
   console.log("🔄 Generating client-init schema...")
   const exportedSQL =
-    await $`bunx drizzle-kit export --config=${join(config.out, "config.ts")}`.text()
+    await $`bunx drizzle-kit export --config=${join(config.out, "config.js")}`.text()
   await write(join(config.out, "init", `INIT_TEMPORARY.sql`), exportedSQL)
 }
 
@@ -97,11 +97,11 @@ async function generateSchemaForTarget({
     throw new Error(`Schema type '${schemaType}' is not supported`)
   }
 
-  await cp(letsyncSchemaTemplate, join(schemaDir, "letsync.generated.ts"))
+  await cp(letsyncSchemaTemplate, join(schemaDir, "letsync.generated.js"))
 
   // Update index.ts to export letsync schema
-  const indexFilePath = join(schemaDir, "index.ts")
-  const exportStatement = 'export * from "./letsync.generated.ts";'
+  const indexFilePath = join(schemaDir, "index.js")
+  const exportStatement = 'export * from "./letsync.generated.js";'
 
   try {
     const indexFile = file(indexFilePath)
@@ -122,14 +122,14 @@ async function generateSchemaForTarget({
       : `${exportStatement}\n`
 
     await indexFile.write(updatedContent)
-    console.log("✅ Letsync schema export added to index.ts")
+    console.log("✅ Letsync schema export added to index.js")
   } catch (error) {
     console.warn("⚠️  Could not update index.ts:", error)
   }
 
   console.log(`✅ Schema generation completed for ${config.dialect}`)
 
-  const configPath = join(config.out, "config.ts")
+  const configPath = join(config.out, "config.js")
   try {
     await $`bun drizzle-kit generate --config=${configPath}`
     console.log("✅ Drizzle migration files generated")

@@ -11,13 +11,13 @@ export async function generateConfigs(config: Config) {
 
   const promises = envs.map(async (env) => {
     const basePath = join(config.out, env)
-    const schema = join(basePath, "schema", "index.ts")
+    const schema = join(basePath, "schema", "index.js")
     const out = join(basePath, "output")
     const $config = { ...config, out, schema }
     configs[env] = $config
 
     const content = `import { defineConfig } from "drizzle-kit";\n\nexport default defineConfig(${JSON.stringify($config, null, 2)});`
-    await write(join(process.cwd(), out, "config.ts"), content)
+    await write(join(process.cwd(), out, "config.js"), content)
   })
 
   await Promise.all(promises)

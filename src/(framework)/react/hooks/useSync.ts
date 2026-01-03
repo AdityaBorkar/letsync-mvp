@@ -1,8 +1,8 @@
 import { useContext } from "react"
 
-import { SyncContext } from "../client/context.ts"
+import { Context } from "../client/context.js"
 
 export function useSync() {
-  const client = useContext(SyncContext)
+  const client = useContext(Context)
   return client
 }

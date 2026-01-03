@@ -1,3 +1,4 @@
+export type { Config } from "../core/client/config.ts"
 export type {
   ClientDb,
   ClientFs,

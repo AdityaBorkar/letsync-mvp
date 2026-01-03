@@ -1,7 +1,7 @@
 import { useContext, useRef, useSyncExternalStore } from "react"
 
 import type { Events } from "../../../core/client/functions/event-manager.ts"
-import { SyncContext } from "../client/context.ts"
+import { Context } from "../client/context.js"
 
 const EVENTS = [
   "status:network",
@@ -11,7 +11,7 @@ const EVENTS = [
 ] satisfies (keyof Events)[]
 
 export function useSyncStatus() {
-  const client = useContext(SyncContext)
+  const client = useContext(Context)
   const cachedStatus = useRef<ReturnType<typeof client.getStatus>>({
     isDbRunning: false,
     isFsRunning: false,

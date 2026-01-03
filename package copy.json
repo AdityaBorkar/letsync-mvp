@@ -1,6 +1,6 @@
 {
   "author": "Aditya Borkar <hello@adityab.tech>",
-  "bin": "./dist/cli/index.cjs",
+  "bin": "./src/cli/index.js",
   "dependencies": {
     "@aws-sdk/client-iot-data-plane": "^3.962.0",
     "arktype": "^2.1.29",
@@ -27,8 +27,6 @@
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
-    "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
     "@types/ws": "^8.18.1",
     "knip": "^5.79.0",
     "next": "^16.1.1",
@@ -37,49 +35,39 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.cts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./src/index.js",
+      "types": "./src/index.js"
     },
     "./drizzle": {
-      "types": "./dist/(orm)/drizzle/index.d.cts",
-      "import": "./dist/(orm)/drizzle/index.js",
-      "require": "./dist/(orm)/drizzle/index.cjs"
+      "import": "./src/(orm)/drizzle/index.js",
+      "types": "./src/(orm)/drizzle/index.js"
     },
     "./mutations": {
-      "types": "./dist/mutations/index.d.cts",
-      "import": "./dist/mutations/index.js",
-      "require": "./dist/mutations/index.cjs"
+      "import": "./src/mutations/index.js",
+      "types": "./src/mutations/index.js"
     },
     "./next": {
-      "types": "./dist/(framework)/next/index.d.cts",
-      "import": "./dist/(framework)/next/index.js",
-      "require": "./dist/(framework)/next/index.cjs"
+      "import": "./src/(framework)/next/index.js",
+      "types": "./src/(framework)/next/index.js"
     },
     "./react": {
-      "types": "./dist/(framework)/react/index.d.cts",
-      "import": "./dist/(framework)/react/index.js",
-      "require": "./dist/(framework)/react/index.cjs"
+      "import": "./src/(framework)/react/index.js",
+      "types": "./src/(framework)/react/index.js"
+    },
+    "./types": {
+      "import": "./src/types/index.js",
+      "types": "./src/types/index.js"
     },
     "./ws": {
-      "types": "./dist/(pubsub)/websockets/index.d.cts",
-      "import": "./dist/(pubsub)/websockets/index.js",
-      "require": "./dist/(pubsub)/websockets/index.cjs"
+      "import": "./src/(pubsub)/websockets/index.js",
+      "types": "./src/(pubsub)/websockets/index.js"
     }
   },
-  "files": [
-    "dist",
-    "src",
-    "LICENSE.md",
-    "package.json",
-    "README.md"
-  ],
-  "keywords": [
-    "letsync"
-  ],
+  "files": ["dist", "src", "LICENSE.md", "package.json", "README.md"],
+  "keywords": ["letsync"],
   "license": "MIT",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
   "name": "letsync",
   "peerDependencies": {
     "@electric-sql/pglite": "^0.3.14",
@@ -100,22 +88,18 @@
     "format": "biome check . --fix --diagnostic-level=error",
     "publish": "npm publish --access public"
   },
-  "trustedDependencies": [
-    "oxc-resolver",
-    "sharp"
-  ],
+  "trustedDependencies": ["oxc-resolver", "sharp"],
   "type": "module",
-  "types": "./dist/index.d.cts",
   "version": "0.0.2",
   "zshy": {
-    "bin": "./src/cli/index.ts",
+    "bin": "./src/cli/index.js",
     "exports": {
-      ".": "./src/index.ts",
-      "./drizzle": "./src/(orm)/drizzle/index.ts",
-      "./mutations": "./src/mutations/index.ts",
-      "./next": "./src/(framework)/next/index.ts",
-      "./react": "./src/(framework)/react/index.ts",
-      "./ws": "./src/(pubsub)/websockets/index.ts"
+      ".": "./src/index.js",
+      "./drizzle": "./src/(orm)/drizzle/index.js",
+      "./mutations": "./src/mutations/index.js",
+      "./next": "./src/(framework)/next/index.js",
+      "./react": "./src/(framework)/react/index.js",
+      "./ws": "./src/(pubsub)/websockets/index.js"
     }
   }
 }
