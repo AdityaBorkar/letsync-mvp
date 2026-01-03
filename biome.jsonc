@@ -29,7 +29,7 @@
     "enabled": null
   },
   "files": {
-    "includes": ["**/*", "!node_modules/**/*", "!dist/**/*"]
+    "includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
   },
   "formatter": {
     "attributePosition": "auto",
