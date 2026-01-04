@@ -3,13 +3,7 @@ import type { ApiEndpoints } from "../core/server/api-endpoints.js"
 type ApiPaths = keyof typeof ApiEndpoints
 type ApiMethods<T extends ApiPaths> = keyof (typeof ApiEndpoints)[T]
 
-export function FetchClient(apiUrl: {
-  path: string
-  domain: string
-  https: boolean
-}) {
-  const baseUrl = `http${apiUrl.https ? "s" : ""}://${apiUrl.domain}${apiUrl.path}`
-
+export function FetchClient(apiUrl: string) {
   const $fetch = async <Path extends ApiPaths, Method extends ApiMethods<Path>>(
     method: Method,
     endpoint: Path,
@@ -21,7 +15,7 @@ export function FetchClient(apiUrl: {
     }
   ) => {
     try {
-      const url = new URL(`${baseUrl}${endpoint}`)
+      const url = new URL(`${apiUrl}${endpoint}`)
       for (const [key, value] of Object.entries(props?.searchParams ?? {})) {
         url.searchParams.set(key, String(value))
       }

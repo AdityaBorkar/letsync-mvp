@@ -16,7 +16,7 @@ import { SyncTerminate } from "./functions/sync-disconnect.js"
 export type Client = ReturnType<typeof Client>
 
 export type Context = {
-  apiUrl: { path: string; domain: string; https: boolean }
+  apiUrl: string
   db: Map<string, ClientDb.Adapter<unknown>>
   fs: Map<string, ClientFs.Adapter<unknown>>
   pubsub: Map<string, ClientPubSub.Adapter>
@@ -31,7 +31,7 @@ export type Context = {
 }
 
 export type Config<R extends Request> = {
-  apiUrl: { path: string; domain: string; https: boolean }
+  apiUrl: string
   auth: ApiHandlerAuth<R>
   connections: (
     | ClientPubSub.Adapter

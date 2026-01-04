@@ -37,7 +37,7 @@ export async function initDb(props: {
 
   if (version === null) {
     logger.log("Schema: Fetching from server")
-    const response = await context.fetch("GET", "/schema", {
+    const response = await context.fetch("GET", "/schema/latest", {
       searchParams: { name: db.name }
     })
     if (response.error) {

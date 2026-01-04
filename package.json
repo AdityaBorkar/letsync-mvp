@@ -5,6 +5,7 @@
     "@aws-sdk/client-iot-data-plane": "^3.962.0",
     "arktype": "^2.1.29",
     "commander": "^14.0.2",
+    "glob": "^13.0.0",
     "jsonwebtoken": "^9.0.3",
     "lodash.merge": "^4.6.2",
     "mqtt": "^5.14.1",
@@ -61,6 +62,11 @@
       "require": "./dist/(framework)/react/index.cjs",
       "types": "./dist/(framework)/react/index.d.cts"
     },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.cjs",
+      "types": "./dist/types/index.d.cts"
+    },
     "./ws": {
       "import": "./dist/(pubsub)/websockets/index.js",
       "require": "./dist/(pubsub)/websockets/index.cjs",
@@ -104,6 +110,7 @@
       "./mutations": "./src/core/mutations/index.ts",
       "./next": "./src/(framework)/next/index.ts",
       "./react": "./src/(framework)/react/index.ts",
+      "./types": "./src/types/index.ts",
       "./ws": "./src/(pubsub)/websockets/index.ts"
     }
   }

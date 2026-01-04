@@ -1,9 +1,16 @@
 #!/usr/bin/env bun
 
+/** biome-ignore-all lint/performance/noNamespaceImport: BARREL FILE */
+
 import { Command } from "commander"
 
+import { detectConfig } from "@/cli/orm/detect-config.js"
+
+import * as drizzle from "./orm/drizzle/index.js"
+import * as prisma from "./orm/prisma/index.js"
 import { detectEnv } from "./utils/detect-env.js"
-import { detectOrm } from "./utils/detect-orm.js"
+
+// import { detectOrm } from "./utils/detect-orm.js"
 
 const program = new Command()
 
@@ -20,22 +27,28 @@ program
 
 program
   .command("generate")
-  .description("Generate a schema for use in a client")
+  .description("Generate ORM schemas")
   .option("--dry-run", "Show what would be generated without creating files")
   // .option("--config <config>", "The config file to use")
   .action(async ({ dryRun = false }) => {
-    const { config, methods } = await detectOrm()
-    await methods.generate(config, { dryRun })
+    const { config } = await detectConfig()
+    if (config.source.orm === "drizzle") {
+      return await drizzle.generate(config, { dryRun })
+    }
+    if (config.source.orm === "prisma") {
+      return await prisma.generate(config, { dryRun })
+    }
+    throw new Error(`ORM '${config.source.orm}' is not supported`)
   })
 
-program
-  .command("migrate")
-  .description("Migrate schema changes to the database")
-  .option("--dry-run", "Show what would be generated without creating files")
-  .action(async ({ dryRun = false }) => {
-    const { config, methods } = await detectOrm()
-    await methods.migrate(config, { dryRun })
-  })
+// program
+//   .command("migrate")
+//   .description("Migrate schema changes to the database")
+//   .option("--dry-run", "Show what would be generated without creating files")
+//   .action(async ({ dryRun = false }) => {
+//     const { config, methods } = await detectOrm()
+//     await methods.migrate(config, { dryRun })
+//   })
 
 // program
 //   .command("push")

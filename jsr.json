@@ -5,6 +5,7 @@
     "./mutations": "./src/core/mutations/index.ts",
     "./next": "./src/(framework)/next/index.ts",
     "./react": "./src/(framework)/react/index.ts",
+    "./types": "./src/types/index.ts",
     "./ws": "./src/(pubsub)/websockets/index.ts"
   },
   "name": "letsync",

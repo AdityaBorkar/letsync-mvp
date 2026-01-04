@@ -27,15 +27,14 @@ export function connect(props: {
   const logger = new Logger("SYNC:WS")
 
   const { client, method, wsUrl, context } = props
-  const { apiUrl, controller } = context
-  if (method !== "ws") {
-    throw new Error("Methods other than `ws` are not supported yet!")
+  const {  controller } = context
+  if (method !== "upgrade-to-ws") {
+    throw new Error("Methods other than `upgrade-to-ws` are not supported yet!")
   }
 
   console.log("Websocket: Connecting")
   const ws = new window.WebSocket(
-    wsUrl ||
-      `${apiUrl.https ? "wss" : "ws"}://${apiUrl.domain}/${apiUrl.path}/ws`
+    wsUrl||""
   )
   controller.signal.addEventListener("abort", () => ws.close())
   client.set(ws)

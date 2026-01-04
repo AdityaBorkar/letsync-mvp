@@ -41,6 +41,12 @@ export const ApiEndpoints = {
   "/schema": {
     GET: schemaList
   },
+  "/schema/latest": {
+    GET: schemaList
+  },
+  "/schema/migration": {
+    GET: schemaList
+  },
   "/schema/verify": {
     POST: schemaVerify
   }

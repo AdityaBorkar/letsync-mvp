@@ -20,7 +20,7 @@ export function PubSubClient({
   wsUrl
 }: {
   name?: string
-  method: "ws" | "sse" | "long-polling" | "short-polling"
+  method: "ws" | "sse" | "long-polling" | "short-polling" | "upgrade-to-ws"
   syncItems?: {
     db: string[]
     fs: string[]
