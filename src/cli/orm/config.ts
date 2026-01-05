@@ -10,6 +10,7 @@ export const OrmDialectType = type("'postgresql' | 'cockroach'")
 export const OrmConfigOutputType = type({
   dialect: OrmDialectType,
   dir: "string",
+  name: "string",
   orm: OrmType
 })
 

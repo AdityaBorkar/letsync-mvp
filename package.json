@@ -5,6 +5,7 @@
     "@aws-sdk/client-iot-data-plane": "^3.962.0",
     "arktype": "^2.1.29",
     "commander": "^14.0.2",
+    "drizzle-kit": "^1.0.0-beta.8-734e789",
     "glob": "^13.0.0",
     "jsonwebtoken": "^9.0.3",
     "lodash.merge": "^4.6.2",
@@ -81,7 +82,7 @@
   "name": "letsync",
   "peerDependencies": {
     "@electric-sql/pglite": "^0.3.14",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^1.0.0-beta.8-734e789",
     "express": "^5.2.1"
   },
   "private": false,
@@ -90,7 +91,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "zshy && cp -r src/cli/schemas dist/cli/schemas && biome check --fix ./package.json",
+    "build": "zshy && biome check --fix ./package.json",
     "check:code": "biome check . --fix --diagnostic-level=error",
     "check:types": "tsc --noEmit",
     "check:unused": "knip",

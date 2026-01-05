@@ -12,7 +12,7 @@ export async function generate(
   config: OrmConfig,
   options: Options
 ): Promise<void> {
-  const sourceDir = join(process.cwd(), config.source.schema, "../")
+  const sourcePath = join(process.cwd(), config.source.schema)
 
   if (options.dryRun) {
     console.log("🔄 Dry run mode is currently WIP. Early Return.")
@@ -26,7 +26,7 @@ export async function generate(
     generateSchema({
       source: {
         dialect: config.source.dialect,
-        dir: sourceDir
+        path: sourcePath
       },
       target: {
         dialect: config.output.client.dialect,
@@ -36,7 +36,7 @@ export async function generate(
     generateSchema({
       source: {
         dialect: config.source.dialect,
-        dir: sourceDir
+        path: sourcePath
       },
       target: {
         dialect: config.output.server.dialect,
