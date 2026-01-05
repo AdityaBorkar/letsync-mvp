@@ -4,8 +4,7 @@
 
 import { Command } from "commander"
 
-import { detectConfig } from "@/cli/orm/detect-config.js"
-
+import { detectConfig } from "./orm/config.js"
 import * as drizzle from "./orm/drizzle/index.js"
 import * as prisma from "./orm/prisma/index.js"
 import { detectEnv } from "./utils/detect-env.js"
@@ -26,7 +25,7 @@ program
   })
 
 program
-  .command("generate")
+  .command("orm:generate")
   .description("Generate ORM schemas")
   .option("--dry-run", "Show what would be generated without creating files")
   // .option("--config <config>", "The config file to use")
@@ -41,14 +40,20 @@ program
     throw new Error(`ORM '${config.source.orm}' is not supported`)
   })
 
-// program
-//   .command("migrate")
-//   .description("Migrate schema changes to the database")
-//   .option("--dry-run", "Show what would be generated without creating files")
-//   .action(async ({ dryRun = false }) => {
-//     const { config, methods } = await detectOrm()
-//     await methods.migrate(config, { dryRun })
-//   })
+program
+  .command("orm:migrate")
+  .description("Migrate schema changes to the database")
+  .option("--dry-run", "Show what would be generated without creating files")
+  .action(async ({ dryRun = false }) => {
+    const { config } = await detectConfig()
+    if (config.source.orm === "drizzle") {
+      return await drizzle.migrate(config, { dryRun })
+    }
+    if (config.source.orm === "prisma") {
+      return await prisma.migrate(config, { dryRun })
+    }
+    throw new Error(`ORM '${config.source.orm}' is not supported`)
+  })
 
 // program
 //   .command("push")

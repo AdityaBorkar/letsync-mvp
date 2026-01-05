@@ -5,6 +5,7 @@ import { file } from "bun"
 import { globSync } from "glob"
 
 import type { OrmDialectType } from "@/cli/orm/config.js"
+import { letsyncSchema } from "@/cli/orm/drizzle/generate/schema.js"
 
 export async function generateSchema(props: {
   source: {
@@ -19,19 +20,21 @@ export async function generateSchema(props: {
   const { source, target } = props
 
   console.log(
-    `🔄 Generating schema for [${source.dialect}] in [${target.dir}]...`
+    `🔄 Generating schema in "${target.dir}" [${source.dialect} -> ${target.dialect}]...`
   )
 
   // Find all TypeScript files in source directory
   const files = globSync("**/*.ts", { cwd: source.dir })
   console.log(`Found ${files.length} schema files to convert`)
 
+  // TODO: Merge all into a single file
+
   // Convert each file
   for await (const fileName of files) {
     const sourcePath = join(source.dir, fileName)
     const targetPath = join(target.dir, fileName)
 
-    console.log(`Converting ${fileName}...`)
+    // console.log(`Converting ${fileName}...`)
     const content = await file(sourcePath).text()
     const dist = convertSchema({
       content,
@@ -42,9 +45,15 @@ export async function generateSchema(props: {
     const targetSubDir = join(target.dir, ...fileName.split("/").slice(0, -1))
     await mkdir(targetSubDir, { recursive: true })
     await file(targetPath).write(dist)
-
-    console.log(`✓ Converted ${fileName}`)
+    // console.log(`✓ Converted ${fileName}`)
   }
+
+  const dist = convertSchema({
+    content: letsyncSchema,
+    sourceDialect: "postgresql",
+    targetDialect: target.dialect
+  })
+  await file(join(target.dir, "letsync.ts")).write(dist)
 
   console.log("\n✅ Schema conversion complete!")
 }
@@ -60,11 +69,13 @@ function convertSchema(props: {
     cockroach: {
       enum: "cockroachEnum",
       module: "cockroach-core",
+      schema: "cockroachSchema",
       table: "cockroachTable"
     },
-    postgres: {
+    postgresql: {
       enum: "pgEnum",
       module: "pg-core",
+      schema: "pgSchema",
       table: "pgTable"
     }
     // TODO: Find data types that are not convertable
