@@ -1,7 +1,11 @@
-import type { MutationPayload } from "../../utils/contract/server-rpc.js"
+import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/contract/helpers.js"
+
 import type { WsCtx } from "../index.js"
 
-export function mutation_get(data: MutationPayload, ctx: WsCtx) {
+export function mutation_get(
+  data: WsMessage_Schema<"server.mutation.get">["payload"],
+  ctx: WsCtx
+) {
   // ctx.emit.event("ack")
   console.log({ ctx, data })
 

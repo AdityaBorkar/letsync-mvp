@@ -16,11 +16,9 @@ export function PubSubClient({
     db: [],
     fs: []
   },
-  method,
   wsUrl
 }: {
   name?: string
-  method: "ws" | "sse" | "long-polling" | "short-polling" | "upgrade-to-ws"
   syncItems?: {
     db: string[]
     fs: string[]
@@ -38,7 +36,7 @@ export function PubSubClient({
   }
   return {
     __brand: "LETSYNC_CLIENT_PUBSUB",
-    connect: (context) => connect({ client, context, method, wsUrl }),
+    connect: (context) => connect({ client, context, wsUrl }),
     disconnect: () => disconnect({ client }),
     name,
     syncItems

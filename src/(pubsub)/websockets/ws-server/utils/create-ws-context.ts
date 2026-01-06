@@ -1,19 +1,9 @@
 import type { ServerWebSocket } from "bun"
 
-import type { WsMessage } from "../../utils/contract/server-rpc.js"
-import type { Callback } from "../../utils/request-store.js"
+import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/contract/helpers.js"
 
-type WsContextType = {
-  emit: {
-    event: (event: string, data: unknown) => void
-    result: (data?: unknown) => void
-    stream: (data?: unknown) => void
-  }
-  rpc<T extends WsMessage["type"]>(
-    type: T,
-    payload?: Extract<WsMessage, { type: T }>["payload"]
-  ): void
-}
+import type { WsMessageType } from "../../utils/contract/index.js"
+import type { Callback } from "../../utils/request-store.js"
 
 export function createWsContext<Context>({
   ws,
@@ -21,47 +11,57 @@ export function createWsContext<Context>({
   context
 }: {
   ws: ServerWebSocket
-  message: WsMessage
+  message: WsMessageType
   context: Context
-}): Context & WsContextType {
+}) {
   const { requestId, type } = message
-  const method = type.split(".")[1]
+  const [, method] = type.split(".")
   return {
     ...context,
     emit: {
-      event: (event: string, data: unknown) => {
-        const message = { data, event: `${type}.${event}` }
+      event: (event: string, payload: unknown) => {
+        const messageId = crypto.randomUUID() // TODO: Make an incremental ID
+        const type = `server.${method}.${event}`
+        const message = { messageId, payload, requestId, type }
         ws.send(JSON.stringify(message))
       },
-      result: (data = null) => {
+      result: (payload = null) => {
         const messageId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { data, messageId, requestId, type: `${method}.result` }
+        const type = `server.${method}.result`
+        const message = { messageId, payload, requestId, type }
         ws.send(JSON.stringify(message))
       },
-      stream: (data = null) => {
+      stream: (payload = null) => {
         const messageId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { data, messageId, requestId, type: `${method}.stream` }
+        const type = `server.${method}.stream`
+        const message = { messageId, payload, requestId, type }
         ws.send(JSON.stringify(message))
       }
     },
     // @ts-expect-error
-    rpc: (type, data = {}) =>
-      new Promise((resolve) => {
+    rpc: <T extends ExtractMethodName<"server", WsMessageType["type"]>>(
+      method: T,
+      payload: WsMessage_Schema<`server.${T}.get`>["payload"]
+    ) => {
+      type ResultType = WsMessage_Schema<`client.${T}.result`>["payload"] | null
+      return new Promise<ResultType>((resolve) => {
         const response: unknown[] = []
         const callback: Callback = (props) => {
-          const { type, data, requestId } = props
+          const { type, payload: data, requestId } = props
           response.push(data)
-          if (type === `server.${method}.result`) {
+          if (type === `client.${method}.result`) {
             // @ts-expect-error
             ws.data.reqManager.markAsResolved(requestId)
             const data = response.length === 1 ? response[0] : response
-            resolve(data)
+            resolve(data as ResultType)
           }
         }
         // @ts-expect-error
         const requestId = ws.data.reqManager.add({ callback })
-        const message = { data, messageId: null, requestId, type }
+        const type = `server.${method}.get`
+        const message = { messageId: null, payload, requestId, type }
         ws.send(JSON.stringify(message))
       })
+    }
   }
 }

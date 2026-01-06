@@ -1,74 +1,69 @@
+import type {
+  ExtractMethodName,
+  WsMessage_Schema
+} from "../../utils/contract/helpers.js"
+import type { WsMessageType } from "../../utils/contract/index.js"
 import type { Callback, RequestStore } from "../../utils/request-store.js"
 
-type BaseRpcMessage = {
-  messageId: null | string
-  requestId: string
-  type: string
-  payload: unknown
-}
-
-type WsContextType<RpcMessage extends BaseRpcMessage, Context> = Context & {
-  emit: {
-    error: (error: string) => void
-    event: (event: string, data: unknown) => void
-    result: (data?: unknown) => void
-    stream: (data?: unknown) => void
-  }
-  rpc<T extends RpcMessage["type"]>(
-    type: T,
-    payload?: Extract<RpcMessage, { type: T }>["payload"]
-  ): void
-}
-
-export function createWsContext<Context, RpcMessage extends BaseRpcMessage>({
+export function createWsContext<Context>({
+  message,
   ws,
-  requestId,
   context,
   reqManager
 }: {
+  message: WsMessageType
   ws: WebSocket
-  requestId: string
   context: Context
   reqManager: ReturnType<typeof RequestStore>
-}): WsContextType<RpcMessage, Context> {
+}) {
+  const { type, requestId } = message
+  const [, method] = type.split(".")
   return {
     ...context,
     emit: {
-      error: (error: string) => {
-        const message = { error, requestId, type: "-- ERROR --" }
-        ws.send(JSON.stringify(message))
-      },
-      event: (event: string, data: unknown) => {
-        const message = { data, event }
-        ws.send(JSON.stringify(message))
-      },
-      result: (data = null) => {
+      event: (event: string, payload: unknown) => {
         const messageId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { data, messageId, requestId, type: "-- END --" }
+        const type = `client.${event}.${event}`
+        const message = { messageId, payload, requestId, type }
         ws.send(JSON.stringify(message))
       },
-      stream: (data = null) => {
+      result: (payload = null) => {
         const messageId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { data, messageId, requestId, type: "-- STREAM --" }
+        const type = `client.${method}.result`
+        const message = { messageId, payload, requestId, type }
+        ws.send(JSON.stringify(message))
+      },
+      stream: (payload = null) => {
+        const messageId = crypto.randomUUID() // TODO: Make an incremental ID
+        const type = `client.${method}.stream`
+        const message = { messageId, payload, requestId, type }
         ws.send(JSON.stringify(message))
       }
     },
-    rpc: (msg_type, payload = {}) =>
-      new Promise((resolve) => {
+    rpc: <T extends ExtractMethodName<"client", WsMessageType["type"]>>(
+      method: T,
+      payload: WsMessage_Schema<`client.${T}.get`>["payload"]
+    ) => {
+      type ResultType = WsMessage_Schema<`server.${T}.result`>["payload"] | null
+      return new Promise<ResultType>((resolve) => {
         const response: unknown[] = []
         const callback: Callback = (props) => {
-          const { type, data, requestId } = props
+          const { type, payload: data, requestId } = props
           response.push(data)
-          if (type === `server.${msg_type}.result`) {
+          if (type === `server.${method}.result`) {
             reqManager.markAsResolved(requestId)
             const data = response.length === 1 ? response[0] : response
-            resolve(data)
+            resolve(data as ResultType)
           }
         }
         const requestId = reqManager.add({ callback })
-        const type = `client.${msg_type}.get`
+        const type = `client.${method}.get`
         const message = { messageId: null, payload, requestId, type }
         ws.send(JSON.stringify(message))
       })
+    }
   }
 }
+
+// const ping = rpc.ping.get({})
+// const { server_ts } = await ping.result

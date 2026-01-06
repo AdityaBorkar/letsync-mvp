@@ -1,7 +1,11 @@
-import type { CdcPayload } from "../../utils/contract/server-rpc.js"
+import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/contract/helpers.js"
+
 import type { WsCtx } from "../index.js"
 
-export async function cdc_get(_props: CdcPayload, _context: WsCtx) {
+export async function cdc_get(
+  _data: WsMessage_Schema<"server.cdc.get">["payload"],
+  _context: WsCtx
+) {
   // const { userId, cursor, name, subscribeChanges } = props
   // // const db = (context.db.get(name)?.client as any)?.$client
   // // if (!db) {

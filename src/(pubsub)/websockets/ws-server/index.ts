@@ -8,9 +8,9 @@ import {
   LetsyncServer
 } from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
-import { WsMessageSchema } from "../utils/contract/server-rpc.js"
+import { WsMessageSchema } from "../utils/contract/index.js"
 import { RequestStore } from "../utils/request-store.js"
-import { server_contract } from "./handlers/index.js"
+import { handlers } from "./handlers/index.js"
 import { createWsContext } from "./utils/create-ws-context.js"
 
 type WsData = {
@@ -81,7 +81,7 @@ export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
       }
 
       const { type, payload } = message
-      const [, method, event] = type.split(".")
+      const [actor, method, event] = type.split(".")
 
       // if (messageId) {
       //   console.log({ messageId })
@@ -92,17 +92,18 @@ export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
       //   //   }
       //   //   request.callback(payload)
       // }
-      if (event === "get") {
-        const handler = server_contract[method as keyof typeof server_contract]
-        if (!handler) {
-          logger.error("Invalid message type", type)
-          return
+      if (actor === "client") {
+        if (event === "get") {
+          const handler = handlers[method as keyof typeof handlers]
+          if (!handler) {
+            logger.error("Invalid message type", type)
+            return
+          }
+          // @ts-expect-error
+          const ws_ctx = createWsContext({ context, message, ws })
+          // @ts-expect-error
+          handler(payload, ws_ctx)
         }
-        // @ts-expect-error
-        const ws_ctx = createWsContext({ context, message, ws })
-        // const _payload = payload as typeof server_contract[event]["payload"]
-        // @ts-expect-error
-        handler(payload, ws_ctx)
       }
     },
     open(ws) {

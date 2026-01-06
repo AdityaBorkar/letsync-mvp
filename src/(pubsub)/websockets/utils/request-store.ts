@@ -2,11 +2,11 @@ import { Logger } from "../../../utils/logger.js"
 
 export type Callback = ({
   type,
-  data,
+  payload,
   requestId
 }: {
-  type: "-- END --" | "-- STREAM --"
-  data: unknown
+  type: `server.${string}.result` | `server.${string}.stream`
+  payload: unknown
   requestId: string
 }) => void
 
