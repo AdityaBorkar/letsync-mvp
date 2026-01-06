@@ -18,7 +18,8 @@ export type Context = {
 }
 
 export type LetsyncConfig<R extends Request> = {
-  apiUrl: { path: string; domain: string; https: boolean }
+  apiUrl: string
+  shadowDbName?: string
   auth: ApiHandlerAuth<R>
   connections: (
     | ServerPubSub.Adapter
@@ -37,6 +38,9 @@ export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
   const fs: Map<string, ServerFs.Adapter<unknown>> = new Map()
   const pubsub: Map<string, ServerPubSub.Adapter> = new Map()
   for (const item of config.connections) {
+    if (item.__brand.startsWith("LETSYNC_CLIENT_")) {
+      throw new Error("Client Adapters are not allowed on server side.")
+    }
     if (item.__brand === "LETSYNC_SERVER_DB") {
       db.set(item.name, item)
       continue

@@ -15,14 +15,17 @@ export async function initDb(props: {
   autoUpgrade: boolean
 }) {
   const { context, db, checkForUpdates, autoUpgrade } = props
+
   const logger = new Logger(db.name)
 
-  logger.log("Establishing connection")
+  logger.log("Connecting")
   await db.connect()
+  logger.log("Connected")
 
-  logger.log("Schema Version: Reading from metadata")
-  const { data: version, error } = await tryCatch(db.metadata.get(VERSION_KEY))
-
+  const { data: version, error } = await tryCatch(
+    db.metadata.get(`${VERSION_KEY}:${db.name}`)
+  )
+  logger.log(`Schema Version: ${version} (from metadata)`)
   if (
     error?.cause &&
     !error?.cause
@@ -33,10 +36,7 @@ export async function initDb(props: {
     throw error.cause
   }
 
-  logger.log(`Schema Version: ${version}`)
-
   if (version === null) {
-    logger.log("Schema: Fetching from server")
     const response = await context.fetch("GET", "/schema/latest", {
       searchParams: { name: db.name }
     })
@@ -44,12 +44,22 @@ export async function initDb(props: {
       logger.error(`Schema: Error fetching from server`, response.error)
       return
     }
-    const schemas = response.data as SQL_Schemas.Schema[]
-    logger.log(`Schema: Initializing`, schemas)
-    await db.schema.initialize(schemas[0])
+    const schema = response.data as SQL_Schemas.Schema
+    logger.log(`Schema: Initializing ${schema.name} ${schema.tag}`)
+    try {
+      await db.schema.initialize(schema)
+    } catch (error) {
+      if (!String(error).includes("already exists")) {
+        throw error
+      }
+      await db.flush()
+      await db.schema.initialize(schema)
+    }
     logger.log("Schema: Initialized")
     return
   }
+
+  console.log("----------------")
 
   // Run schema operations sequentially per database
   if (checkForUpdates) {

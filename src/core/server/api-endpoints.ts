@@ -1,19 +1,9 @@
 // biome-ignore-all lint/style/useNamingConvention: API Methods must be in uppercase
 
-import type { ServerDb, ServerFs, ServerPubSub } from "@/types/server.js"
+import { schemaLatest } from "./functions/schema-latest.js"
+import { schemaMigration } from "./functions/schema-migration.js"
 
-import { schemaList } from "./functions/schema-list.js"
-import { schemaVerify } from "./functions/schema-verify.js"
-
-export type EndpointContext = {
-  db: ServerDb.Adapter<unknown>[]
-  fs: ServerFs.Adapter<unknown>[]
-  pubsub: ServerPubSub.Adapter
-  auth: {
-    userId: string
-    deviceId: string
-  }
-}
+export type { ApiContext } from "./types.js"
 
 export const ApiEndpoints = {
   // "/cache": {
@@ -38,16 +28,16 @@ export const ApiEndpoints = {
   // 	DELETE: deviceUnregister,
   // 	POST: deviceRegister,
   // },
-  "/schema": {
-    GET: schemaList
-  },
+  // "/schema": {
+  //   GET: schemaList
+  // },
+  // "/schema/verify": {
+  //   POST: schemaVerify
+  // }
   "/schema/latest": {
-    GET: schemaList
+    GET: schemaLatest
   },
   "/schema/migration": {
-    GET: schemaList
-  },
-  "/schema/verify": {
-    POST: schemaVerify
+    GET: schemaMigration
   }
 } as const

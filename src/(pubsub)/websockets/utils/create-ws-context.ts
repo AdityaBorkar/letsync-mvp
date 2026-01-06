@@ -1,43 +1,57 @@
-import type { Callback, RequestStore } from "./request-store.js"
+import type { ServerWebSocket } from "bun"
+
+import type { Callback } from "./request-store.js"
 
 type BaseRpcMessage = {
-  type: string
-  chunkId: null | string
+  messageId: null | string
   requestId: string
-  data: unknown
+  type: string
+  payload: unknown
 }
 
 type WsContextType<RpcMessage extends BaseRpcMessage, Context> = Context & {
-  end: (data?: unknown) => void
-  stream: (data?: unknown) => void
+  emit: {
+    error: (error: string) => void
+    event: (event: string, data: unknown) => void
+    result: (data?: unknown) => void
+    stream: (data?: unknown) => void
+  }
   rpc<T extends RpcMessage["type"]>(
     type: T,
-    data?: Extract<RpcMessage, { type: T }>["data"]
+    payload?: Extract<RpcMessage, { type: T }>["payload"]
   ): void
 }
 
-export function createWsContext<
-  WsType,
-  Context,
-  RpcMessage extends BaseRpcMessage
->({
-  RequestManager,
+export function createWsContext<T, Context, RpcMessage extends BaseRpcMessage>({
   ws,
   requestId,
   context
 }: {
-  RequestManager: ReturnType<typeof RequestStore>
-  ws: WsType
+  ws: ServerWebSocket<T>
   requestId: string
   context: Context
 }): WsContextType<RpcMessage, Context> {
   return {
     ...context,
-    end: (data = null) => {
-      const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
-      const message = { chunkId, data, requestId, type: "-- END --" }
-      // @ts-expect-error
-      ws.send(JSON.stringify(message))
+    emit: {
+      error: (error: string) => {
+        const message = { error, requestId, type: "-- ERROR --" }
+        ws.send(JSON.stringify(message))
+      },
+      event: (event: string, data: unknown) => {
+        const message = { data, event }
+        ws.send(JSON.stringify(message))
+      },
+      result: (data = null) => {
+        const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
+        const message = { chunkId, data, requestId, type: "-- END --" }
+        ws.send(JSON.stringify(message))
+      },
+      stream: (data = null) => {
+        const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
+        const message = { chunkId, data, requestId, type: "-- STREAM --" }
+        ws.send(JSON.stringify(message))
+      }
     },
     rpc: (type, data = null) =>
       new Promise((resolve) => {
@@ -46,22 +60,16 @@ export function createWsContext<
           const { type, data, requestId } = props
           response.push(data)
           if (type === "-- END --") {
-            RequestManager.markAsResolved(requestId)
+            // @ts-expect-error
+            ws.data.reqManager.markAsResolved(requestId)
             const data = response.length === 1 ? response[0] : response
             resolve(data)
           }
         }
-        const requestId = RequestManager.add({ callback })
-
-        const message = { chunkId: null, data, requestId, type }
         // @ts-expect-error
+        const requestId = ws.data.reqManager.add({ callback })
+        const message = { chunkId: null, data, requestId, type }
         ws.send(JSON.stringify(message))
-      }),
-    stream: (data = null) => {
-      const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
-      const message = { chunkId, data, requestId, type: "-- STREAM --" }
-      // @ts-expect-error
-      ws.send(JSON.stringify(message))
-    }
+      })
   }
 }

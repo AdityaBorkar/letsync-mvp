@@ -2,7 +2,6 @@ import type { SQL_Schemas } from "@/types/schemas.js"
 
 import { VERSION_KEY } from "../../../core/client/constants.js"
 import { tryCatch } from "../../../utils/try-catch.js"
-import { flush } from "./flush.js"
 import { metadata } from "./metadata.js"
 import type { DrizzleClientDb } from "./types.js"
 
@@ -24,17 +23,11 @@ async function initialize(
   props: { schema: SQL_Schemas.Schema }
 ) {
   const { schema } = props
-  const { error } = await tryCatch(executeSQL({ db, sql: schema.sql_init }))
+  const { error } = await tryCatch(executeSQL({ db, sql: schema.init_sql }))
   if (error) {
-    console.log("Schema Initialization Failed", error)
-    if (!String(error).includes("already exists")) {
-      throw error
-    }
-    await flush(db)
-    await executeSQL({ db, sql: schema.sql_init })
+    throw error
   }
-
-  await metadata.set(db, VERSION_KEY, String(schema.idx))
+  await metadata.set(db, `${VERSION_KEY}:${schema.name}`, String(schema.tag))
   return
 }
 
@@ -45,7 +38,7 @@ async function migrate(db: DrizzleClientDb, props: { idx: string }) {
     [idx]
   )
   const schema = result.rows[0]
-  const sql = schema.sql_migration.replace("--> statement-breakpoint", "\n\n")
+  const sql = schema.init_sql.replace("--> statement-breakpoint", "\n\n")
   await executeSQL({ db, sql })
   await metadata.set(db, `__LETSYNC:schema.idx__`, String(idx))
 }

@@ -9,15 +9,18 @@ export async function SchemaCheckForUpdates(
   props: { name: string } | { db: ClientDb.Adapter<unknown> },
   context: Context
 ) {
-  const db = "name" in props ? context.db.get(props.name) : props.db
-  if (!db) {
-    throw new Error("Database not found")
-  }
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  console.log("SchemaCheckForUpdates", { context, props, VERSION_KEY })
 
-  const version = await db.metadata.get(VERSION_KEY)
-  if (version === null) {
-    throw new Error("No version found")
-  }
+  // const db = "name" in props ? context.db.get(props.name) : props.db
+  // if (!db) {
+  //   throw new Error("Database not found")
+  // }
+
+  // const version = await db.metadata.get(`${VERSION_KEY}:${db.name}`)
+  // if (version === null) {
+  //   throw new Error("No version found")
+  // }
 
   // TODO: WRITE LOGIC
 

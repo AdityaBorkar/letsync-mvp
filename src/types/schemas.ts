@@ -7,11 +7,12 @@ export namespace SQL_Schemas {
   }
 
   export type Schema = {
+    id: string
     created_at: string
-    idx: string
-    sql_init: string
-    sql_migration: string
+    init_sql: string
+    is_rolled_back: boolean
     tag: string
+    name: string
   }
 
   export type Mutation = {

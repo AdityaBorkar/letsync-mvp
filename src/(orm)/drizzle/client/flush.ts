@@ -2,7 +2,7 @@ import { close } from "./close.js"
 import { connect } from "./connect.js"
 import type { DrizzleClientDb } from "./types.js"
 
-export async function flush(db: DrizzleClientDb) {
+export async function flush(db: DrizzleClientDb, maxAttempt = 3) {
   //   TODO: THIS APPROACH IS VERY SPECIFIC TO PGLITE-INDEXEDDB. WE NEED TO FIND A BETTER APPROACH.
 
   const dataDir = db.$client.dataDir
@@ -31,7 +31,14 @@ export async function flush(db: DrizzleClientDb) {
       reject(error)
     }
     request.onblocked = () => {
-      reject(new Error("Database deletion blocked"))
+      const attempt = maxAttempt - 1
+      console.error(
+        `Database deletion blocked. Retrying after 500 ms... (attempt remaining: ${attempt})`
+      )
+      if (attempt === 0) {
+        throw new Error("Database deletion blocked. Maximum attempts reached.")
+      }
+      setTimeout(() => flush(db, attempt), 500)
     }
   })
   if (!error) {

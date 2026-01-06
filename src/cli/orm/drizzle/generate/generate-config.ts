@@ -14,7 +14,7 @@ export async function generateConfig(
     ..._config,
     dialect,
     out: join("./", dir, "migrations"),
-    schema: join("./", dir, "schema", "index.js"),
+    schema: join("./", dir, "schema"),
     strict: true,
     verbose: true
   }

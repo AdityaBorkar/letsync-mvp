@@ -15,10 +15,13 @@ export async function SchemaVerify(
   const version = await db.metadata.get(VERSION_KEY)
   const schema = await db.schema.introspect()
 
-  const body = { schema, version }
-  const response = await context.fetch("POST", "/schema/verify", { body })
-  if (response.error) {
-    throw new Error(response.error.toString())
-  }
-  return response.data
+  console.log("----------------")
+  console.log(version)
+  console.log(schema)
+  // const body = { schema, version }
+  // const response = await context.fetch("GET", "/schema/verify", { body })
+  // if (response.error) {
+  //   throw new Error(response.error.toString())
+  // }
+  // return response.data
 }

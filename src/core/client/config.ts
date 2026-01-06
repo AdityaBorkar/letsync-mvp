@@ -10,8 +10,8 @@ import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.js"
 import { SchemaList } from "./functions/schema-list.js"
 import { SchemaUpgrade } from "./functions/schema-upgrade.js"
 import { SchemaVerify } from "./functions/schema-verify.js"
-import { SyncStart } from "./functions/sync-connect.js"
-import { SyncTerminate } from "./functions/sync-disconnect.js"
+import { SyncStart } from "./functions/sync-start.js"
+import { SyncTerminate } from "./functions/sync-terminate.js"
 
 export type Client = ReturnType<typeof Client>
 

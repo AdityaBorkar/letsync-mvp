@@ -1,3 +1,45 @@
+import type { CdcPayload } from "../../utils/schemas/server-rpc.js"
+import type { WsCtx } from "../index.js"
+
+export async function cdc_get(_props: CdcPayload, _context: WsCtx) {
+  // const { userId, cursor, name, subscribeChanges } = props
+  // // const db = (context.db.get(name)?.client as any)?.$client
+  // // if (!db) {
+  // //   throw new Error("Database not found")
+  // // }
+  // // TODO: Enable LOCK
+  // subscribeChanges({
+  //   callback(record) {
+  //     context.rpc("cdc-records", { ...record, lsn: "" })
+  //     // context.rpc("cdc-cache", record)
+  //     // TODO: Collect these records in a LIST
+  //   },
+  //   userId
+  // })
+  // const RECORDS_LIMIT = 50
+  // let $cursor = cursor
+  // while (true) {
+  //   // biome-ignore lint/performance/noAwaitInLoops: EXCEPTION
+  //   const cdc = await db.sql<SQL_Schemas.CdcRecord>`
+  //         SELECT * FROM "letsync"."cdc"
+  //         WHERE tenantId = ${userId}
+  //         ORDER BY id ASC
+  //         LIMIT ${RECORDS_LIMIT};
+  //       `
+  //   // TODO: GET ALL CACHE FROM
+  //   // context.rpc("cdc-records", data)
+  //   // context.rpc("cdc-cache", data)
+  //   $cursor = cdc.rows.at(-1).id
+  //   if (cdc.rows.length < RECORDS_LIMIT) break
+  // }
+  // console.log({ $cursor })
+  // // TODO: Disable LOCK
+  // console.log(`Subscribed to changes for user: ${userId}`)
+  // // TODO: Get Cursor and Integrity & VERIFY
+  // // Cron Job - Every 24 hours - merge records into the cache file IF records are greater than 50.
+  // context.result()
+}
+
 // import type { ServerWebSocket } from "bun"
 
 // import { type } from "arktype"

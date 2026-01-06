@@ -5,6 +5,10 @@ export function connect(client: DrizzleServerDb) {
   if ("connect" in $client) {
     return $client.connect() as unknown as Promise<void>
   }
+  if ("waitReady" in $client) {
+    // @ts-expect-error
+    return $client.waitReady as unknown as Promise<void>
+  }
   throw new Error(
     ".connect() is not supported by the Database Client. Kindly raise a GitHub Issue [INSERT PRE-FILLED DATA HERE]."
   )

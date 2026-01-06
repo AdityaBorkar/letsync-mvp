@@ -3,6 +3,7 @@ import { join } from "node:path"
 import { build, file } from "bun"
 
 import type { OrmDialectType } from "@/cli/orm/config.js"
+import { letsync_schema as letsync_schema_raw } from "@/cli/orm/drizzle/generate/letsync-schema.js"
 
 export async function generateSchema(props: {
   source: {
@@ -15,7 +16,7 @@ export async function generateSchema(props: {
   }
 }) {
   const { source, target } = props
-
+  await mkdir(target.dir, { recursive: true })
   console.log(
     `🔄 Generating schema in "${target.dir}" [${source.dialect} -> ${target.dialect}]...`
   )
@@ -30,14 +31,20 @@ export async function generateSchema(props: {
     splitting: false,
     target: "node"
   })
-  const schema_bundled = await build_output.outputs[0].text()
+  const schema_raw = await build_output.outputs[0].text()
   const schema = convertSchema({
-    content: schema_bundled,
+    content: schema_raw,
     sourceDialect: source.dialect,
     targetDialect: target.dialect
   })
-  await mkdir(target.dir, { recursive: true })
   await file(join(target.dir, "index.js")).write(schema)
+
+  const letsync_schema = convertSchema({
+    content: letsync_schema_raw,
+    sourceDialect: "cockroach",
+    targetDialect: target.dialect
+  })
+  await file(join(target.dir, "letsync.js")).write(letsync_schema)
 
   console.log("\n✅ Schema conversion complete!")
 }
@@ -69,16 +76,20 @@ function convertSchema(props: {
   const targetProps = dialects[targetDialect]
 
   content = content.replace(
+    new RegExp(`\\b${srcProps.enum}\\b`, "gmi"),
+    targetProps.enum
+  )
+  content = content.replace(
     new RegExp(`["']drizzle-orm\\/${srcProps.module}["']`, "gmi"),
     `"drizzle-orm/${targetProps.module}"`
   )
   content = content.replace(
-    new RegExp(`\\b${srcProps.table}\\b`, "gmi"),
-    targetProps.table
+    new RegExp(`\\b${srcProps.schema}\\b`, "gmi"),
+    targetProps.schema
   )
   content = content.replace(
-    new RegExp(`\\b${srcProps.enum}\\b`, "gmi"),
-    targetProps.enum
+    new RegExp(`\\b${srcProps.table}\\b`, "gmi"),
+    targetProps.table
   )
 
   return content

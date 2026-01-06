@@ -13,6 +13,12 @@
 1. Sync
 2. How to code Mutations? (With RSA Support)
 
+- letsync/ws
+  - Add token-based authentication for backup option
+- letsync
+  - Sync strategies for multiple databases
+    - store cdc in each database or store cdc in a single database?
+
 ## Questions for the future
 
 - How much of the data to sync in the first shot? How to implement incremental sync?

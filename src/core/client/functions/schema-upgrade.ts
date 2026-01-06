@@ -9,25 +9,28 @@ export async function SchemaUpgrade(
   },
   context: Context
 ) {
-  const db = "name" in props ? context.db.get(props.name) : props.db
-  if (!db) {
-    throw new Error("Database not found")
-  }
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  console.log("SchemaUpgrade", { context, props, VERSION_KEY })
 
-  const { version } = props
-  const currentVersion = await db.metadata.get(VERSION_KEY)
-  const schemas = await db.schema.list({
-    aboveVersion: String(currentVersion),
-    belowVersion: typeof version === "number" ? String(version) : undefined
-  })
-  if (schemas.length === 0) {
-    console.log("No updates found")
-    return
-  }
+  // const db = "name" in props ? context.db.get(props.name) : props.db
+  // if (!db) {
+  //   throw new Error("Database not found")
+  // }
 
-  for await (const schema of schemas) {
-    await db.schema.migrate({ idx: schema.idx })
-  }
+  // const { version } = props
+  // const currentVersion = await db.metadata.get(VERSION_KEY)
+  // const schemas = await db.schema.list({
+  //   aboveVersion: String(currentVersion),
+  //   belowVersion: typeof version === "number" ? String(version) : undefined
+  // })
+  // if (schemas.length === 0) {
+  //   console.log("No updates found")
+  //   return
+  // }
+
+  // for await (const schema of schemas) {
+  //   await db.schema.migrate({ id: schema.id })
+  // }
 
   return
 }

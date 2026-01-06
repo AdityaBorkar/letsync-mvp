@@ -5,6 +5,8 @@ import { Pool } from "pg"
 
 import type { Options, OrmConfig } from "@/cli/orm/config.js"
 
+import { getTimestampString } from "../../../../utils/date.js"
+
 /**
  * Executes database migration for the Drizzle ORM setup.
  * Handles schema pushing to server, verification, and client schema recording.
@@ -33,7 +35,7 @@ export async function migrate(config: OrmConfig, options: Options) {
 
   const name = config.output.client.name
   const timestamp = new Date()
-  const tag = timestamp.toISOString().split("T")[0]
+  const tag = getTimestampString(timestamp)
 
   // Connect to Shadow (Server) Database
   const db = new Pool({
