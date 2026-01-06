@@ -2,7 +2,7 @@ import { ArkErrors } from "arktype"
 
 import type { Context } from "@/core/client/config.js"
 
-// import { CURSOR_KEY } from "../../../../core/client/constants.js"
+import { CURSOR_KEY } from "../../../../core/client/constants.js"
 import { Logger } from "../../../../utils/logger.js"
 import {
   WsMessageSchema,
@@ -85,19 +85,42 @@ export function connect(props: {
     } as unknown as WsMessageType
     const ws_ctx = createWsContext({ context, message, reqManager, ws })
 
-    const ping = await ws_ctx.rpc("ping", null)
-    if (!ping) {
+    const ping = ws_ctx.rpc("ping", null)
+    const pingResult = await ping.result
+    if (!pingResult) {
       throw new Error("Ping failed")
     }
-    const latency = Date.now() - ping.server_ts
+    const latency = Date.now() - pingResult.server_ts
     logger.log("Latency", { latency })
 
-    // for await (const [_, database] of context.db.entries()) {
-    //   const name = database.name
-    //   const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
-    //   const cursor = timestamp ? new Date(timestamp).toString() : null
-    //   wsContext.rpc("cdc", { cursor, name })
-    // }
+    for await (const [_, database] of context.db.entries()) {
+      const name = database.name
+      const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
+      const cursor = timestamp ? new Date(timestamp).toString() : null
+      const cdc = ws_ctx.rpc("cdc", { cursor, name })
+
+      const cacheIds = []
+      cdc.on("cache", (data) => {
+        console.log({ data })
+        cacheIds.push(data.id)
+      })
+
+      const recordIds = []
+      cdc.on("records", (data) => {
+        console.log({ data })
+        recordIds.push(data.id)
+      })
+
+      const result = await cdc.result
+      // TODO: Reconcile if all records and caches are recieved and inserted
+
+      const live = ws_ctx.rpc("live", { cursor, name })
+      live.on("record", (data) => {
+        recordIds.push(data.id)
+        // TODO: ACKNOWLEDGE or else the record shall be re-sent after some time.
+        // TODO: Plan about what to do about the missing records.
+      })
+    }
 
     // for await (const [_, filesystem] of fs.entries()) {
     //   const name = filesystem.name

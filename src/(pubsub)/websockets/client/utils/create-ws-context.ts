@@ -45,22 +45,37 @@ export function createWsContext<Context>({
       payload: WsMessage_Schema<`client.${T}.get`>["payload"]
     ) => {
       type ResultType = WsMessage_Schema<`server.${T}.result`>["payload"] | null
-      return new Promise<ResultType>((resolve) => {
-        const response: unknown[] = []
+
+      const response: unknown[] = []
+
+      const result = new Promise<ResultType>((resolve) => {
         const callback: Callback = (props) => {
-          const { type, payload: data, requestId } = props
-          response.push(data)
+          const { type, payload, requestId } = props
+          response.push(payload)
           if (type === `server.${method}.result`) {
             reqManager.markAsResolved(requestId)
-            const data = response.length === 1 ? response[0] : response
-            resolve(data as ResultType)
+            resolve(payload as ResultType)
           }
         }
         const requestId = reqManager.add({ callback })
+
         const type = `client.${method}.get`
         const message = { messageId: null, payload, requestId, type }
         ws.send(JSON.stringify(message))
       })
+
+      const on = (event: string, callback: (payload: unknown) => void) => {
+        // const callback: Callback = (props) => {
+        //   const { type, payload, requestId } = props
+        //   response.push(payload)
+        //   if (type === `server.${method}.result`) {
+        //     reqManager.markAsResolved(requestId)
+        //     resolve(payload as ResultType)
+        //   }
+        // }
+      }
+
+      return { on, result }
     }
   }
 }

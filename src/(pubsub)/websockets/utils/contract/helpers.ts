@@ -18,7 +18,7 @@ export function ServerMethod<
   const { input, output_result, output_stream } = payload
 
   const common_schema = type.raw({
-    messageId: "string",
+    messageId: "string | null",
     requestId: "string"
   })
   const input_schema = type.raw({
@@ -38,7 +38,7 @@ export function ServerMethod<
     input_schema.or(output_result_schema).or(output_stream_schema)
   ) as unknown as type.instantiate<
     {
-      messageId: "string"
+      messageId: "string | null"
       requestId: "string"
     } & (
       | {

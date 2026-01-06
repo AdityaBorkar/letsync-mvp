@@ -10,7 +10,7 @@ const ping = ServerMethod("ping", {
 
 const cdc = ServerMethod("cdc", {
   input: {
-    cursor: "string",
+    cursor: "string | null",
     name: "string"
   },
   output_result: "null",
