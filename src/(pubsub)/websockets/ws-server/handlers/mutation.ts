@@ -1,4 +1,4 @@
-import type { MutationPayload } from "../../utils/schemas/server-rpc.js"
+import type { MutationPayload } from "../../utils/contract/server-rpc.js"
 import type { WsCtx } from "../index.js"
 
 export function mutation_get(data: MutationPayload, ctx: WsCtx) {

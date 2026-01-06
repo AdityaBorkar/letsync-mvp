@@ -5,12 +5,12 @@ const MessageType = <const MT extends string, const DT>(
   payload: type.validate<DT>
 ) =>
   type.raw({
-    messageId: "string",
+    messageId: "string | null",
     payload,
     requestId: "string",
     type: `"client.${msg_type}.get"`
   }) as type.instantiate<{
-    messageId: "string"
+    messageId: "string | null"
     payload: DT
     requestId: "string"
     type: `"client.${MT}.get"`

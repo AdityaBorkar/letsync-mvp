@@ -2,18 +2,16 @@ import type { Server, WebSocketHandler } from "bun"
 
 import { ArkErrors } from "arktype"
 
-import { WsMessageSchema } from "@/(pubsub)/websockets/utils/schemas/server-rpc.js"
-import { server_contract } from "@/(pubsub)/websockets/ws-server/handlers/index.js"
-
 import {
   type Context,
   type LetsyncConfig,
   LetsyncServer
 } from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
-import { createWsContext } from "../utils/create-ws-context.js"
+import { WsMessageSchema } from "../utils/contract/server-rpc.js"
 import { RequestStore } from "../utils/request-store.js"
-import type { WsMessage } from "../utils/schemas/server-rpc.js"
+import { server_contract } from "./handlers/index.js"
+import { createWsContext } from "./utils/create-ws-context.js"
 
 type WsData = {
   reqManager: ReturnType<typeof RequestStore>
@@ -23,12 +21,12 @@ type WsData = {
 }
 
 export type WsCtx = ReturnType<
-  typeof createWsContext<WsData, Omit<Context, "status" | "fetch">, WsMessage>
+  typeof createWsContext<Omit<Context, "status" | "fetch">>
 >
 
-export function WebsocketServer(config: LetsyncConfig<Request>) {
+export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
   const { context } = LetsyncServer(config)
-  const logger = new Logger(`[${"INSERT-NAME-HERE"}]`)
+  const logger = new Logger(`[${name}]`)
 
   async function apiHandler(
     request: Request,
@@ -68,52 +66,50 @@ export function WebsocketServer(config: LetsyncConfig<Request>) {
 
   const wsHandler: WebSocketHandler<WsData> = {
     close(ws, code, reason) {
-      const { userId } = ws.data
-      // ws.data.reqManager.flush()
-      logger.log(`Connection closed for user: ${userId}`)
-      console.log("WebSocket closed", code, reason)
+      const { userId, deviceId } = ws.data
+      const duration = Date.now() - ws.data.connectionTime
+      const data = { code, deviceId, duration, reason, userId }
+      logger.log("WebSocket closed", data)
     },
     idleTimeout: 60 * 15, // 15 minutes
     message(ws, msg) {
-      // Validation
       const msg_string = msg.toString()
       const message = WsMessageSchema(JSON.parse(msg_string))
       if (message instanceof ArkErrors) {
-        logger.log("Invalid Message", { message, msg_string })
+        logger.log("Invalid Message", { error: message.join("\n"), msg_string })
         throw new Error("Invalid Message")
       }
 
-      // const ping = rpc.ping.get({})
-      // ping.on(<name>, () => {})
-      // const result = await ping.result
-
-      // Parsing
-      // const userId = ws.data.userId
-      const { type, payload, messageId, requestId } = message
+      const { type, payload } = message
       const [, method, event] = type.split(".")
 
-      if (messageId) {
-        console.log({ messageId })
-        //   const request = RequestManager.get(requestId)
-        //   if (!request) {
-        //     logger.error("Request not found", requestId)
-        //   }
-        //   request?.callback(message)
-      }
+      // if (messageId) {
+      //   console.log({ messageId })
+      //   //   const request = ws.data.reqManager.get(requestId)
+      //   //   if (!request) {
+      //   //     logger.error("Request not found", requestId)
+      //   //     return
+      //   //   }
+      //   //   request.callback(payload)
+      // }
       if (event === "get") {
         const handler = server_contract[method as keyof typeof server_contract]
         if (!handler) {
           logger.error("Invalid message type", type)
           return
         }
-        const wsCtx = createWsContext({ context, requestId, ws })
         // @ts-expect-error
-        handler(payload, wsCtx)
+        const ws_ctx = createWsContext({ context, message, ws })
+        // const _payload = payload as typeof server_contract[event]["payload"]
+        // @ts-expect-error
+        handler(payload, ws_ctx)
       }
     },
     open(ws) {
-      const { userId } = ws.data
-      console.log(`WebSocket opened for user: ${userId}`)
+      const { userId, deviceId } = ws.data
+      const data = { deviceId, userId }
+      logger.log("WebSocket opened", data)
+      // TODO: Propagate as the user is ONLINE
     }
   }
 

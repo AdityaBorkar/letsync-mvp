@@ -1,6 +1,4 @@
-import type { ServerWebSocket } from "bun"
-
-import type { Callback } from "./request-store.js"
+import type { Callback, RequestStore } from "../../utils/request-store.js"
 
 type BaseRpcMessage = {
   messageId: null | string
@@ -22,14 +20,16 @@ type WsContextType<RpcMessage extends BaseRpcMessage, Context> = Context & {
   ): void
 }
 
-export function createWsContext<T, Context, RpcMessage extends BaseRpcMessage>({
+export function createWsContext<Context, RpcMessage extends BaseRpcMessage>({
   ws,
   requestId,
-  context
+  context,
+  reqManager
 }: {
-  ws: ServerWebSocket<T>
+  ws: WebSocket
   requestId: string
   context: Context
+  reqManager: ReturnType<typeof RequestStore>
 }): WsContextType<RpcMessage, Context> {
   return {
     ...context,
@@ -43,32 +43,31 @@ export function createWsContext<T, Context, RpcMessage extends BaseRpcMessage>({
         ws.send(JSON.stringify(message))
       },
       result: (data = null) => {
-        const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { chunkId, data, requestId, type: "-- END --" }
+        const messageId = crypto.randomUUID() // TODO: Make an incremental ID
+        const message = { data, messageId, requestId, type: "-- END --" }
         ws.send(JSON.stringify(message))
       },
       stream: (data = null) => {
-        const chunkId = crypto.randomUUID() // TODO: Make an incremental ID
-        const message = { chunkId, data, requestId, type: "-- STREAM --" }
+        const messageId = crypto.randomUUID() // TODO: Make an incremental ID
+        const message = { data, messageId, requestId, type: "-- STREAM --" }
         ws.send(JSON.stringify(message))
       }
     },
-    rpc: (type, data = null) =>
+    rpc: (msg_type, payload = {}) =>
       new Promise((resolve) => {
         const response: unknown[] = []
         const callback: Callback = (props) => {
           const { type, data, requestId } = props
           response.push(data)
-          if (type === "-- END --") {
-            // @ts-expect-error
-            ws.data.reqManager.markAsResolved(requestId)
+          if (type === `server.${msg_type}.result`) {
+            reqManager.markAsResolved(requestId)
             const data = response.length === 1 ? response[0] : response
             resolve(data)
           }
         }
-        // @ts-expect-error
-        const requestId = ws.data.reqManager.add({ callback })
-        const message = { chunkId: null, data, requestId, type }
+        const requestId = reqManager.add({ callback })
+        const type = `client.${msg_type}.get`
+        const message = { messageId: null, payload, requestId, type }
         ws.send(JSON.stringify(message))
       })
   }

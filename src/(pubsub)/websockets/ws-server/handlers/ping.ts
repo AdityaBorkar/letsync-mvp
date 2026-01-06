@@ -1,4 +1,4 @@
-import type { PingPayload } from "../../utils/schemas/server-rpc.js"
+import type { PingPayload } from "../../utils/contract/server-rpc.js"
 import type { WsCtx } from "../index.js"
 
 export function ping_get(_data: PingPayload, ctx: WsCtx) {

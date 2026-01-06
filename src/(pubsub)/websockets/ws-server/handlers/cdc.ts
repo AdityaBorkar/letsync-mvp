@@ -1,4 +1,4 @@
-import type { CdcPayload } from "../../utils/schemas/server-rpc.js"
+import type { CdcPayload } from "../../utils/contract/server-rpc.js"
 import type { WsCtx } from "../index.js"
 
 export async function cdc_get(_props: CdcPayload, _context: WsCtx) {

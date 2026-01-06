@@ -39,51 +39,43 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.cts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.cts"
     },
     "./drizzle": {
-      "types": "./dist/(orm)/drizzle/index.d.cts",
       "import": "./dist/(orm)/drizzle/index.js",
-      "require": "./dist/(orm)/drizzle/index.cjs"
+      "require": "./dist/(orm)/drizzle/index.cjs",
+      "types": "./dist/(orm)/drizzle/index.d.cts"
     },
     "./mutations": {
-      "types": "./dist/core/mutations/index.d.cts",
       "import": "./dist/core/mutations/index.js",
-      "require": "./dist/core/mutations/index.cjs"
+      "require": "./dist/core/mutations/index.cjs",
+      "types": "./dist/core/mutations/index.d.cts"
     },
     "./next": {
-      "types": "./dist/(framework)/next/index.d.cts",
       "import": "./dist/(framework)/next/index.js",
-      "require": "./dist/(framework)/next/index.cjs"
+      "require": "./dist/(framework)/next/index.cjs",
+      "types": "./dist/(framework)/next/index.d.cts"
     },
     "./react": {
-      "types": "./dist/(framework)/react/index.d.cts",
       "import": "./dist/(framework)/react/index.js",
-      "require": "./dist/(framework)/react/index.cjs"
+      "require": "./dist/(framework)/react/index.cjs",
+      "types": "./dist/(framework)/react/index.d.cts"
     },
     "./types": {
-      "types": "./dist/types/index.d.cts",
       "import": "./dist/types/index.js",
-      "require": "./dist/types/index.cjs"
+      "require": "./dist/types/index.cjs",
+      "types": "./dist/types/index.d.cts"
     },
     "./ws": {
-      "types": "./dist/(pubsub)/websockets/index.d.cts",
       "import": "./dist/(pubsub)/websockets/index.js",
-      "require": "./dist/(pubsub)/websockets/index.cjs"
+      "require": "./dist/(pubsub)/websockets/index.cjs",
+      "types": "./dist/(pubsub)/websockets/index.d.cts"
     }
   },
-  "files": [
-    "dist",
-    "src",
-    "LICENSE.md",
-    "package.json",
-    "README.md"
-  ],
-  "keywords": [
-    "letsync"
-  ],
+  "files": ["dist", "src", "LICENSE.md", "package.json", "README.md"],
+  "keywords": ["letsync"],
   "license": "MIT",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -107,10 +99,7 @@
     "format": "biome check . --fix --diagnostic-level=error",
     "publish": "npm publish --access public"
   },
-  "trustedDependencies": [
-    "oxc-resolver",
-    "sharp"
-  ],
+  "trustedDependencies": ["oxc-resolver", "sharp"],
   "type": "module",
   "types": "./dist/index.d.cts",
   "version": "0.0.2",

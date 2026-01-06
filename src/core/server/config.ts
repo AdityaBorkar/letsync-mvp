@@ -55,23 +55,20 @@ export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
     }
     throw new Error("Invalid adapter type")
   }
-  if (fs.size === 0 && db.size === 0) {
-    throw new Error("No database or filesystem configured")
-  }
-  if (pubsub.size === 0) {
-    throw new Error("No pubsub configured")
-  }
+  // if (fs.size === 0 && db.size === 0) {
+  //   throw new Error("No database or filesystem configured")
+  // }
+  // if (pubsub.size === 0) {
+  //   throw new Error("No pubsub configured")
+  // }
 
   // TODO - Auth Provider check
-  const { auth } = config
+  const { auth, apiUrl } = config
   if (!auth) {
     throw new Error("Auth middleware is required")
   }
-
-  const apiUrl = config.apiUrl || {
-    domain: "localhost:3000",
-    https: false,
-    path: "/api/sync"
+  if (!apiUrl) {
+    throw new Error("API URL is required")
   }
 
   // @ts-expect-error

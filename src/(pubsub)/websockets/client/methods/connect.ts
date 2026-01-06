@@ -1,13 +1,13 @@
 import { ArkErrors } from "arktype"
 
-import { WsMessageSchema } from "@/(pubsub)/websockets/utils/schemas/client-rpc.js"
 import type { Context } from "@/core/client/config.js"
 
 // import { CURSOR_KEY } from "../../../../core/client/constants.js"
 import { Logger } from "../../../../utils/logger.js"
-import { createWsContext } from "../../utils/create-ws-context.js"
+import { WsMessageSchema } from "../../utils/contract/client-rpc.js"
 import { RequestStore } from "../../utils/request-store.js"
 import type { ClientState } from "../index.js"
+import { createWsContext } from "../utils/create-ws-context.js"
 
 // import { cdcCache } from "../messages/cdc-cache.js"
 // import { cdcRecords } from "../messages/cdc-records.js"
@@ -31,36 +31,36 @@ export function connect(props: {
   }
 
   const ws = new window.WebSocket(wsUrl || "")
-  const RequestManager = RequestStore()
+  const reqManager = RequestStore()
 
   controller.signal.addEventListener("abort", () => ws.close())
   ws.onopen = async () => {
     console.log("Websockets: Connected")
     client.set(ws)
+
     // <WebSocket, ContextType, ServerRpcMessage>
-    const ws_ctx = createWsContext({
-      context,
-      RequestManager,
-      requestId: crypto.randomUUID(),
-      // @ts-expect-error
-      ws
-    })
+    const requestId = crypto.randomUUID()
+    const ws_ctx = createWsContext({ context, reqManager, requestId, ws })
+
+    // const ping = rpc.ping.get({})
+    // ping.on(<name>, () => {})
+    // const result = await ping.result
 
     const ping = await ws_ctx.rpc("ping")
     // @ts-expect-error
-    const latency = Date.now() - Number(ping.timestamp)
-    console.log(`Latency: ${latency}ms`)
+    const latency = Date.now() - ping.server_ts
+    logger.log("Latency", { latency })
 
     // for await (const [_, database] of context.db.entries()) {
     //   const name = database.name
     //   const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
     //   const cursor = timestamp ? new Date(timestamp).toString() : null
-    //   wsContext.rpc("sync-request", { cursor, name })
+    //   wsContext.rpc("cdc", { cursor, name })
     // }
 
     // for await (const [_, filesystem] of fs.entries()) {
     //   const name = filesystem.name
-    //   wsContext.rpc("sync-request", { name })
+    //   wsContext.rpc("cdc", { name })
     // }
   }
   ws.onmessage = ({ data: msg }) => {
@@ -68,7 +68,7 @@ export function connect(props: {
     const msg_string = msg.toString()
     const message = WsMessageSchema(JSON.parse(msg_string))
     if (message instanceof ArkErrors) {
-      logger.log("Invalid Message", { message, msg_string })
+      logger.log("Invalid Message", { error: message.join("\n"), msg_string })
       throw new Error("Invalid Message")
     }
 
