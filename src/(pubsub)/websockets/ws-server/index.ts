@@ -8,7 +8,7 @@ import {
   LetsyncServer
 } from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
-import { WsMessageSchema } from "../utils/contract/index.js"
+import { WsMessageSchema } from "../utils/contract.js"
 import { RequestStore } from "../utils/request-store.js"
 import { handlers } from "./handlers/index.js"
 import { createWsContext } from "./utils/create-ws-context.js"

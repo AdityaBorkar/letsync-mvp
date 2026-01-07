@@ -1,4 +1,4 @@
-import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/contract/helpers.js"
+import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/ws-rpc-library/type-helpers.js"
 
 import type { WsCtx } from "../index.js"
 

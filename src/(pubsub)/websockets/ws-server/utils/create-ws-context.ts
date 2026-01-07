@@ -1,8 +1,8 @@
 import type { ServerWebSocket } from "bun"
 
-import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/contract/helpers.js"
+import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/ws-rpc-library/type-helpers.js"
 
-import type { WsMessageType } from "../../utils/contract/index.js"
+import type { WsMessageType } from "../../utils/contract.js"
 import type { Callback } from "../../utils/request-store.js"
 
 export function createWsContext<Context>({
