@@ -10,17 +10,8 @@
   },
   "name": "letsync",
   "publish": {
-    "exclude": [
-      "**/tests/**",
-      "dist"
-    ],
-    "include": [
-      "src",
-      "LICENSE",
-      "package.json",
-      "README.md",
-      "cli"
-    ]
+    "exclude": ["**/tests/**", "dist"],
+    "include": ["src", "LICENSE", "package.json", "README.md", "cli"]
   },
   "version": "0.0.2"
 }

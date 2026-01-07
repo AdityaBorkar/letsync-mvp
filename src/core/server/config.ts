@@ -10,17 +10,17 @@ import { apiHandler } from "./api-handler.js"
 export type Server = ReturnType<typeof LetsyncServer>
 
 export type Context = {
-  auth: ApiHandlerAuth<Request>
-  apiUrl: { path: string; domain: string; https: boolean }
+  auth: ApiHandlerAuth
+  apiUrl: string
   db: Map<string, ServerDb.Adapter<unknown>>
   fs: Map<string, ServerFs.Adapter<unknown>>
   pubsub: Map<string, ServerPubSub.Adapter>
 }
 
-export type LetsyncConfig<R extends Request> = {
+export type LetsyncConfig = {
   apiUrl: string
   shadowDbName?: string
-  auth: ApiHandlerAuth<R>
+  auth: ApiHandlerAuth
   connections: (
     | ServerPubSub.Adapter
     | ServerDb.Adapter<unknown>
@@ -28,7 +28,7 @@ export type LetsyncConfig<R extends Request> = {
   )[]
 }
 
-export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
+export function LetsyncServer(config: LetsyncConfig) {
   if (typeof window !== "undefined" || typeof process === "undefined") {
     throw new Error("LetSync can only be used in the server")
   }
@@ -37,7 +37,15 @@ export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
   const db: Map<string, ServerDb.Adapter<unknown>> = new Map()
   const fs: Map<string, ServerFs.Adapter<unknown>> = new Map()
   const pubsub: Map<string, ServerPubSub.Adapter> = new Map()
-  for (const item of config.connections) {
+
+  const { auth, apiUrl, connections } = config
+  if (!auth) {
+    throw new Error("Auth middleware is required")
+  }
+  if (!apiUrl) {
+    throw new Error("API URL is required")
+  }
+  for (const item of connections) {
     if (item.__brand.startsWith("LETSYNC_CLIENT_")) {
       throw new Error("Client Adapters are not allowed on server side.")
     }
@@ -62,16 +70,6 @@ export function LetsyncServer<R extends Request>(config: LetsyncConfig<R>) {
   //   throw new Error("No pubsub configured")
   // }
 
-  // TODO - Auth Provider check
-  const { auth, apiUrl } = config
-  if (!auth) {
-    throw new Error("Auth middleware is required")
-  }
-  if (!apiUrl) {
-    throw new Error("API URL is required")
-  }
-
-  // @ts-expect-error
   const context: Context = { apiUrl, auth, db, fs, pubsub }
 
   return {

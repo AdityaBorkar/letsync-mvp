@@ -1,28 +1,33 @@
-import { ArkErrors } from "arktype"
+import { ArkErrors, type Type } from "arktype"
 
 import { Logger } from "../../../../utils/logger.js"
-import { WsMessageSchema } from "../contract.js"
-import type { RequestStore } from "../request-store.js"
-import { createWsHandlerContext } from "./create-ws-context.js"
+import { createWsHandlerContext, type LimitedWs } from "./create-ws-context.js"
+import type { RequestStore } from "./request-store.js"
+import type { WsHandlerType, WsMsgType } from "./type-helpers.js"
 
 const logger = new Logger("WS-RPC")
 
-export function onMessage<Context>(
+export function onMessage<
+  Context,
+  Ws extends LimitedWs,
+  Message extends Type<WsMsgType>
+>(
   msg: Buffer | string,
   _context: {
+    MsgSchema: Message
     context: Context
-    handlers: Record<string, (payload: unknown, ctx: unknown) => void>
+    handlers: Record<string, WsHandlerType<any, string, Context>>
     actor_env: "client" | "server"
-    reqManager: ReturnType<typeof RequestStore>
-    ws: WebSocket
+    ReqManager: ReturnType<typeof RequestStore>
+    ws: Ws
   }
 ) {
   // Context
-  const { actor_env, handlers, reqManager, ws, context } = _context
+  const { actor_env, handlers, context, ReqManager, ws, MsgSchema } = _context
 
   // Validation
   const msg_string = msg.toString()
-  const message = WsMessageSchema(JSON.parse(msg_string))
+  const message = MsgSchema(JSON.parse(msg_string))
   if (message instanceof ArkErrors) {
     logger.log("Invalid Message", { error: message.join("\n"), msg_string })
     throw new Error("Invalid Message")
@@ -34,23 +39,27 @@ export function onMessage<Context>(
 
   // Handling
   if (actor === actor_env) {
-    if (event === "result" || event === "stream") {
-      const request = reqManager.get(requestId)
-      if (request) {
-        // @ts-expect-error
-        request.callback({ payload, requestId, type })
-      } else {
-        console.error("Request not found", requestId)
-      }
-    } else if (event === "get") {
+    if (event === "get") {
       const handler = handlers[method]
       if (!handler) {
-        logger.error("Handler not found", { type })
-        throw new Error("Handler not found")
+        throw new Error(`Handler not found for type: ${type}`)
       }
-      const ctx = createWsHandlerContext({ context, message, reqManager, ws })
-      handler(payload, ctx)
+      const { emit, ctx } = createWsHandlerContext({
+        context,
+        MsgSchema,
+        message,
+        ReqManager,
+        ws
+      })
+      handler(payload, emit, ctx)
     }
-    return
+  } else {
+    const request = ReqManager.get(requestId)
+    if (!request) {
+      throw new Error(`Request ${requestId} not found`)
+    }
+    for (const callback of request.callbacks) {
+      callback(message)
+    }
   }
 }

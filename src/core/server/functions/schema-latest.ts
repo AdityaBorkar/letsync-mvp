@@ -28,7 +28,6 @@ export async function schemaLatest(request: Request, context: Context) {
   // const { name } = data
   // const db = new Pool({
   //   // TODO: USE THE CORRECT DYNAMIC DATABASE DEFINED IN CONFIG
-  //   // @ts-expect-error
   //   connectionString: context.db.get(name)?.dbCredentials.url
   // })
   // const result = await db.query(

@@ -1,12 +1,6 @@
-import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/ws-rpc-library/type-helpers.js"
+import type { WsHandler } from "../index.js"
 
-import type { WsCtx } from "../index.js"
-
-export function ping_get(
-  _data: WsMessage_Schema<"server.ping.get">["payload"],
-  ctx: WsCtx
-) {
+export const ping_get: WsHandler<"ping"> = (_payload, emit) => {
   const server_ts = Date.now()
-  // @ts-expect-error
-  ctx.emit.result({ server_ts })
+  emit.result({ server_ts })
 }

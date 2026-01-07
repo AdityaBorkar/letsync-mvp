@@ -51,8 +51,7 @@ async function set(
   return
 }
 
-// @ts-expect-error - TODO: Fix this
-export type Object = Record<
-  string,
-  string | number | boolean | null | undefined | Object
->
+// export type Object = Record<
+//   string,
+//   string | number | boolean | null | undefined | Object
+// >

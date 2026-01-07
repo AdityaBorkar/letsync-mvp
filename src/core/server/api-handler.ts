@@ -3,10 +3,7 @@ import type { Context } from "./config.js"
 
 export async function apiHandler<R extends Request>(request: R, ctx: Context) {
   const url = new URL(request.url)
-  const path = url.pathname.replace(
-    ctx.apiUrl.path,
-    ""
-  ) as keyof typeof ApiEndpoints
+  const path = url.pathname as keyof typeof ApiEndpoints
   if (!(path in ApiEndpoints)) {
     return Response.json({ message: "Not Found" }, { status: 404 })
   }

@@ -30,9 +30,9 @@ export type Context = {
   fetch: ReturnType<typeof FetchClient>
 }
 
-export type Config<R extends Request> = {
+export type Config = {
   apiUrl: string
-  auth: ApiHandlerAuth<R>
+  auth: ApiHandlerAuth
   connections: (
     | ClientPubSub.Adapter
     | ClientDb.Adapter<unknown>
@@ -40,7 +40,7 @@ export type Config<R extends Request> = {
   )[]
 }
 
-export function Client(config: Config<Request>) {
+export function Client(config: Config) {
   if (typeof window === "undefined") {
     throw new Error("LetSync can only be used in the client")
   }

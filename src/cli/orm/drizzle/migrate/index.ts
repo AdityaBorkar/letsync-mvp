@@ -38,10 +38,14 @@ export async function migrate(config: OrmConfig, options: Options) {
   const tag = getTimestampString(timestamp)
 
   // Connect to Shadow (Server) Database
-  const db = new Pool({
-    // @ts-expect-error
-    connectionString: config.output.server.dbCredentials.url
-  })
+  // @ts-expect-error TODO: Define Types
+  const connectionString = config.output.server?.dbCredentials?.url
+  if (!connectionString) {
+    throw new Error(
+      "Connection string not found in Letsync Config (server.dbCredentials.url)"
+    )
+  }
+  const db = new Pool({ connectionString })
   const client = await db.connect()
 
   // Check if the client schema already exists and whether there are any changes.

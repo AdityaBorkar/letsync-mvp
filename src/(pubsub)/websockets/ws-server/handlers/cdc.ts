@@ -1,11 +1,7 @@
-import type { WsMessage_Schema } from "@/(pubsub)/websockets/utils/ws-rpc-library/type-helpers.js"
+import type { WsHandlerType } from "../index.js"
 
-import type { WsCtx } from "../index.js"
-
-export async function cdc_get(
-  _data: WsMessage_Schema<"server.cdc.get">["payload"],
-  _context: WsCtx
-) {
+export const cdc_get: WsHandlerType<"cdc"> = (payload, emit, ctx) => {
+  console.log({ ctx, emit, payload })
   // const { userId, cursor, name, subscribeChanges } = props
   // // const db = (context.db.get(name)?.client as any)?.$client
   // // if (!db) {

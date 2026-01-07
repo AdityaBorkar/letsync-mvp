@@ -1,79 +1,96 @@
-import type { WsMessageType } from "../contract.js"
-import type { Callback, RequestStore } from "../request-store.js"
-import type { ExtractMethodName, WsMessage_Schema } from "./type-helpers.js"
+import type { Type } from "arktype"
+
+import type { RequestStore } from "./request-store.js"
+import type {
+  $Extract_WsMethodNames,
+  $GetSchemaOf_WsMessage,
+  EmitType,
+  WsMsgType
+} from "./type-helpers.js"
 
 // TODO: Improvements to Make
-// 1. Make the types accurate and avoid @ts-expect-error
+// 1. Error Handling and Logging
 // 2. Make references to the original code for better understanding
-// 3. Error Handling and Logging
 
-export function createWsHandlerContext<Context, Message extends WsMessageType>({
+export type LimitedWs = {
+  send: (message: string) => void
+}
+
+export function createWsHandlerContext<
+  Context,
+  Ws extends LimitedWs,
+  Message extends MessageSchema["infer"],
+  MessageSchema extends Type<WsMsgType>
+>({
   message,
   ws,
   context,
-  reqManager
+  ReqManager
 }: {
+  MsgSchema: MessageSchema
   message?: Message
-  ws: WebSocket
+  ws: Ws
   context: Context
-  reqManager: ReturnType<typeof RequestStore>
+  ReqManager: ReturnType<typeof RequestStore>
 }) {
   const { type, requestId } = message ?? {}
   const [, method] = (type || "").split(".")
 
-  type MethodName = ExtractMethodName<"client", WsMessageType["type"]>
+  type MsgSchema = MessageSchema["infer"]
+  type MethodNames = $Extract_WsMethodNames<"client", Message["type"]>
 
-  function executeRPC<T extends MethodName>(
+  function executeRPC<T extends MethodNames>(
     method: T,
-    payload: WsMessage_Schema<`client.${T}.get`>["payload"]
+    payload: $GetSchemaOf_WsMessage<`client.${T}.get`, MsgSchema>["payload"]
   ) {
-    // const ping = rpc.ping({})
-    type ResultType = WsMessage_Schema<`server.${T}.result`>["payload"]
+    const requestId = ReqManager.create()
 
-    const response: unknown[] = []
-
-    const result = new Promise<ResultType>((resolve) => {
-      const callback: Callback = (props) => {
-        const { type, payload, requestId } = props
-        response.push(payload)
-        if (type === `server.${method}.result`) {
-          reqManager.markAsResolved(requestId)
-          // @ts-expect-error
-          resolve(payload as ResultType)
+    const on = (event: string, cbk: (payload: unknown) => void) => {
+      ReqManager.update(requestId, (message) => {
+        if (message.type === `server.${method}.${event}`) {
+          cbk(message.payload)
         }
-      }
-      const requestId = reqManager.add({ callback })
+      })
+    }
 
-      const type = `client.${method}.get`
-      const message = { messageId: null, payload, requestId, type }
-      ws.send(JSON.stringify(message))
+    type ResultType = $GetSchemaOf_WsMessage<
+      `server.${T}.result`,
+      MsgSchema
+    >["payload"]
+    const result = new Promise<ResultType>((resolve) => {
+      on("result", (payload) => {
+        ReqManager.markAsResolved(requestId)
+        // // @ts-expect-error TODO: Implement Error Handling
+        resolve(payload as ResultType)
+      })
     })
 
-    const on = (event: string, callback: (payload: unknown) => void) => {
-      console.log({ callback, event })
-      // const callback: Callback = (props) => {
-      //   const { type, payload, requestId } = props
-      //   response.push(payload)
-      //   if (type === `server.${method}.result`) {
-      //     reqManager.markAsResolved(requestId)
-      //     resolve(payload as ResultType)
-      //   }
-      // }
-    }
+    ws.send(
+      JSON.stringify({
+        messageId: null,
+        payload,
+        requestId,
+        type: `client.${method}.get`
+      })
+    )
 
     return { on, result }
   }
 
   const rpc = new Proxy(
     {} as {
-      [K in MethodName]: (
-        payload: WsMessage_Schema<`client.${K}.get`>["payload"]
-      ) => Promise<WsMessage_Schema<`server.${K}.result`>["payload"]>
+      [T in MethodNames]: (
+        payload: $GetSchemaOf_WsMessage<`client.${T}.get`, MsgSchema>["payload"]
+      ) => ReturnType<typeof executeRPC<T>>
     },
     {
-      get<T extends MethodName>(_: unknown, methodName: T) {
-        return (payload: WsMessage_Schema<`client.${T}.get`>["payload"]) =>
-          executeRPC(methodName, payload)
+      get<T extends MethodNames>(_: unknown, methodName: T) {
+        return (
+          payload: $GetSchemaOf_WsMessage<
+            `client.${T}.get`,
+            MsgSchema
+          >["payload"]
+        ) => executeRPC(methodName, payload)
       }
     }
   )
@@ -98,7 +115,11 @@ export function createWsHandlerContext<Context, Message extends WsMessageType>({
       ws.send(JSON.stringify(message))
     }
   }
-  type EmitType = Message extends undefined ? undefined : typeof emit
 
-  return { ...context, emit: emit as EmitType, executeRPC, rpc }
+  return {
+    ctx: { executeRPC, rpc, ...context },
+    emit: emit as Message extends undefined
+      ? undefined
+      : EmitType<MsgSchema, MethodNames>
+  }
 }

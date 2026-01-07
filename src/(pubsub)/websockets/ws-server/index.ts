@@ -1,6 +1,4 @@
-import type { Server, WebSocketHandler } from "bun"
-
-import { ArkErrors } from "arktype"
+import { type Server, sleep, type WebSocketHandler } from "bun"
 
 import {
   type Context,
@@ -8,10 +6,14 @@ import {
   LetsyncServer
 } from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
-import { WsMessageSchema } from "../utils/contract.js"
-import { RequestStore } from "../utils/request-store.js"
+import { WsMessageSchema, type WsMessageType } from "../utils/contract.js"
+import { onMessage } from "../utils/ws-rpc-library/on-message.js"
+import { RequestStore } from "../utils/ws-rpc-library/request-store.js"
+import type {
+  $Extract_WsMethodNames,
+  WsHandlerType
+} from "../utils/ws-rpc-library/type-helpers.js"
 import { handlers } from "./handlers/index.js"
-import { createWsContext } from "./utils/create-ws-context.js"
 
 type WsData = {
   reqManager: ReturnType<typeof RequestStore>
@@ -20,15 +22,15 @@ type WsData = {
   connectionTime: number
 }
 
-export type WsCtx = ReturnType<
-  typeof createWsContext<Omit<Context, "status" | "fetch">>
->
+export type WsHandler<
+  M extends $Extract_WsMethodNames<"client", WsMessageType["type"]>
+> = WsHandlerType<WsMessageType, M, Omit<Context, "status" | "fetch">>
 
-export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
+export function WebsocketServer(config: LetsyncConfig, name: string) {
   const { context } = LetsyncServer(config)
   const logger = new Logger(`[${name}]`)
 
-  async function apiHandler(
+  async function dataHandler(
     request: Request,
     server: Server<{
       userId: string
@@ -54,6 +56,12 @@ export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
     return
   }
 
+  async function ingestHandler(_request: Request) {
+    // TODO: Write to DB CDC
+    await sleep(1000)
+    // TODO: Propagate to all subscribers
+  }
+
   // const subscribeChanges = () => {}
   // const database =
   //   context.db.size === 1
@@ -73,38 +81,14 @@ export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
     },
     idleTimeout: 60 * 15, // 15 minutes
     message(ws, msg) {
-      const msg_string = msg.toString()
-      const message = WsMessageSchema(JSON.parse(msg_string))
-      if (message instanceof ArkErrors) {
-        logger.log("Invalid Message", { error: message.join("\n"), msg_string })
-        throw new Error("Invalid Message")
-      }
-
-      const { type, payload } = message
-      const [actor, method, event] = type.split(".")
-
-      // if (messageId) {
-      //   console.log({ messageId })
-      //   //   const request = ws.data.reqManager.get(requestId)
-      //   //   if (!request) {
-      //   //     logger.error("Request not found", requestId)
-      //   //     return
-      //   //   }
-      //   //   request.callback(payload)
-      // }
-      if (actor === "client") {
-        if (event === "get") {
-          const handler = handlers[method as keyof typeof handlers]
-          if (!handler) {
-            logger.error("Invalid message type", type)
-            return
-          }
-          // @ts-expect-error
-          const ws_ctx = createWsContext({ context, message, ws })
-          // @ts-expect-error
-          handler(payload, ws_ctx)
-        }
-      }
+      onMessage(msg, {
+        actor_env: "server",
+        context,
+        handlers,
+        MsgSchema: WsMessageSchema,
+        ReqManager: ws.data.reqManager,
+        ws
+      })
     },
     open(ws) {
       const { userId, deviceId } = ws.data
@@ -114,5 +98,5 @@ export function WebsocketServer(config: LetsyncConfig<Request>, name: string) {
     }
   }
 
-  return { apiHandler, wsHandler }
+  return { dataHandler, ingestHandler, wsHandler }
 }
