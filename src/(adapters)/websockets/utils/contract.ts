@@ -1,4 +1,4 @@
-import { Method } from "./ws-rpc-library/helpers.js"
+import { Method } from "../library-ws-rpc/helpers.js"
 
 const ping = Method.server("ping", {
   $input: "null",

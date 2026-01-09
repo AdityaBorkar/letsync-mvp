@@ -49,24 +49,24 @@
       "require": "./dist/(orm)/drizzle/index.cjs"
     },
     "./next": {
-      "types": "./dist/(framework)/next/index.d.cts",
-      "import": "./dist/(framework)/next/index.js",
-      "require": "./dist/(framework)/next/index.cjs"
+      "types": "./dist/(adapters)/next/index.d.cts",
+      "import": "./dist/(adapters)/next/index.js",
+      "require": "./dist/(adapters)/next/index.cjs"
     },
     "./react": {
-      "types": "./dist/(framework)/react/index.d.cts",
-      "import": "./dist/(framework)/react/index.js",
-      "require": "./dist/(framework)/react/index.cjs"
+      "types": "./dist/(adapters)/react/index.d.cts",
+      "import": "./dist/(adapters)/react/index.js",
+      "require": "./dist/(adapters)/react/index.cjs"
     },
     "./web-server": {
-      "types": "./dist/(framework)/web-server/index.d.cts",
-      "import": "./dist/(framework)/web-server/index.js",
-      "require": "./dist/(framework)/web-server/index.cjs"
+      "types": "./dist/(adapters)/web-server/index.d.cts",
+      "import": "./dist/(adapters)/web-server/index.js",
+      "require": "./dist/(adapters)/web-server/index.cjs"
     },
     "./ws": {
-      "types": "./dist/(pubsub)/websockets/index.d.cts",
-      "import": "./dist/(pubsub)/websockets/index.js",
-      "require": "./dist/(pubsub)/websockets/index.cjs"
+      "types": "./dist/(adapters)/websockets/index.d.cts",
+      "import": "./dist/(adapters)/websockets/index.js",
+      "require": "./dist/(adapters)/websockets/index.cjs"
     }
   },
   "files": [
@@ -114,10 +114,10 @@
     "exports": {
       ".": "./src/index.ts",
       "./drizzle": "./src/(orm)/drizzle/index.ts",
-      "./next": "./src/(framework)/next/index.ts",
-      "./react": "./src/(framework)/react/index.ts",
-      "./web-server": "./src/(framework)/web-server/index.ts",
-      "./ws": "./src/(pubsub)/websockets/index.ts"
+      "./next": "./src/(adapters)/next/index.ts",
+      "./react": "./src/(adapters)/react/index.ts",
+      "./web-server": "./src/(adapters)/web-server/index.ts",
+      "./ws": "./src/(adapters)/websockets/index.ts"
     }
   }
 }

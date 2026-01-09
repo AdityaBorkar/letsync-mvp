@@ -1,6 +1,6 @@
 import { ArkErrors, type Type } from "arktype"
 
-import { Logger } from "../../../../utils/logger.js"
+import { Logger } from "../../../utils/logger.js"
 import { createWsHandlerContext, type LimitedWs } from "./create-ws-context.js"
 import type { RequestStore } from "./request-store.js"
 import type { WsHandlerType, WsMsgType } from "./type-helpers.js"

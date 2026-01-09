@@ -1,4 +1,4 @@
-import type { WsHandler } from "@/(adapters)/websockets/ws-server/index.js"
+import type { WsHandler } from "@/(adapters)/websockets/server/index.js"
 
 export const live_get: WsHandler<"live"> = (payload, _emit, ctx) => {
   const TOPICS = ctx.ws.data.topics

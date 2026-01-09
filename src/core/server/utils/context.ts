@@ -1,8 +1,8 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 
-import type { Config } from "@/core/server/config.js"
+import type { ServerContext } from "@/core/server/config.js"
 
-export type ContextType = Config & {
+export type ContextType = ServerContext & {
   debug?: {
     prefix?: string
     color?: string

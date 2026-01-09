@@ -1,13 +1,13 @@
 import type { NextRequest } from "next/server.js"
 
 import { apiHandler as apiHandlerCore } from "@/core/server/api-handler.js"
-import type { Config } from "@/core/server/index.js"
+import type { ServerContext } from "@/core/server/index.js"
 
 export function apiHandler({
   config,
   debug
 }: {
-  config: Config
+  config: ServerContext
   debug?: {
     prefix?: string
     color?: string
