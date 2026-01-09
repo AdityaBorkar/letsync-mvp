@@ -57,6 +57,11 @@
       "import": "./dist/(adapters)/websockets/index.js",
       "require": "./dist/(adapters)/websockets/index.cjs",
       "types": "./dist/(adapters)/websockets/index.d.cts"
+    },
+    "./ws-server-patch": {
+      "import": "./dist/(adapters)/ws-server-patch/index.js",
+      "require": "./dist/(adapters)/ws-server-patch/index.cjs",
+      "types": "./dist/(adapters)/ws-server-patch/index.d.cts"
     }
   },
   "files": ["dist", "LICENSE.md", "package.json", "README.md"],
@@ -97,7 +102,8 @@
       "./next": "./src/(adapters)/next/index.ts",
       "./react": "./src/(adapters)/react/index.ts",
       "./web-server": "./src/(adapters)/web-server/index.ts",
-      "./ws": "./src/(adapters)/websockets/index.ts"
+      "./ws": "./src/(adapters)/websockets/index.ts",
+      "./ws-server-patch": "./src/(adapters)/ws-server-patch/index.ts"
     }
   }
 }

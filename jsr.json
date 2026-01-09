@@ -5,7 +5,8 @@
     "./next": "./src/(adapters)/next/index.ts",
     "./react": "./src/(adapters)/react/index.ts",
     "./web-server": "./src/(adapters)/web-server/index.ts",
-    "./ws": "./src/(adapters)/websockets/index.ts"
+    "./ws": "./src/(adapters)/websockets/index.ts",
+    "./ws-server-patch": "./src/(adapters)/ws-server-patch/index.ts"
   },
   "name": "letsync",
   "publish": {
