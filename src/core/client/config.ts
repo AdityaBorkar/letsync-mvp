@@ -29,9 +29,11 @@ export type Context = {
   fetch: ReturnType<typeof FetchClient>
 }
 
+type ClientAuthMiddleware = () => Promise<{ userId: string; deviceId: string }>
+
 export type Config = {
   apiUrl: string
-  auth: ApiHandlerAuth
+  auth: ClientAuthMiddleware
   connections: (
     | ClientPubSub.Adapter
     | ClientDb.Adapter<unknown>

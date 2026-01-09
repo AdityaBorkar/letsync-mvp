@@ -3,7 +3,7 @@ import type { Context } from "@/core/client/config.js"
 
 import type { SQL_Schemas } from "./schemas.js"
 
-type GenericObject = { [key: string]: string | boolean | GenericObject }
+export type GenericObject = { [key: string]: string | boolean | GenericObject }
 
 export namespace ClientDb {
   export type Adapter<T> = {

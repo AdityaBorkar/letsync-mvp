@@ -1,11 +1,8 @@
 import { ArkErrors, type Type } from "arktype"
 
-import { Logger } from "../../../utils/logger.js"
 import { createWsHandlerContext, type LimitedWs } from "./create-ws-context.js"
 import type { RequestStore } from "./request-store.js"
 import type { WsHandlerType, WsMsgType } from "./type-helpers.js"
-
-const logger = new Logger("WS-RPC")
 
 export function onMessage<
   Context,
@@ -29,8 +26,9 @@ export function onMessage<
   const msg_string = msg.toString()
   const message = MsgSchema(JSON.parse(msg_string))
   if (message instanceof ArkErrors) {
-    logger.log("Invalid Message", { error: message.join("\n"), msg_string })
-    throw new Error("Invalid Message")
+    throw new Error("Invalid Message", {
+      cause: { error: message.join("\n"), msg_string }
+    })
   }
 
   // Message

@@ -1,8 +1,8 @@
 import type { SQL_Schemas } from "@/types/index.js"
 
-import { VERSION_KEY } from "../../../core/client/constants.js"
-import { tryCatch } from "../../../utils/try-catch.js"
-import type { DrizzleClientDb } from "./index.js"
+import { VERSION_KEY } from "../../../../core/client/constants.js"
+import { tryCatch } from "../../../../utils/try-catch.js"
+import type { DrizzleClientDb } from "../index.js"
 import { metadata } from "./metadata.js"
 
 export const schema = { initialize, introspect, list, migrate }

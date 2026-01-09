@@ -16,7 +16,7 @@ export function connect(props: {
   wsUrl: string | undefined
   context: Omit<Context, "status" | "fetch">
 }) {
-  const logger = new Logger("SYNC:WS")
+  const logger = new Logger({ color: "#fff", prefix: "LETSYNC_CLIENT_WS" })
 
   const { client, context } = props
   const ws = new window.WebSocket(props.wsUrl || "")

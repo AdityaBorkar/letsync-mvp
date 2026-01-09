@@ -2,9 +2,9 @@ import type { Context } from "@/core/client/config.js"
 import type { ClientDb } from "@/types/client.js"
 import type { SQL_Schemas } from "@/types/index.js"
 
-import { Logger } from "../../../../utils/logger.js"
 import { tryCatch } from "../../../../utils/try-catch.js"
 import { VERSION_KEY } from "../../constants.js"
+import { logger } from "../../utils/logger.js"
 import { SchemaCheckForUpdates } from "../schema-check-for-updates.js"
 import { SchemaUpgrade } from "../schema-upgrade.js"
 
@@ -15,8 +15,6 @@ export async function initDb(props: {
   autoUpgrade: boolean
 }) {
   const { context, db, checkForUpdates, autoUpgrade } = props
-
-  const logger = new Logger(db.name)
 
   logger.log("Connecting")
   await db.connect()

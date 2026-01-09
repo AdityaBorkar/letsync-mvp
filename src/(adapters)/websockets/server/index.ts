@@ -2,11 +2,7 @@ import type { Server, ServerWebSocket, WebSocketHandler } from "bun"
 
 import type { ingestHelperFn } from "@/types/index.js"
 
-import {
-  ServerConfig,
-  type ServerContext
-} from "../../../core/server/config.js"
-import { Logger } from "../../../utils/logger.js"
+import type { ServerContext } from "../../../core/server/config.js"
 import { onMessage } from "../library-ws-rpc/on-message.js"
 import { RequestStore } from "../library-ws-rpc/request-store.js"
 import type {
@@ -15,6 +11,8 @@ import type {
 } from "../library-ws-rpc/type-helpers.js"
 import { WsMessageSchema, type WsMessageType } from "../utils/contract.js"
 import { handlers } from "./handlers/index.js"
+import { Context } from "./utils/context.js"
+import { logger } from "./utils/logger.js"
 
 type WsData = {
   reqManager: ReturnType<typeof RequestStore>
@@ -34,18 +32,20 @@ export type WsHandler<
 >
 
 export async function WsServer(props: {
-  config: ServerContext
-  name: string
+  context: ServerContext
+  debug?: {
+    prefix?: string
+    color?: string
+  }
   ingest: ingestHelperFn
 }) {
-  const { config, name, ingest } = props
-  const { context } = ServerConfig(config)
-  const logger = new Logger(`[${name}]`)
+  const { context, debug, ingest } = props
+  Context.enterWith({ ...context, ...(debug || {}) })
 
-  const db =
-    context.db.size === 1
-      ? context.db.values().next().value
-      : context.db.get(config.shadowDbName || "") // TODO: HARDCODE
+  const db = context.db.values().next().value
+  // context.db.size === 1
+  //   ? context.db.values().next().value
+  //   : context.db.get(context.shadowDbName || "") // TODO: HARDCODE
   if (!db) {
     throw new Error("Database not found")
   }
@@ -112,6 +112,7 @@ export async function WsServer(props: {
     }
 
     const topics = [
+      // TODO: DO NOT HARDCODE
       "poc_replication.public.transactions",
       "poc_replication.public.accounts"
     ]

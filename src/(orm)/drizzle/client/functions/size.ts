@@ -1,4 +1,4 @@
-import type { DrizzleClientDb } from "./index.js"
+import type { DrizzleClientDb } from "../index.js"
 
 export async function size(db: DrizzleClientDb) {
   const data = await db.execute(

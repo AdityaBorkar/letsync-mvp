@@ -1,5 +1,3 @@
-import { Logger } from "../../../utils/logger.js"
-
 export type Callback = ({
   type,
   payload,
@@ -11,8 +9,6 @@ export type Callback = ({
 }) => void
 
 type Status = "pending" | "resolved"
-
-const logger = new Logger("WS:REQUEST-STORE")
 
 export function RequestStore() {
   const store = new Map<string, { callbacks: Callback[]; status: Status }>()
@@ -29,16 +25,14 @@ export function RequestStore() {
     markAsResolved(requestId: string) {
       const request = store.get(requestId)
       if (!request) {
-        logger.error("Request not found", requestId)
-        throw new Error("Request not found")
+        throw new Error("Request not found", { cause: { requestId } })
       }
       request.status = "resolved"
     },
     update(requestId: string, callback: Callback) {
       const existing = store.get(requestId)
       if (!existing) {
-        logger.error("Request not found", requestId)
-        throw new Error("Request not found")
+        throw new Error("Request not found", { cause: { requestId } })
       }
       const callbacks = [...existing.callbacks, callback]
       store.set(requestId, { ...existing, callbacks })

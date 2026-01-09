@@ -1,6 +1,6 @@
 import { ArkErrors, type } from "arktype"
 
-import type { Context } from "../config.js"
+import type { ServerContext } from "../config.js"
 import { ResponseError } from "../utils/return-error.js"
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
@@ -10,7 +10,7 @@ const schema = type({
   name: "string"
 })
 
-export async function schemaLatest(request: Request, context: Context) {
+export async function schemaLatest(request: Request, context: ServerContext) {
   const { searchParams } = new URL(request.url)
   const data = schema({
     name: searchParams.get("name")

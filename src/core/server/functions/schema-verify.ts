@@ -1,6 +1,6 @@
-import type { Context } from "../config.js"
+import type { ServerContext } from "../config.js"
 
-export async function schemaVerify(request: Request, context: Context) {
+export async function schemaVerify(request: Request, context: ServerContext) {
   const body = await request.json()
   const { schema, version } = body
 

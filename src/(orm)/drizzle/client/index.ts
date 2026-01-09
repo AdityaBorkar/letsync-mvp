@@ -1,16 +1,15 @@
 import type { PGlite } from "@electric-sql/pglite"
 import type { PgliteDatabase } from "drizzle-orm/pglite"
 
-import type { ClientDb, GenericObject } from "@/types/client.js"
-import type { SQL_Schemas } from "@/types/index.js"
+import type { ClientDb } from "@/types/client.js"
 
-import { close } from "./close.js"
-import { connect } from "./connect.js"
-import { dumpData } from "./dumpData.js"
-import { flush } from "./flush.js"
-import { metadata } from "./metadata.js"
-import { schema } from "./schema.js"
-import { size } from "./size.js"
+import { close } from "./functions/close.js"
+import { connect } from "./functions/connect.js"
+import { dumpData } from "./functions/dump-data.js"
+import { flush } from "./functions/flush.js"
+import { metadata } from "./functions/metadata.js"
+import { schema } from "./functions/schema.js"
+import { size } from "./functions/size.js"
 
 type pglite<S extends Record<string, unknown>> = PgliteDatabase<S> & {
   $client: PGlite
@@ -26,7 +25,7 @@ export function ClientDB<
 >(props: { client: T; name: string }) {
   const { client, name } = props
   // TODO: DO NOT ALLOW DIRECT WRITES TO TABLES (IMPLEMENT USING USER ROLES / ACL)
-  return {
+  const entity: ClientDb.Adapter<T> = {
     __brand: "LETSYNC_CLIENT_DB",
     client,
     close: () => close(client),
@@ -34,21 +33,18 @@ export function ClientDB<
     export: (_: Parameters<typeof dumpData>[1]) => dumpData(client, _),
     flush: () => flush(client),
     metadata: {
-      get: (key: string) => metadata.get(client, key),
-      remove: (key: string) => metadata.remove(client, key),
-      set: (key: string, value: string | boolean | GenericObject) =>
-        metadata.set(client, key, value)
+      get: (key) => metadata.get(client, key),
+      remove: (key) => metadata.remove(client, key),
+      set: (key, value) => metadata.set(client, key, value)
     },
     name,
     schema: {
-      initialize: ($schema: SQL_Schemas.Schema) =>
-        schema.initialize(client, { schema: $schema }),
+      initialize: ($schema) => schema.initialize(client, { schema: $schema }),
       introspect: () => schema.introspect(client),
-      list: (props?: Parameters<(typeof schema)["list"]>[1]) =>
-        schema.list(client, props),
-      migrate: (props: Parameters<(typeof schema)["migrate"]>[1]) =>
-        schema.migrate(client, props)
+      list: (props) => schema.list(client, props),
+      migrate: (props) => schema.migrate(client, props)
     },
     size: () => size(client)
-  } satisfies ClientDb.Adapter<T>
+  }
+  return entity
 }

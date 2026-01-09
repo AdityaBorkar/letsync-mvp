@@ -1,7 +1,6 @@
-import { schemaVerify } from "@/core/server/functions/schema-verify.js"
-
 import { schemaLatest } from "./functions/schema-latest.js"
 import { schemaMigration } from "./functions/schema-migration.js"
+import { schemaVerify } from "./functions/schema-verify.js"
 
 export const API_ENDPOINTS = {
   "/schema/latest": {
