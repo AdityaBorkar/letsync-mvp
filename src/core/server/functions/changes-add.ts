@@ -1,4 +1,4 @@
-import type { Context } from "../config/index.js"
+import type { Context } from "../config.js"
 
 export async function changesAdd(request: Request, _: Context) {
   const input = await request.json()

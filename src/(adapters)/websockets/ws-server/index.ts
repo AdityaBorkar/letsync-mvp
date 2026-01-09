@@ -3,10 +3,10 @@ import type { Server, ServerWebSocket, WebSocketHandler } from "bun"
 import type { ingestHelperFn } from "@/types/index.js"
 
 import {
+  type Config,
   type Context,
-  type LetsyncConfig,
   ServerConfig
-} from "../../../core/server/config/index.js"
+} from "../../../core/server/config.js"
 import { Logger } from "../../../utils/logger.js"
 import { WsMessageSchema, type WsMessageType } from "../utils/contract.js"
 import { onMessage } from "../utils/ws-rpc-library/on-message.js"
@@ -35,7 +35,7 @@ export type WsHandler<
 >
 
 export async function WsServer(props: {
-  config: LetsyncConfig
+  config: Config
   name: string
   ingest: ingestHelperFn
 }) {

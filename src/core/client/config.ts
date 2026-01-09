@@ -1,17 +1,17 @@
 import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.js"
 import type { ApiHandlerAuth } from "@/types/context.js"
 
-import { FetchClient } from "../../../utils/fetch-client.js"
-import { Signal } from "../../../utils/signal.js"
+import { FetchClient } from "../../utils/fetch-client.js"
+import { Signal } from "../../utils/signal.js"
 // import { DeviceDeregister } from "./functions/device-deregister.js";
 // import { DeviceRegister } from "./functions/device-register.js";
-import { EventManager } from "../functions/event-manager.js"
-import { SchemaCheckForUpdates } from "../functions/schema-check-for-updates.js"
-import { SchemaList } from "../functions/schema-list.js"
-import { SchemaUpgrade } from "../functions/schema-upgrade.js"
-import { SchemaVerify } from "../functions/schema-verify.js"
-import { SyncStart } from "../functions/sync-start.js"
-import { SyncTerminate } from "../functions/sync-terminate.js"
+import { EventManager } from "./functions/event-manager.js"
+import { SchemaCheckForUpdates } from "./functions/schema-check-for-updates.js"
+import { SchemaList } from "./functions/schema-list.js"
+import { SchemaUpgrade } from "./functions/schema-upgrade.js"
+import { SchemaVerify } from "./functions/schema-verify.js"
+import { SyncStart } from "./functions/sync-start.js"
+import { SyncTerminate } from "./functions/sync-terminate.js"
 
 export type ClientConfig = ReturnType<typeof ClientConfig>
 

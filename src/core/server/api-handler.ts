@@ -34,6 +34,7 @@ export async function apiHandler<R extends Request>(
   // TODO: Build Time Generated (Pendering) for non-OTA
   // TODO: ISR for OTA
   // TODO: Remove the Authentication once ISR is implemented
+
   const auth = await ctx.auth(request)
   if ("status" in auth) {
     const { message, status } = auth

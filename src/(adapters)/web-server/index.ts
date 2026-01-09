@@ -1,11 +1,11 @@
 import { apiHandler } from "@/core/server/api-handler.js"
-import type { LetsyncConfig } from "@/core/server/config/index.js"
+import type { Config } from "@/core/server/index.js"
 
 export function ApiServer({
   config,
   debug
 }: {
-  config: LetsyncConfig
+  config: Config
   debug?: {
     prefix?: string
     color?: string

@@ -1,8 +1,6 @@
 import { ArkErrors, type } from "arktype"
 
-// import { Pool } from "pg"
-
-import type { Context } from "../config/index.js"
+import type { Context } from "../config.js"
 import { ResponseError } from "../utils/return-error.js"
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
@@ -24,19 +22,19 @@ export async function schemaLatest(request: Request, context: Context) {
   await new Promise((resolve) => setTimeout(resolve, 1000))
   console.log(context)
   return ResponseError(`TEMPORARILY DISABLED FOR CF WORKERS DEV`)
-
-  // const { name } = data
-  // const db = new Pool({
-  //   // TODO: USE THE CORRECT DYNAMIC DATABASE DEFINED IN CONFIG
-  //   connectionString: context.db.get(name)?.dbCredentials.url
-  // })
-  // const result = await db.query(
-  //   `SELECT id, init_sql, tag FROM letsync.client_schema WHERE name = $1 AND is_rolled_back = false ORDER BY created_at DESC LIMIT 1`,
-  //   [name]
-  // )
-  // const latestSchema = result.rows[0]
-  // if (!latestSchema) {
-  //   return ResponseError(`Latest schema for '${name}' not found`)
-  // }
-  // return Response.json(latestSchema)
 }
+
+// const { name } = data
+// const db = new Pool({
+//   // TODO: USE THE CORRECT DYNAMIC DATABASE DEFINED IN CONFIG
+//   connectionString: context.db.get(name)?.dbCredentials.url
+// })
+// const result = await db.query(
+//   `SELECT id, init_sql, tag FROM letsync.client_schema WHERE name = $1 AND is_rolled_back = false ORDER BY created_at DESC LIMIT 1`,
+//   [name]
+// )
+// const latestSchema = result.rows[0]
+// if (!latestSchema) {
+//   return ResponseError(`Latest schema for '${name}' not found`)
+// }
+// return Response.json(latestSchema)

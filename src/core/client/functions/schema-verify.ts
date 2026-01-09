@@ -1,4 +1,4 @@
-import type { Context } from "../config/index.js"
+import type { Context } from "../config.js"
 import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaVerify(

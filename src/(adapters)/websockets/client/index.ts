@@ -1,6 +1,5 @@
 import type { ClientPubSub } from "@/types/client.js"
 
-import { generateName } from "../../../utils/generate-name.js"
 import { connect } from "./methods/connect.js"
 import { disconnect } from "./methods/disconnect.js"
 
@@ -11,14 +10,14 @@ export type ClientState = {
 }
 
 export function PubSubClient({
-  name = generateName(),
+  name,
   syncItems = {
     db: [],
     fs: []
   },
   wsUrl
 }: {
-  name?: string
+  name: string
   syncItems?: {
     db: string[]
     fs: string[]

@@ -1,4 +1,4 @@
-import type { Context } from "@/core/client/config/index.js"
+import type { Context } from "@/core/client/config.js"
 
 import { CURSOR_KEY } from "../../../../core/client/constants.js"
 // import { WsMessageSchema, type WsMessageType } from "../../utils/contract.js"

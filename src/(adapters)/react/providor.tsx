@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useImportType: REACT
 import React from "react"
 
-import type { ClientConfig } from "@/core/client/config/index.js"
+import type { ClientConfig } from "@/core/client/config.js"
 
 import { Context } from "./context.js"
 

@@ -8,6 +8,13 @@ export type ingestHelperFn = (
   | { success: false; error: string }
 >
 
+export type ServerAuthMiddleware = (
+  request: Request
+) => Promise<
+  | { userId: string; deviceId: string }
+  | { message: string; status: 401 | 403 | 404 | 500 }
+>
+
 export namespace ServerDb {
   export type Adapter<T> = {
     __brand: "LETSYNC_SERVER_DB"

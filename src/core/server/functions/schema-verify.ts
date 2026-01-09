@@ -1,6 +1,6 @@
-import type { ApiContext } from "../api-endpoints.js"
+import type { Context } from "../config.js"
 
-export async function schemaVerify(request: Request, context: ApiContext) {
+export async function schemaVerify(request: Request, context: Context) {
   const body = await request.json()
   const { schema, version } = body
 

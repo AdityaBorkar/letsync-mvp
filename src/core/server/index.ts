@@ -2,4 +2,5 @@
 
 export { API_ENDPOINTS } from "./api-endpoints.js"
 export { apiHandler } from "./api-handler.js"
-// export type { ApiContext } from "./types.js"
+export type { ServerContext } from "./config.js"
+export { ServerConfig } from "./config.js"
