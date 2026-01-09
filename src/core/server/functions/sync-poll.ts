@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 
 export function getData_POLL(__: Request, _: Context) {
   // const isAnonymous = session?.user?.isAnonymous;

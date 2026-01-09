@@ -1,6 +1,6 @@
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { SQL_Schemas } from "@/types/index.js"
 
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaList(

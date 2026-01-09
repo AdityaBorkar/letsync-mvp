@@ -1,12 +1,15 @@
-// TODO: Make coloring compatible with server-side
+type LoggerProps = { color: string; prefix: string }
 
 export class Logger {
-  private readonly prefix: string
-  private readonly color: string
+  private readonly getConfig?: () => LoggerProps
+  private readonly props?: LoggerProps
 
-  constructor(prefix: string, color: null | string = null) {
-    this.prefix = prefix
-    this.color = color ?? "#fff"
+  constructor(props: LoggerProps | (() => LoggerProps)) {
+    if (typeof props === "function") {
+      this.getConfig = props
+    } else {
+      this.props = props
+    }
   }
 
   warn(title: string, ...messages: unknown[]) {
@@ -22,10 +25,16 @@ export class Logger {
   }
 
   private render(...msgs: unknown[]) {
+    // TODO: Make coloring compatible with server-side
+    const { color, prefix } = this.getConfig?.() ??
+      this.props ?? { color: "#fff", prefix: "Letsync Logger" }
     return [
-      `%c[${this.prefix}]`,
-      `background-color: ${this.color}; color: #000;`,
+      `%c[${prefix}]`,
+      `background-color: ${color}; color: #000;`,
       ...msgs
     ]
   }
+
+  // TODO: Support Traces and Context
+  // TODO: Support Single Log File Format
 }

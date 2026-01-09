@@ -1,7 +1,7 @@
 // import { createId } from "@paralleldrive/cuid2";
 // import jwt from "jsonwebtoken";
 
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 
 // import getLatestSchema from "../schema/getLatest.js";
 

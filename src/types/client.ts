@@ -1,5 +1,5 @@
 // biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
-import type { Context } from "@/core/client/config.js"
+import type { Context } from "@/core/client/config/index.js"
 
 import type { SQL_Schemas } from "./schemas.js"
 

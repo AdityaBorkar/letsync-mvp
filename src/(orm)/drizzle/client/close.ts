@@ -1,4 +1,4 @@
-import type { DrizzleClientDb } from "./types.js"
+import type { DrizzleClientDb } from "./index.js"
 
 export function close(client: DrizzleClientDb) {
   const { $client } = client

@@ -1,7 +1,6 @@
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { SQL_Schemas } from "@/types/index.js"
 
-// import { sql } from "./sql.js"
-import type { DrizzleServerDb } from "./types.js"
+import type { DrizzleServerDb } from "./index.js"
 
 export const schema = { list }
 

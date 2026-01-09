@@ -23,14 +23,20 @@ export namespace SQL_Schemas {
   }
 
   export type CdcRecord = {
-    id: string
-    kind: "insert" | "update" | "delete"
-    target_columns: string[]
-    target_schema: string
-    target_table: string
-    target_values: string[]
-    timestamp: string
-    user_id: string
+    mvcc_ts: string
+    table_name: string
+    key: string
+    type: "insert" | "update" | "delete"
+    updated: string
+    changes: Record<string, unknown>
+    // id: string
+    // kind: "insert" | "update" | "delete"
+    // target_columns: string[]
+    // target_schema: string
+    // target_table: string
+    // target_values: string[]
+    // timestamp: string
+    // user_id: string
     // tenant_id: string
   }
 

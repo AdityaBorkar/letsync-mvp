@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 import { initDb } from "./init/db.js"
 import { initFs } from "./init/fs.js"
 import { initPubsub } from "./init/pubsub.js"

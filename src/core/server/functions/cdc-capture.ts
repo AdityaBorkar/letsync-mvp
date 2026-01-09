@@ -1,4 +1,4 @@
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 
 export async function cdcCapture(__: Request, _: Context) {
   // const { pubsub, db } = _;

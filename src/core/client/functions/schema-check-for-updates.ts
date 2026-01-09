@@ -2,7 +2,7 @@
 
 import type { ClientDb } from "@/types/client.js"
 
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 import { VERSION_KEY } from "../constants.js"
 
 export async function SchemaCheckForUpdates(

@@ -2,7 +2,7 @@ import { ArkErrors, type } from "arktype"
 
 // import { Pool } from "pg"
 
-import type { Context } from "../config.js"
+import type { Context } from "../config/index.js"
 import { ResponseError } from "../utils/return-error.js"
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)

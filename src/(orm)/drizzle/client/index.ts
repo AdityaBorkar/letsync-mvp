@@ -1,7 +1,9 @@
-import type { ClientDb, GenericObject } from "@/types/client.js"
-import type { SQL_Schemas } from "@/types/schemas.js"
+import type { PGlite } from "@electric-sql/pglite"
+import type { PgliteDatabase } from "drizzle-orm/pglite"
 
-import { generateName } from "../../../utils/generate-name.js"
+import type { ClientDb, GenericObject } from "@/types/client.js"
+import type { SQL_Schemas } from "@/types/index.js"
+
 import { close } from "./close.js"
 import { connect } from "./connect.js"
 import { dumpData } from "./dumpData.js"
@@ -9,13 +11,20 @@ import { flush } from "./flush.js"
 import { metadata } from "./metadata.js"
 import { schema } from "./schema.js"
 import { size } from "./size.js"
-import type { DrizzleClientDb_typed } from "./types.js"
+
+type pglite<S extends Record<string, unknown>> = PgliteDatabase<S> & {
+  $client: PGlite
+}
+
+export type DrizzleClientDb = pglite<Record<string, unknown>>
+
+export type DrizzleClientDb_typed<S extends Record<string, unknown>> = pglite<S>
 
 export function ClientDB<
   T extends DrizzleClientDb_typed<S>,
   S extends Record<string, unknown>
->(props: { client: T; name?: string }) {
-  const { client, name = generateName() } = props
+>(props: { client: T; name: string }) {
+  const { client, name } = props
   // TODO: DO NOT ALLOW DIRECT WRITES TO TABLES (IMPLEMENT USING USER ROLES / ACL)
   return {
     __brand: "LETSYNC_CLIENT_DB",

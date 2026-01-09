@@ -1,7 +1,7 @@
-import type { ApiEndpoints } from "../core/server/api-endpoints.js"
+import type { API_ENDPOINTS } from "../core/server/api-endpoints.js"
 
-type ApiPaths = keyof typeof ApiEndpoints
-type ApiMethods<T extends ApiPaths> = keyof (typeof ApiEndpoints)[T]
+type ApiPaths = keyof typeof API_ENDPOINTS
+type ApiMethods<T extends ApiPaths> = keyof (typeof API_ENDPOINTS)[T]
 
 export function FetchClient(apiUrl: string) {
   const $fetch = async <Path extends ApiPaths, Method extends ApiMethods<Path>>(

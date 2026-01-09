@@ -1,6 +1,6 @@
 import { sql as drizzleSql } from "drizzle-orm"
 
-import type { DrizzleServerDb } from "./types.js"
+import type { DrizzleServerDb } from "./index.js"
 
 export function sql<T>(
   db: DrizzleServerDb,

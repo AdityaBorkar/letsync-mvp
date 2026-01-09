@@ -1,4 +1,4 @@
-import type { DrizzleClientDb } from "./types.js"
+import type { DrizzleClientDb } from "./index.js"
 
 export function dumpData(
   client: DrizzleClientDb,

@@ -1,6 +1,13 @@
 // biome-ignore-all lint/style/noNamespace: FOR INTERNAL USE ONLY
 import type { SQL_Schemas } from "./schemas.js"
 
+export type ingestHelperFn = (
+  body: string
+) => Promise<
+  | { success: true; cdc_records: SQL_Schemas.CdcRecord[] }
+  | { success: false; error: string }
+>
+
 export namespace ServerDb {
   export type Adapter<T> = {
     __brand: "LETSYNC_SERVER_DB"

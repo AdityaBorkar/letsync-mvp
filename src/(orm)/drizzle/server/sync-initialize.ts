@@ -8,7 +8,7 @@
 // import type { SQL_Schemas } from "@/types/schemas.js"
 
 import { connect } from "./connect.js"
-import type { DrizzleServerDb } from "./types.js"
+import type { DrizzleServerDb } from "./index.js"
 
 export async function syncInitialize(client: DrizzleServerDb, params: "wal") {
   await connect(client)

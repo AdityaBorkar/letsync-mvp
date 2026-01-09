@@ -1,4 +1,4 @@
-import type { DrizzleServerDb } from "./types.js"
+import type { DrizzleServerDb } from "./index.js"
 
 export function connect(client: DrizzleServerDb) {
   const { $client } = client

@@ -1,10 +1,16 @@
-import type { ServerDb } from "@/types/index.js"
+import type { NodePgDatabase } from "drizzle-orm/node-postgres"
+import type { Pool } from "pg"
+
+import type { ServerDb } from "@/types/server.js"
 
 import { close } from "./close.js"
 import { connect } from "./connect.js"
 import { schema } from "./schema.js"
 import { syncInitialize } from "./sync-initialize.js"
-import type { DrizzleServerDb } from "./types.js"
+
+export type DrizzleServerDb = NodePgDatabase<Record<string, unknown>> & {
+  $client: Pool
+}
 
 export function ServerDB<T extends DrizzleServerDb>({
   name,

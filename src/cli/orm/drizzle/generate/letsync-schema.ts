@@ -2,7 +2,7 @@ export const letsync_schema = `
 import { boolean, cockroachSchema, jsonb, text, timestamp, uuid } from "drizzle-orm/cockroach-core"
 import { v7 as uuidv7 } from "uuid"
 
-export const letsync = cockroachSchema("letsync")
+export const letsync = cockroachSchema("__letsync__")
 
 export const clientMetadataType = letsync.enum("client_metadata_type", [
   "string",
@@ -42,28 +42,27 @@ export const mutations = letsync.table("mutation", {
   status: mutationStatus().notNull()
 })
 
+export const cdcOperationType = letsync.enum("cdc_operation_type", [
+  "insert",
+  "update",
+  "delete"
+])
+
 export const cdcRecords = letsync.table("cdc_record", {
-  id: text()
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
-  kind: text({ enum: ["insert", "update", "delete"] }).notNull(),
-  lsn: text().notNull(),
-  target_columns: jsonb().notNull(),
-  target_schema: text().notNull(),
-  target_table: text().notNull(),
-  target_values: jsonb().notNull(),
+  // lsn: text().notNull(), // TODO: Add lsn for ordering of events for PG-WAL
+  mvcc_ts: text().primaryKey(),
+  table_name: text().notNull(),
+  key: text().notNull(),
+  type: cdcOperationType().notNull(),
+  updated: timestamp().notNull(),
+  changes: jsonb().notNull(),
   // tenant_id: uuid(),
-  timestamp: timestamp().notNull().defaultNow(),
-  user_id: uuid().notNull()
 })
 
 export const cdcCache = letsync.table("cdc_cache", {
   created_at: timestamp().notNull().defaultNow(),
-  cursor_end: text().notNull(),
-  cursor_start: text().notNull(),
-  id: text()
-    .primaryKey()
-    .$defaultFn(() => uuidv7()),
+  mvcc_ts_start: text().primaryKey(),
+  mvcc_ts_end: text().notNull(),
   updated_at: timestamp()
     .notNull()
     .$onUpdate(() => new Date()),
