@@ -1,5 +1,4 @@
-import { Logger } from "@/utils/logger.js"
-
+import { Logger } from "../../../utils/logger.js"
 import { Context } from "./context.js"
 
 export const logger = new Logger(() => {

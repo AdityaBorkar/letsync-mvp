@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server.js"
 
-import { apiHandler as apiHandlerCore } from "@/core/server/api-handler.js"
-import type { ServerContext } from "@/core/server/index.js"
+import { apiHandler as apiHandlerCore } from "../../core/server/api-handler.js"
+import type { ServerContext } from "../../core/server/index.js"
 
 export function apiHandler({
   config,

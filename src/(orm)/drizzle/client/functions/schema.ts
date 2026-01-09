@@ -1,4 +1,4 @@
-import type { SQL_Schemas } from "@/types/index.js"
+import type { SQL_Schemas } from "@/types"
 
 import { VERSION_KEY } from "../../../../core/client/constants.js"
 import { tryCatch } from "../../../../utils/try-catch.js"

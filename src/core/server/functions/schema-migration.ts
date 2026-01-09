@@ -1,6 +1,6 @@
 import { ArkErrors, type } from "arktype"
 
-import type { ServerContext } from "../config.js"
+import { Context } from "../../server/utils/context.js"
 import { ResponseError } from "../utils/return-error.js"
 
 // TODO: Cache Requests for 365 days, if returns 200 (ISR)
@@ -11,10 +11,13 @@ const schema = type({
   version: "number | undefined"
 })
 
-export async function schemaMigration(
-  request: Request,
-  context: ServerContext
-) {
+export async function schemaMigration(request: Request) {
+  const context = Context.getStore()
+  if (!context) {
+    console.error("Context not found")
+    return Response.json({ message: "Internal Server Error" }, { status: 500 })
+  }
+
   const { searchParams } = new URL(request.url)
   const data = schema({
     name: searchParams.get("name"),

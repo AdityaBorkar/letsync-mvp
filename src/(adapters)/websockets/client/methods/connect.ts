@@ -1,5 +1,4 @@
-import type { Context } from "@/core/client/config.js"
-
+import type { Context } from "../../../../core/client/config.js"
 import { CURSOR_KEY } from "../../../../core/client/constants.js"
 // import { WsMessageSchema, type WsMessageType } from "../../utils/contract.js"
 // import { CURSOR_KEY } from "../../../../core/client/constants.js"
@@ -7,7 +6,7 @@ import { Logger } from "../../../../utils/logger.js"
 import { createWsHandlerContext } from "../../library-ws-rpc/create-ws-context.js"
 import { onMessage } from "../../library-ws-rpc/on-message.js"
 import { RequestStore } from "../../library-ws-rpc/request-store.js"
-import { WsMessageSchema } from "../../utils/contract.js"
+import { WsMessageSchema } from "../../rpc-contract.js"
 import { handlers } from "../handlers/index.js"
 import type { ClientState } from "../index.js"
 

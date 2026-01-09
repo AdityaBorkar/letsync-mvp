@@ -1,7 +1,6 @@
-import type { Context } from "@/core/client/config.js"
-import type { ClientDb } from "@/types/client.js"
-import type { SQL_Schemas } from "@/types/index.js"
+import type { ClientDb, SQL_Schemas } from "@/types"
 
+import type { Context } from "../../../../core/client/config.js"
 import { tryCatch } from "../../../../utils/try-catch.js"
 import { VERSION_KEY } from "../../constants.js"
 import { logger } from "../../utils/logger.js"

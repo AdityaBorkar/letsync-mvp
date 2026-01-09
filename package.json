@@ -39,46 +39,38 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.cts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.cts"
     },
     "./drizzle": {
-      "types": "./dist/(orm)/drizzle/index.d.cts",
       "import": "./dist/(orm)/drizzle/index.js",
-      "require": "./dist/(orm)/drizzle/index.cjs"
+      "require": "./dist/(orm)/drizzle/index.cjs",
+      "types": "./dist/(orm)/drizzle/index.d.cts"
     },
     "./next": {
-      "types": "./dist/(adapters)/next/index.d.cts",
       "import": "./dist/(adapters)/next/index.js",
-      "require": "./dist/(adapters)/next/index.cjs"
+      "require": "./dist/(adapters)/next/index.cjs",
+      "types": "./dist/(adapters)/next/index.d.cts"
     },
     "./react": {
-      "types": "./dist/(adapters)/react/index.d.cts",
       "import": "./dist/(adapters)/react/index.js",
-      "require": "./dist/(adapters)/react/index.cjs"
+      "require": "./dist/(adapters)/react/index.cjs",
+      "types": "./dist/(adapters)/react/index.d.cts"
     },
     "./web-server": {
-      "types": "./dist/(adapters)/web-server/index.d.cts",
       "import": "./dist/(adapters)/web-server/index.js",
-      "require": "./dist/(adapters)/web-server/index.cjs"
+      "require": "./dist/(adapters)/web-server/index.cjs",
+      "types": "./dist/(adapters)/web-server/index.d.cts"
     },
     "./ws": {
-      "types": "./dist/(adapters)/websockets/index.d.cts",
       "import": "./dist/(adapters)/websockets/index.js",
-      "require": "./dist/(adapters)/websockets/index.cjs"
+      "require": "./dist/(adapters)/websockets/index.cjs",
+      "types": "./dist/(adapters)/websockets/index.d.cts"
     }
   },
-  "files": [
-    "dist",
-    "src",
-    "LICENSE.md",
-    "package.json",
-    "README.md"
-  ],
-  "keywords": [
-    "letsync"
-  ],
+  "files": ["dist", "src", "LICENSE.md", "package.json", "README.md"],
+  "keywords": ["letsync"],
   "license": "MIT",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -102,10 +94,7 @@
     "format": "biome check . --fix --diagnostic-level=error",
     "publish": "npm publish --access public"
   },
-  "trustedDependencies": [
-    "oxc-resolver",
-    "sharp"
-  ],
+  "trustedDependencies": ["oxc-resolver", "sharp"],
   "type": "module",
   "types": "./dist/index.d.cts",
   "version": "0.0.2",

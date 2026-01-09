@@ -1,7 +1,7 @@
 import type { PGlite } from "@electric-sql/pglite"
 import type { PgliteDatabase } from "drizzle-orm/pglite"
 
-import type { ClientDb } from "@/types/client.js"
+import type { ClientDb } from "@/types"
 
 import { close } from "./functions/close.js"
 import { connect } from "./functions/connect.js"

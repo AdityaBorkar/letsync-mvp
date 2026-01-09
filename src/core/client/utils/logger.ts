@@ -1,4 +1,4 @@
-import { Logger } from "@/utils/logger.js"
+import { Logger } from "../../../utils/logger.js"
 
 export const logger = new Logger({
   color: "#fff",

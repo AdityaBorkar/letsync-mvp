@@ -2,8 +2,8 @@ import { mkdir } from "node:fs/promises"
 import { join } from "node:path"
 import { build, file } from "bun"
 
-import type { OrmDialectType } from "@/cli/orm/config.js"
-import { letsync_schema as letsync_schema_raw } from "@/cli/orm/drizzle/generate/letsync-schema.js"
+import type { OrmDialectType } from "../../../orm/config.js"
+import { letsync_schema as letsync_schema_raw } from "./letsync-schema.js"
 
 export async function generateSchema(props: {
   source: {

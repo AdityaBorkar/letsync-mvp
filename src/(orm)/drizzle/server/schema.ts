@@ -1,4 +1,4 @@
-import type { SQL_Schemas } from "@/types/index.js"
+import type { SQL_Schemas } from "@/types"
 
 import type { DrizzleServerDb } from "./index.js"
 

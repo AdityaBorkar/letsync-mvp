@@ -3,9 +3,8 @@ import { $, file, randomUUIDv7 } from "bun"
 
 import { Pool } from "pg"
 
-import type { Options, OrmConfig } from "@/cli/orm/config.js"
-
 import { getTimestampString } from "../../../../utils/date.js"
+import type { Options, OrmConfig } from "../../../orm/config.js"
 
 /**
  * Executes database migration for the Drizzle ORM setup.

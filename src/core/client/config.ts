@@ -1,4 +1,4 @@
-import type { ClientDb, ClientFs, ClientPubSub } from "@/types/client.js"
+import type { ClientDb, ClientFs, ClientPubSub } from "@/types"
 
 import { FetchClient } from "../../utils/fetch-client.js"
 import { Signal } from "../../utils/signal.js"

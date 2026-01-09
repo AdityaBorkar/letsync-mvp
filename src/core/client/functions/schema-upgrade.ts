@@ -1,4 +1,4 @@
-import type { ClientDb } from "@/types/client.js"
+import type { ClientDb } from "@/types"
 
 import type { Context } from "../config.js"
 import { VERSION_KEY } from "../constants.js"

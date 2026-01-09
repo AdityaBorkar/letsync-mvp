@@ -1,6 +1,6 @@
 import { createContext } from "react"
 
-import type { ClientConfig } from "@/core/client/config.js"
+import type { ClientConfig } from "../../core/client/config.js"
 
 export const Context = createContext<ClientConfig>(
   null as unknown as ClientConfig

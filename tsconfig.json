@@ -23,7 +23,7 @@
     "noUnusedParameters": true,
     "outDir": "./dist/",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/types": ["./src/types/index.ts"]
     },
     "pretty": true,
     "removeComments": false,

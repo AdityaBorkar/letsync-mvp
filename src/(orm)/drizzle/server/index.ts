@@ -1,7 +1,7 @@
 import type { NodePgDatabase } from "drizzle-orm/node-postgres"
 import type { Pool } from "pg"
 
-import type { ServerDb } from "@/types/server.js"
+import type { ServerDb } from "@/types"
 
 import { close } from "./close.js"
 import { connect } from "./connect.js"

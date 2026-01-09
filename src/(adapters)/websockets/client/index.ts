@@ -1,4 +1,4 @@
-import type { ClientPubSub } from "@/types/client.js"
+import type { ClientPubSub } from "@/types"
 
 import { connect } from "./methods/connect.js"
 import { disconnect } from "./methods/disconnect.js"

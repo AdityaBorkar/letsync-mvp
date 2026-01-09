@@ -1,5 +1,5 @@
-import { apiHandler } from "@/core/server/api-handler.js"
-import type { ServerContext } from "@/core/server/index.js"
+import { apiHandler } from "../../core/server/api-handler.js"
+import type { ServerContext } from "../../core/server/index.js"
 
 export function ApiServer({
   config,

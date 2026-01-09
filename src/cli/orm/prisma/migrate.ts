@@ -1,4 +1,4 @@
-import type { Options, OrmConfig } from "@/cli/orm/config.js"
+import type { Options, OrmConfig } from "../../orm/config.js"
 
 export function migrate(config: OrmConfig, options: Options) {
   const { dryRun } = options

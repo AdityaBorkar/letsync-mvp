@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 
-import type { ServerContext } from "@/core/server/config.js"
+import type { ServerContext } from "../../../core/server/config.js"
 
 export type ContextType = ServerContext & {
   debug?: {

@@ -1,7 +1,6 @@
 import { join } from "node:path"
 
-import type { Options, OrmConfig } from "@/cli/orm/config.js"
-
+import type { Options, OrmConfig } from "../../../orm/config.js"
 import { generateConfig } from "./generate-config.js"
 import { generateSchema } from "./generate-schema.js"
 

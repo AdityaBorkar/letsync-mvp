@@ -3,7 +3,7 @@ import type {
   ServerDb,
   ServerFs,
   ServerPubSub
-} from "@/types/index.js"
+} from "@/types"
 
 export type ServerContext = {
   auth: ServerAuthMiddleware

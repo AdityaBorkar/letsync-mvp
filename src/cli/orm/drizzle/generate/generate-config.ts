@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises"
 import { join } from "node:path"
 import { file } from "bun"
 
-import type { OrmConfigOutputType } from "@/cli/orm/config.js"
+import type { OrmConfigOutputType } from "../../../orm/config.js"
 
 export async function generateConfig(
   config: (typeof OrmConfigOutputType)["infer"]

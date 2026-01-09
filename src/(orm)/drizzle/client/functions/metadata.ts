@@ -1,4 +1,4 @@
-import type { GenericObject, SQL_Schemas } from "@/types/index.js"
+import type { GenericObject, SQL_Schemas } from "@/types"
 
 import { tryCatch } from "../../../../utils/try-catch.js"
 import type { DrizzleClientDb } from "../index.js"
