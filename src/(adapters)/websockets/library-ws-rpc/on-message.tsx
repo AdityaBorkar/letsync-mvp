@@ -12,6 +12,7 @@ export function onMessage<
   msg: Buffer | string,
   _context: {
     MsgSchema: Message
+    system_callbacks: ((message: WsMsgType) => void)[]
     context: Context
     handlers: Record<string, WsHandlerType<any, string, Context>>
     actor_env: "client" | "server"
@@ -20,14 +21,22 @@ export function onMessage<
   }
 ) {
   // Context
-  const { actor_env, handlers, context, ReqManager, ws, MsgSchema } = _context
+  const {
+    actor_env,
+    handlers,
+    context,
+    ReqManager,
+    ws,
+    MsgSchema,
+    system_callbacks
+  } = _context
 
   // Validation
   const msg_string = msg.toString()
   const message = MsgSchema(JSON.parse(msg_string))
   if (message instanceof ArkErrors) {
-    throw new Error("Invalid Message", {
-      cause: { error: message.join("\n"), msg_string }
+    throw new Error(`Invalid Message: ${message.join("\n")}`, {
+      cause: msg_string
     })
   }
 
@@ -36,7 +45,17 @@ export function onMessage<
   const [actor, method, event] = type.split(".")
 
   // Handling
-  if (actor !== actor_env) {
+  if (actor.includes("system")) {
+    if (actor !== `${actor_env}-system`) {
+      console.log("Possible Bug: Actor mismatch for", { message })
+      return
+    }
+    for (const callback of system_callbacks) {
+      console.log("CALLBACK: ", { message })
+      callback(message)
+    }
+    return
+  } else {
     if (event === "get") {
       const handler = handlers[method]
       if (!handler) {

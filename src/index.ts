@@ -3,4 +3,4 @@
 
 export { ClientConfig } from "./core/client/config.js"
 export { ServerConfig } from "./core/server/config.js"
-export type { ingestHelperFn } from "./types/server.js"
+export * from "./types/index.js"

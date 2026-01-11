@@ -1,7 +1,8 @@
 import type { WsHandler } from "../index.js"
 
-export const cdc_get: WsHandler<"cdc"> = (payload, emit, ctx) => {
-  console.log({ ctx, emit, payload })
+export const cdc_get: WsHandler<"cdc"> = (_payload, _emit, _ctx) => {
+  console.log("GET CDC")
+  // console.log({ ctx, emit, payload })
   // emit.stream(payload)
   // const { userId, cursor, name, subscribeChanges } = props
 

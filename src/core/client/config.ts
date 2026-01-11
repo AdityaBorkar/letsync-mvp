@@ -74,11 +74,9 @@ export function ClientConfig(config: Config) {
   if (pubsub.size === 0) {
     throw new Error("No pubsub configured")
   }
-
-  // TODO - Auth Provider check
-  // if (!config.auth) {
-  // 	throw new Error("Auth middleware is required");
-  // }
+  if (!config.auth) {
+    throw new Error("Auth middleware is required")
+  }
 
   // * Utils
   const GarbageCollector: (() => void)[] = []

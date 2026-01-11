@@ -1,3 +1,4 @@
+import type { WsMsgType } from "../../library-ws-rpc/type-helpers.js"
 import type { WsHandler } from "../index.js"
 
 export const live_get: WsHandler<"live"> = (payload, _emit, ctx) => {
@@ -10,13 +11,14 @@ export const live_get: WsHandler<"live"> = (payload, _emit, ctx) => {
     ctx.ws.subscribe(topic)
   }
 
-  const system_callback = (message: string) => {
+  const system_callback = (message: WsMsgType) => {
+    console.log("LIVE SYSTEM CALLBACK: ", { message })
+
     if (payload.name !== "") return
     if (payload.cursor < "") return
 
     //   TODO: Use the CDC Record Payload
     //   emit.stream(payload)
-    console.log({ message })
     // emit.stream(message)
   }
 

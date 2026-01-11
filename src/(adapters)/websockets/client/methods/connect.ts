@@ -44,7 +44,7 @@ export function connect(props: {
   }
 
   ws.onmessage = ({ data: msg }) => {
-    onMessage(msg, ws_ctx)
+    onMessage(msg, { ...ws_ctx, system_callbacks: [] })
   }
   ws.onopen = async () => {
     console.log("Websockets: Connected")
@@ -57,7 +57,8 @@ export function connect(props: {
     for await (const [_, database] of context.db.entries()) {
       const name = database.name
       const timestamp = (await database.metadata.get(CURSOR_KEY)) as string
-      const cursor = timestamp ? new Date(timestamp).toString() : null
+      const cursor = "ADITYA-BORKAR"
+      // const cursor = timestamp ? new Date(timestamp).toString() : null
 
       console.log({ cursor, name, timestamp })
       // const cdc = ws_ctx.rpc.cdc({ cursor, name })
@@ -77,7 +78,7 @@ export function connect(props: {
       // const result = await cdc.result
       // TODO: Reconcile if all records and caches are recieved and inserted
 
-      const live = ctx.rpc.cdc({ cursor, name })
+      const live = ctx.rpc.live({ cursor, name })
       live.on("stream", (payload: unknown) => {
         console.log("Message from Server: ", { payload })
 

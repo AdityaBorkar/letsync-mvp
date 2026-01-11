@@ -3,9 +3,9 @@ import { Context, type ContextType } from "./utils/context.js"
 
 export async function apiHandler<R extends Request>(
   request: R,
-  ctx: ContextType
+  context: ContextType
 ) {
-  Context.enterWith(ctx)
+  Context.enterWith(context)
 
   const url = new URL(request.url)
   const path = url.pathname as keyof typeof API_ENDPOINTS
@@ -29,7 +29,7 @@ export async function apiHandler<R extends Request>(
   // TODO: ISR for OTA
   // TODO: Remove the Authentication once ISR is implemented
 
-  const auth = await ctx.auth(request)
+  const auth = await context.auth(request)
   if ("status" in auth) {
     const { message, status } = auth
     return Response.json({ message }, { status })

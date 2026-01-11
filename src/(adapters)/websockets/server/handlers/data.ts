@@ -5,18 +5,19 @@ import { Context } from "../utils/context.js"
 export async function dataHandler(props: {
   request: Request
   server: HttpServer
+  ctx: any
 }) {
   const context = Context.getStore()
   if (!context) {
     console.error("Context not found")
-    return Response.json({ message: "Internal Server Error" }, { status: 500 })
+    return { data: { message: "Internal Server Error" }, status: 500 }
   }
 
   const { request, server } = props
   const result = await context.auth(request)
   if ("status" in result) {
     const { message, status } = result
-    return Response.json({ message }, { status })
+    return { data: { message }, status }
   }
   const topics = [
     // TODO: DO NOT HARDCODE
@@ -31,8 +32,8 @@ export async function dataHandler(props: {
     ...result
   }
   const upgraded = server.upgrade(request, { data })
-  if (!upgraded) {
-    Response.json({ error: "Failed to upgrade to WebSocket" }, { status: 400 })
+  if (upgraded) {
+    return { data: {}, status: 200, success: true }
   }
-  return
+  return { data: { message: "Failed to upgrade to WebSocket" }, status: 500 }
 }

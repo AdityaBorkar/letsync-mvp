@@ -1,3 +1,4 @@
+export type { ServerMiddlewareFn } from "../(adapters)/websockets/index.js"
 export type {
   ClientDb,
   ClientFs,
